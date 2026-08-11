@@ -1,0 +1,293 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder - My Shortlisted PGs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-secondary-fixed-variant": "#324d2f",
+                            "on-surface-variant": "#424843",
+                            "surface-container-highest": "#e3e2df",
+                            "surface-dim": "#dadad7",
+                            "on-primary": "#ffffff",
+                            "on-primary-container": "#99b9a2",
+                            "secondary": "#496645",
+                            "primary-fixed-dim": "#aeceb6",
+                            "on-tertiary-container": "#d7a5a9",
+                            "tertiary": "#462428",
+                            "surface-bright": "#faf9f6",
+                            "surface": "#faf9f6",
+                            "error": "#ba1a1a",
+                            "on-secondary-container": "#4f6c4a",
+                            "background": "#faf9f6",
+                            "inverse-surface": "#2f312f",
+                            "on-error": "#ffffff",
+                            "primary-fixed": "#caead2",
+                            "secondary-fixed": "#caecc2",
+                            "primary-container": "#2e4a38",
+                            "on-error-container": "#93000a",
+                            "on-primary-fixed": "#042011",
+                            "on-tertiary": "#ffffff",
+                            "outline": "#727972",
+                            "surface-container-lowest": "#ffffff",
+                            "inverse-primary": "#aeceb6",
+                            "primary": "#183323",
+                            "tertiary-container": "#5f3a3e",
+                            "on-tertiary-fixed-variant": "#623c40",
+                            "surface-container-low": "#f4f4f0",
+                            "on-background": "#1a1c1a",
+                            "on-primary-fixed-variant": "#314d3b",
+                            "on-tertiary-fixed": "#301216",
+                            "surface-container": "#eeeeeb",
+                            "on-secondary-fixed": "#062107",
+                            "on-surface": "#1a1c1a",
+                            "error-container": "#ffdad6",
+                            "surface-tint": "#486551",
+                            "on-secondary": "#ffffff",
+                            "secondary-container": "#caecc2",
+                            "inverse-on-surface": "#f1f1ed",
+                            "tertiary-fixed": "#ffd9dc",
+                            "outline-variant": "#c2c8c1",
+                            "surface-container-high": "#e9e8e5",
+                            "tertiary-fixed-dim": "#eeb9be",
+                            "secondary-fixed-dim": "#afcfa7",
+                            "surface-variant": "#e3e2df"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "sm": "8px",
+                            "xs": "4px",
+                            "max-width": "1280px",
+                            "unit": "4px",
+                            "lg": "24px",
+                            "md": "16px",
+                            "gutter": "24px",
+                            "margin-desktop": "64px",
+                            "xl": "40px",
+                            "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                            "label-sm": ["Inter"],
+                            "body-md": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "label-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "display-lg": ["Inter"],
+                            "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                            "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #DCEEDD; }
+        .card-shadow { box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08); }
+        .hover-elevate { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .hover-elevate:hover { transform: translateY(-4px); box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12); }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface shadow-sm docked full-width top-0 z-50">
+<div class="flex justify-between items-center px-lg w-full max-w-max-width mx-auto h-16">
+<div class="flex items-center gap-lg">
+<span class="font-headline-md text-headline-md font-bold text-primary">PGFinder</span>
+<nav class="hidden md:flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Find a PG</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors" href="#">List Your PG</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="font-label-md text-label-md text-primary font-bold hover:text-primary-container transition-colors">Sign In</button>
+<button class="bg-primary-container text-on-primary px-lg py-sm rounded-[12px] font-label-md text-label-md font-bold hover:bg-primary transition-colors">Sign Up</button>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen pt-16">
+<!-- SideNavBar -->
+<aside class="w-64 bg-surface-container-low border-r border-outline-variant hidden md:flex flex-col h-[calc(100vh-64px)] p-md fixed left-0 top-16 z-40">
+<div class="mb-xl px-sm">
+<div class="font-headline-md text-headline-md font-bold text-primary">PGFinder</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Portal Management</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary py-sm rounded-[12px] font-label-md text-label-md mb-xl hover:bg-primary transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">add</span>
+                Add New Listing
+            </button>
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="explore" style="font-variation-settings: 'FILL' 0;">explore</span>
+                    Discovery
+                </a>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-xl font-bold transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                    Favorites
+                </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="domain" style="font-variation-settings: 'FILL' 0;">domain</span>
+                    Listings
+                </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 0;">analytics</span>
+                    Analytics
+                </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="verified_user" style="font-variation-settings: 'FILL' 0;">verified_user</span>
+                    Verification
+                </a>
+</nav>
+<div class="mt-auto flex flex-col gap-xs pt-md border-t border-outline-variant">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 0;">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="logout" style="font-variation-settings: 'FILL' 0;">logout</span>
+                    Logout
+                </a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 p-margin-mobile md:p-margin-desktop">
+<div class="max-w-max-width mx-auto">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-primary mb-lg">My Shortlisted PGs</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter mb-xl">
+<!-- Card 1 -->
+<div class="bg-surface rounded-[24px] overflow-hidden card-shadow hover-elevate relative flex flex-col h-full">
+<button class="absolute top-md right-md z-10 w-8 h-8 bg-surface rounded-full flex items-center justify-center text-on-surface-variant hover:text-error transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="close" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+<div class="h-48 w-full bg-surface-container rounded-t-[24px] overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A bright, airy student dorm room with modern minimalist furniture, featuring a comfortable bed with soft mint green linens, a sleek wooden study desk by a large window letting in abundant natural light, and tasteful organic decorative accents in deep forest green. The atmosphere is calm, residential, and welcoming, designed for focused study and relaxation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBArRjvFOw6BDoMJoT7OKKAUrS8JWz9fBrorMF3iH81LgU6dgfn81FyRqEdLlf-JPowDsylh9Szy2jTqUwI5ETFt3JsIlzQDXEzIlu8ikLHLcjHa9IN74ANcC3AZRdMyfLgQROU2uZrULHirBGObyh48iW6L06aeycqn7qCm4S2Cm-cQeRbeGdQWx0Yq1wpm7_nJ4uTQOCK6qwZodXP1HJd_geIkAvkgL4USRm7KbHbTk7YaOwVa_7L">
+</div>
+<div class="p-lg flex flex-col flex-1">
+<div class="flex justify-between items-start mb-sm">
+<h2 class="font-headline-md text-headline-md text-primary truncate pr-md">Greenwood Hostel</h2>
+<span class="font-body-lg text-body-lg text-secondary font-bold">₹8,500<span class="font-label-sm text-label-sm font-normal text-on-surface-variant">/mo</span></span>
+</div>
+<div class="flex items-center text-on-surface-variant font-label-md text-label-md mb-md">
+<span class="material-symbols-outlined text-[16px] mr-xs" data-icon="location_on" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="truncate">Koramangala, Bangalore</span>
+</div>
+<div class="flex flex-wrap gap-xs mb-lg mt-auto">
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">WiFi</span>
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">AC</span>
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">Meals</span>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 border-2 border-[#2E4A38] text-[#2E4A38] rounded-[12px] py-sm font-label-md text-label-md font-bold hover:bg-surface-container-low transition-colors">Compare</button>
+<button class="flex-1 bg-primary-container text-on-primary rounded-[12px] py-sm font-label-md text-label-md font-bold hover:bg-primary transition-colors">Book Visit</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface rounded-[24px] overflow-hidden card-shadow hover-elevate relative flex flex-col h-full">
+<button class="absolute top-md right-md z-10 w-8 h-8 bg-surface rounded-full flex items-center justify-center text-on-surface-variant hover:text-error transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="close" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+<div class="h-48 w-full bg-surface-container rounded-t-[24px] overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A clean, modern shared living space in a student accommodation. The room features twin beds with crisp white sheets and soft mint throws. Two ergonomic study chairs sit at built-in desks along the wall. The walls are painted a pristine white, accented by healthy indoor potted plants in deep green ceramic pots. Natural sunlight filters through sheer curtains, creating a tranquil environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-PdRZHwMRmJAhX_lGPVt-jWtqVnOKuD3NK5M2XbxAbQcd75JOQvWlfv6fycZ_3x3rFR9UVunaiOvN_ngUvry7POPO8Vmlb2KZD5o9asBaj4uOvo_InyYu0vPLZPYEGiymUb5JnCPS7pP1vf1CZ_K7d94mg7irFFViJAVyNPoKexIh3Xeldb34hGUiOyllkV6KJWphGqUKd9k31O9UjRgIgd1CfYC-1vWoSdAR3u8KVadbgwqoOs4O">
+</div>
+<div class="p-lg flex flex-col flex-1">
+<div class="flex justify-between items-start mb-sm">
+<h2 class="font-headline-md text-headline-md text-primary truncate pr-md">Sunrise PG</h2>
+<span class="font-body-lg text-body-lg text-secondary font-bold">₹6,200<span class="font-label-sm text-label-sm font-normal text-on-surface-variant">/mo</span></span>
+</div>
+<div class="flex items-center text-on-surface-variant font-label-md text-label-md mb-md">
+<span class="material-symbols-outlined text-[16px] mr-xs" data-icon="location_on" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="truncate">HSR Layout, Bangalore</span>
+</div>
+<div class="flex flex-wrap gap-xs mb-lg mt-auto">
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">WiFi</span>
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">Laundry</span>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 border-2 border-[#2E4A38] text-[#2E4A38] rounded-[12px] py-sm font-label-md text-label-md font-bold hover:bg-surface-container-low transition-colors">Compare</button>
+<button class="flex-1 bg-primary-container text-on-primary rounded-[12px] py-sm font-label-md text-label-md font-bold hover:bg-primary transition-colors">Book Visit</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface rounded-[24px] overflow-hidden card-shadow hover-elevate relative flex flex-col h-full">
+<button class="absolute top-md right-md z-10 w-8 h-8 bg-surface rounded-full flex items-center justify-center text-on-surface-variant hover:text-error transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="close" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+<div class="h-48 w-full bg-surface-container rounded-t-[24px] overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="An inviting communal kitchen and dining area in a premium student PG. The space features sleek minimalist countertops, light wood cabinetry, and a large communal dining table surrounded by comfortable chairs. Soft pendant lighting casts a warm glow, complementing the mint green tiled backsplash. The overall aesthetic is highly polished, spacious, and promotes a sense of community and cleanliness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb_98iN0rPjK6z5q77O4aOK7RTH2yDxKow1-D5C07wqa-hyc0Q4_wAQhVIOOnUGBV2hkaJlR8Uadw88EW1-j4PIwXJ3ksAHc2IekguVYsusvHT4sbCQWoBYiar2PpdREjCAiqBp7VYuiMXFfFGvNDDce3dSq2d3gLvIlMEko8HgV76ZGY0RHHxA4n3Juuyb78DrWssDltfBcVsNyP8aoqWOcvDz8kQXbjUb47F52hCXwg_lO7Zk-iM">
+</div>
+<div class="p-lg flex flex-col flex-1">
+<div class="flex justify-between items-start mb-sm">
+<h2 class="font-headline-md text-headline-md text-primary truncate pr-md">Elite Stays</h2>
+<span class="font-body-lg text-body-lg text-secondary font-bold">₹10,000<span class="font-label-sm text-label-sm font-normal text-on-surface-variant">/mo</span></span>
+</div>
+<div class="flex items-center text-on-surface-variant font-label-md text-label-md mb-md">
+<span class="material-symbols-outlined text-[16px] mr-xs" data-icon="location_on" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="truncate">Indiranagar, Bangalore</span>
+</div>
+<div class="flex flex-wrap gap-xs mb-lg mt-auto">
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">AC</span>
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">Gym</span>
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-sm py-xs rounded-full font-label-sm text-label-sm">Security</span>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 border-2 border-[#2E4A38] text-[#2E4A38] rounded-[12px] py-sm font-label-md text-label-md font-bold hover:bg-surface-container-low transition-colors bg-surface-container-high">Selected</button>
+<button class="flex-1 bg-primary-container text-on-primary rounded-[12px] py-sm font-label-md text-label-md font-bold hover:bg-primary transition-colors">Book Visit</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Comparison Bar Sticky Footer -->
+<div class="fixed bottom-0 left-0 right-0 md:left-64 bg-surface border-t border-outline-variant shadow-[0px_-4px_20px_rgba(46,74,56,0.08)] p-md z-40 transform translate-y-0 transition-transform duration-300">
+<div class="max-w-max-width mx-auto flex flex-col sm:flex-row items-center justify-between gap-md">
+<div class="flex items-center gap-md w-full sm:w-auto">
+<div class="font-label-md text-label-md text-on-surface-variant whitespace-nowrap">
+                    Compare up to 3:
+                </div>
+<div class="flex gap-sm flex-1 sm:flex-none">
+<div class="h-12 w-12 bg-surface-container-highest rounded-lg flex items-center justify-center border border-outline-variant overflow-hidden">
+<span class="font-label-sm text-label-sm text-primary text-center leading-tight">Elite Stays</span>
+</div>
+<div class="h-12 w-12 bg-surface-container-low rounded-lg flex items-center justify-center border border-dashed border-outline-variant text-outline">
+<span class="material-symbols-outlined text-[20px]" data-icon="add" style="font-variation-settings: 'FILL' 0;">add</span>
+</div>
+<div class="h-12 w-12 bg-surface-container-low rounded-lg flex items-center justify-center border border-dashed border-outline-variant text-outline">
+<span class="material-symbols-outlined text-[20px]" data-icon="add" style="font-variation-settings: 'FILL' 0;">add</span>
+</div>
+</div>
+</div>
+<button class="w-full sm:w-auto bg-primary-container text-on-primary px-xl py-sm rounded-[12px] font-label-md text-label-md font-bold hover:bg-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Compare Properties
+            </button>
+</div>
+</div>
+</body></html>

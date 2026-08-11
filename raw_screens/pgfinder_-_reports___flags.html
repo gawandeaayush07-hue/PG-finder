@@ -1,0 +1,328 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder Admin - Moderation Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-secondary-fixed-variant": "#324d2f",
+                            "on-surface-variant": "#424843",
+                            "surface-container-highest": "#e3e2df",
+                            "surface-dim": "#dadad7",
+                            "on-primary": "#ffffff",
+                            "on-primary-container": "#99b9a2",
+                            "secondary": "#496645",
+                            "primary-fixed-dim": "#aeceb6",
+                            "on-tertiary-container": "#d7a5a9",
+                            "tertiary": "#462428",
+                            "surface-bright": "#faf9f6",
+                            "surface": "#faf9f6",
+                            "error": "#ba1a1a",
+                            "on-secondary-container": "#4f6c4a",
+                            "background": "#faf9f6",
+                            "inverse-surface": "#2f312f",
+                            "on-error": "#ffffff",
+                            "primary-fixed": "#caead2",
+                            "secondary-fixed": "#caecc2",
+                            "primary-container": "#2e4a38",
+                            "on-error-container": "#93000a",
+                            "on-primary-fixed": "#042011",
+                            "on-tertiary": "#ffffff",
+                            "outline": "#727972",
+                            "surface-container-lowest": "#ffffff",
+                            "inverse-primary": "#aeceb6",
+                            "primary": "#183323",
+                            "tertiary-container": "#5f3a3e",
+                            "on-tertiary-fixed-variant": "#623c40",
+                            "surface-container-low": "#f4f4f0",
+                            "on-background": "#1a1c1a",
+                            "on-primary-fixed-variant": "#314d3b",
+                            "on-tertiary-fixed": "#301216",
+                            "surface-container": "#eeeeeb",
+                            "on-secondary-fixed": "#062107",
+                            "on-surface": "#1a1c1a",
+                            "error-container": "#ffdad6",
+                            "surface-tint": "#486551",
+                            "on-secondary": "#ffffff",
+                            "secondary-container": "#caecc2",
+                            "inverse-on-surface": "#f1f1ed",
+                            "tertiary-fixed": "#ffd9dc",
+                            "outline-variant": "#c2c8c1",
+                            "surface-container-high": "#e9e8e5",
+                            "tertiary-fixed-dim": "#eeb9be",
+                            "secondary-fixed-dim": "#afcfa7",
+                            "surface-variant": "#e3e2df"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "sm": "8px",
+                            "xs": "4px",
+                            "max-width": "1280px",
+                            "unit": "4px",
+                            "lg": "24px",
+                            "md": "16px",
+                            "gutter": "24px",
+                            "margin-desktop": "64px",
+                            "xl": "40px",
+                            "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                            "label-sm": ["Inter"],
+                            "body-md": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "label-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "display-lg": ["Inter"],
+                            "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                            "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #DCEEDD; /* Custom Forest Mint Background */
+        }
+        .soft-shadow-level-1 {
+            box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08);
+        }
+        .soft-shadow-level-2 {
+            box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12);
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased flex h-screen overflow-hidden">
+<!-- SideNavBar (Web) -->
+<nav class="hidden md:flex bg-surface-container-low border-r border-outline-variant h-screen w-64 left-0 top-0 fixed flex-col h-full p-md z-40">
+<div class="flex items-center gap-sm mb-lg px-sm">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A small, modern, minimalist abstract leaf icon in deep forest green, representing a calm residential brand identity, set against a light background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn0kr0gBrQ6fyAvcishResA2mLIMeQRFoIA37vQiuj2K8JAGoQOrJaFJyyaiwWyc6jEHr8lZD-DC1f7V7kg6b8SH_C10cAGZM_D9mF8E6V9RbxP-vLRzSaRRDljcgb2D1iVe-qDilgMIcokLZdgEMuB9yZw7lbsSZkujTUFtXT7osNypkhpG7d7SWkNNTsyyT8MMkrOhS5D623KJYDafLvWLWb1Rfj2nuqNJIiCgoC1dGZjBV3l5oc">
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">PGFinder</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Portal Management</p>
+</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary text-center py-sm rounded-[12px] font-label-md mb-lg hover:opacity-90 transition-opacity">
+            Add New Listing
+        </button>
+<div class="flex-1 overflow-y-auto space-y-xs">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-label-md text-label-md">Discovery</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-label-md text-label-md">Favorites</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span class="font-label-md text-label-md">Listings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<!-- Active State using Semantic Intent matching user prompt 'Reports/Flags' -->
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-xl font-bold transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+<span class="font-label-md text-label-md">Verification</span>
+</a>
+</div>
+<div class="pt-md border-t border-outline-variant space-y-xs mt-auto">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-64 flex flex-col overflow-hidden h-full">
+<!-- TopNavBar (Mobile mainly, hidden on desktop due to side nav, but providing for responsive structural requirement) -->
+<header class="bg-surface md:hidden flex justify-between items-center px-lg w-full max-w-max-width mx-auto py-sm shadow-sm z-30">
+<div class="flex items-center gap-sm">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">PGFinder</h1>
+</div>
+<button class="material-symbols-outlined text-primary">menu</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop">
+<div class="max-w-max-width mx-auto">
+<header class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h2 class="font-display-lg text-display-lg text-primary mb-xs">Moderation Hub</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Review and manage platform reports and flags to ensure a safe environment.</p>
+</div>
+<!-- Filter Tabs -->
+<div class="flex gap-sm p-xs bg-surface-container-low rounded-xl border border-outline-variant w-fit h-fit">
+<button class="px-md py-sm bg-primary-container text-on-primary rounded-lg font-label-md text-label-md">All</button>
+<button class="px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-colors">Pending</button>
+<button class="px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg font-label-md text-label-md transition-colors">Resolved</button>
+</div>
+</header>
+<!-- Reports Grid (Bento style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- High Priority Report Card -->
+<article class="bg-surface rounded-[24px] p-lg soft-shadow-level-1 flex flex-col gap-md relative overflow-hidden group">
+<!-- Red Accent for High Priority -->
+<div class="absolute top-0 left-0 w-full h-1 bg-error"></div>
+<header class="flex justify-between items-start">
+<div class="flex items-center gap-xs text-error font-label-md text-label-md bg-error-container px-sm py-xs rounded-md">
+<span class="material-symbols-outlined text-[16px]" data-icon="gpp_bad">gpp_bad</span>
+                                Safety Concern
+                            </div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 24, 2023</span>
+</header>
+<div>
+<h3 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary mb-xs">Greenwood Heights PG</h3>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A small circular avatar of a young female student, brightly lit with a soft smile, wearing casual modern clothing, set against a clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC35saFCr5kJdFcsqKHWYDHizjg00cKUZVVUpOddQstLfoRD8F_qT0HPHDMFV3LPWu21S44nCD_k3ogrXhha6djb2PO7W234M6JNEmxj38ETAvMaQlMM-GlawkiYASsMSzAdhLpYq1cfyWecr4KUrGbXJmAH4-wePgfDdjXhMpon6R37RvUZ7THRzViY9Jcga5fkpxA7LR31-aRP0tguKomD7dQvTZ9UgL_D7h4SHkGWcu-Mbes-yQD">
+<p class="font-label-md text-label-md">Reported by: Sarah Jenkins</p>
+</div>
+</div>
+<div class="mt-auto pt-sm flex gap-sm">
+<button class="flex-1 py-sm border-2 border-primary text-primary rounded-[12px] font-label-md text-label-md hover:bg-surface-container-low transition-colors" onclick="toggleDetails('report-1')">
+                                View Complaint
+                            </button>
+</div>
+<!-- Expandable Details -->
+<div class="hidden flex-col gap-md pt-md border-t border-outline-variant mt-sm" id="report-1">
+<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant text-body-md text-on-surface">
+                                "The main entrance door lock has been broken for three days. Anyone can walk in off the street. Owner ignores messages."
+                            </div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Take Action</label>
+<select class="bg-surface border border-[#B8D9B0] rounded-[12px] px-sm py-xs font-body-md text-primary focus:border-[2px] focus:border-primary-container focus:ring-0 outline-none w-full">
+<option value="">Select Action...</option>
+<option value="warning">Warning to Owner</option>
+<option value="hide">Temporarily Hide Listing</option>
+<option value="resolve">Resolve / No Issue</option>
+</select>
+</div>
+<button class="w-full bg-primary-container text-on-primary py-sm rounded-[12px] font-label-md mt-xs hover:opacity-90">Confirm Action</button>
+</div>
+</article>
+<!-- Medium Priority Report Card -->
+<article class="bg-surface rounded-[24px] p-lg soft-shadow-level-1 flex flex-col gap-md relative overflow-hidden group">
+<header class="flex justify-between items-start">
+<div class="flex items-center gap-xs text-secondary font-label-md text-label-md bg-[#B8D9B0] px-sm py-xs rounded-md">
+<span class="material-symbols-outlined text-[16px]" data-icon="info">info</span>
+                                Inaccurate Info
+                            </div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 23, 2023</span>
+</header>
+<div>
+<h3 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary mb-xs">Oakwood Residences</h3>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A small circular avatar of a young male student looking focused, well-lit portrait, clean background, modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiRJxCoaYaxm3jdjsTvevACAhnIO1m0uGwzXcPXAXs70dyQcb7Z3q6VFzclF11BNw0KVe3MkNYZ03sYq2LKsCBOIL8_vxSIgtgCcuAvM6zDeOIXS-Zc5lmu5sZ1_Hbitbor4WCrnIKQmFihlUeSK6DzJGCLVU7RfbZO67H85GJIMJVzTUGKeWlcNLqHInPRkc6SXsCsZgEYIsHLK8NsEwUk5UvzM0clOZb1yKckwgSYofjeB2kj6_b">
+<p class="font-label-md text-label-md">Reported by: Michael Chang</p>
+</div>
+</div>
+<div class="mt-auto pt-sm flex gap-sm">
+<button class="flex-1 py-sm border-2 border-primary text-primary rounded-[12px] font-label-md text-label-md hover:bg-surface-container-low transition-colors" onclick="toggleDetails('report-2')">
+                                View Complaint
+                            </button>
+</div>
+<!-- Expandable Details -->
+<div class="hidden flex-col gap-md pt-md border-t border-outline-variant mt-sm" id="report-2">
+<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant text-body-md text-on-surface">
+                                "Listing says high-speed wifi is included, but there is no internet connection in the building at all."
+                            </div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Take Action</label>
+<select class="bg-surface border border-[#B8D9B0] rounded-[12px] px-sm py-xs font-body-md text-primary focus:border-[2px] focus:border-primary-container focus:ring-0 outline-none w-full">
+<option value="">Select Action...</option>
+<option value="warning">Warning to Owner</option>
+<option value="hide">Temporarily Hide Listing</option>
+<option value="resolve">Resolve / No Issue</option>
+</select>
+</div>
+<button class="w-full bg-primary-container text-on-primary py-sm rounded-[12px] font-label-md mt-xs hover:opacity-90">Confirm Action</button>
+</div>
+</article>
+<!-- Duplicate for visual balance -->
+<article class="bg-surface rounded-[24px] p-lg soft-shadow-level-1 flex flex-col gap-md relative overflow-hidden group">
+<header class="flex justify-between items-start">
+<div class="flex items-center gap-xs text-secondary font-label-md text-label-md bg-[#B8D9B0] px-sm py-xs rounded-md">
+<span class="material-symbols-outlined text-[16px]" data-icon="policy">policy</span>
+                                Policy Violation
+                            </div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 21, 2023</span>
+</header>
+<div>
+<h3 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary mb-xs">Sunny Side Hostels</h3>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A small circular avatar of a young female professional, soft natural lighting, minimal modern background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhAXoa_vAmtcgsGpDkIvIAy1ib-ZG0T7AmyH-FRswvRumd36StNiwjrJhn4CsDYjSKVeeoE501D88x_T8VkFLfAPRg1pA-hlocqxH7IPLQy3HJI_ywhw6pKva-lcEgxtjuDqIsRY2KX9zJho9QuRpg25F5TJZ1bgJk2KsoQwK717FmSXxoPW_kxzoeVWOuAYbedhttak2GNG3oJwYhmmKRtEPKk7PPfsB-pEK118HKlY-bKBdWZ-LC">
+<p class="font-label-md text-label-md">Reported by: Emily R.</p>
+</div>
+</div>
+<div class="mt-auto pt-sm flex gap-sm">
+<button class="flex-1 py-sm border-2 border-primary text-primary rounded-[12px] font-label-md text-label-md hover:bg-surface-container-low transition-colors" onclick="toggleDetails('report-3')">
+                                View Complaint
+                            </button>
+</div>
+<!-- Expandable Details -->
+<div class="hidden flex-col gap-md pt-md border-t border-outline-variant mt-sm" id="report-3">
+<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant text-body-md text-on-surface">
+                                "Owner is asking for 6 months rent in cash upfront, which violates the platform terms."
+                            </div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Take Action</label>
+<select class="bg-surface border border-[#B8D9B0] rounded-[12px] px-sm py-xs font-body-md text-primary focus:border-[2px] focus:border-primary-container focus:ring-0 outline-none w-full">
+<option value="">Select Action...</option>
+<option value="warning">Warning to Owner</option>
+<option value="hide">Temporarily Hide Listing</option>
+<option value="resolve">Resolve / No Issue</option>
+</select>
+</div>
+<button class="w-full bg-primary-container text-on-primary py-sm rounded-[12px] font-label-md mt-xs hover:opacity-90">Confirm Action</button>
+</div>
+</article>
+</div>
+</div>
+</main>
+</div>
+<script>
+        function toggleDetails(id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            } else {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
+        }
+    </script>
+</body></html>

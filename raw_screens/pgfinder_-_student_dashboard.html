@@ -1,0 +1,299 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Student Dashboard - PGFinder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container": "#eeeeeb",
+                      "secondary-fixed": "#caecc2",
+                      "on-primary-fixed-variant": "#314d3b",
+                      "surface-bright": "#faf9f6",
+                      "error-container": "#ffdad6",
+                      "inverse-on-surface": "#f1f1ed",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#caecc2",
+                      "on-error": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "inverse-surface": "#2f312f",
+                      "surface-container-highest": "#e3e2df",
+                      "outline-variant": "#c2c8c1",
+                      "on-secondary-fixed-variant": "#324d2f",
+                      "on-tertiary-fixed-variant": "#623c40",
+                      "on-tertiary-container": "#d7a5a9",
+                      "on-error-container": "#93000a",
+                      "outline": "#727972",
+                      "on-primary-fixed": "#042011",
+                      "surface": "#faf9f6",
+                      "on-primary-container": "#99b9a2",
+                      "on-secondary-container": "#4f6c4a",
+                      "surface-dim": "#dadad7",
+                      "secondary": "#496645",
+                      "background": "#faf9f6",
+                      "on-surface": "#1a1c1a",
+                      "surface-container-low": "#f4f4f0",
+                      "on-secondary-fixed": "#062107",
+                      "primary-fixed-dim": "#aeceb6",
+                      "tertiary-fixed": "#ffd9dc",
+                      "secondary-fixed-dim": "#afcfa7",
+                      "surface-variant": "#e3e2df",
+                      "tertiary": "#462428",
+                      "primary-fixed": "#caead2",
+                      "tertiary-container": "#5f3a3e",
+                      "primary-container": "#2e4a38",
+                      "primary": "#183323",
+                      "on-primary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed": "#301216",
+                      "surface-container-high": "#e9e8e5",
+                      "on-surface-variant": "#424843",
+                      "inverse-primary": "#aeceb6",
+                      "surface-tint": "#486551",
+                      "on-tertiary": "#ffffff",
+                      "on-background": "#1a1c1a",
+                      "tertiary-fixed-dim": "#eeb9be",
+                      
+                      "mint-bg": "#DCEEDD",
+                      "primary-accent": "#2e4a38",
+                      "secondary-accent": "#B8D9B0",
+                      "heading-text": "#333333",
+                      "sub-text": "#7A8F7A"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "2xl": "1.5rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "max-width": "1280px",
+                      "unit": "4px",
+                      "sm": "8px",
+                      "margin-desktop": "64px",
+                      "margin-mobile": "16px",
+                      "xs": "4px",
+                      "gutter": "24px",
+                      "xl": "40px",
+                      "md": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "label-sm": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Inter"]
+              },
+              "fontSize": {
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #DCEEDD; }
+        .shadow-soft { box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08); }
+        .card-radius { border-radius: 24px; }
+    </style>
+</head>
+<body class="text-heading-text min-h-screen pb-xl">
+<!-- Top Navigation -->
+<nav class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-max-width mx-auto h-20">
+<!-- Brand -->
+<a class="font-headline-md text-headline-md font-bold text-primary" href="#">PGFinder</a>
+<!-- Links (Desktop) -->
+<div class="hidden md:flex gap-8">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md py-2" href="#">Home</a>
+<a class="text-primary font-semibold border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Find a PG</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md py-2" href="#">List Your PG</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md py-2" href="#">Contact</a>
+</div>
+<!-- Profile -->
+<div class="flex items-center gap-3 cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary-accent overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young Indian male student named Rahul, smiling softly in a modern, well-lit environment. He is wearing a casual button-down shirt. The background is slightly blurred with soft warm tones. High resolution, portrait photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUFjhTqKl9aqxt6V4yOLNl_ikHk9M__mKxXR6tDqK63_aemnlQwgJd7a19f177hBt2eEW_oVigPeVXZcQWZLkINFTmTShAeuITDLHPyDgiaY0ikUAD3SrEeYNqsbfOnTsji-d3OoD3wK6DncMs1zNOADr19bVO5yVsk-klVliW3xJwNIF4k5bULreEbnJOYlCObaiXflWwc8IoYCtV6Jx6SpX4ZMS2UTnV-ZlMkQAznjeixMYlFo9O">
+</div>
+<div class="hidden md:flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-heading-text">Rahul S.</span>
+</div>
+<span class="material-symbols-outlined text-sub-text">expand_more</span>
+</div>
+</div>
+</nav>
+<!-- Main Layout -->
+<div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop mt-xl flex flex-col md:flex-row gap-gutter">
+<!-- Sidebar -->
+<aside class="w-full md:w-64 flex-shrink-0">
+<div class="bg-white card-radius shadow-soft p-4 flex flex-col gap-2 sticky top-28">
+<a class="flex items-center gap-3 p-3 rounded-xl bg-primary-accent text-white font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Overview
+                </a>
+<a class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low text-sub-text hover:text-primary transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">favorite</span>
+                    Shortlisted PGs
+                </a>
+<a class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low text-sub-text hover:text-primary transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+                    My Meetings
+                </a>
+<a class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low text-sub-text hover:text-primary transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Profile Settings
+                </a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col gap-xl">
+<header>
+<h1 class="font-display-lg text-display-lg text-heading-text">Welcome back, Rahul</h1>
+<p class="font-body-lg text-body-lg text-sub-text mt-2">Here is a quick overview of your PG search journey.</p>
+</header>
+<!-- Shortlisted PGs -->
+<section>
+<div class="flex justify-between items-end mb-4">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-heading-text">Shortlisted PGs</h2>
+<a class="text-primary font-label-md text-label-md hover:underline" href="#">View All</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-white card-radius shadow-soft overflow-hidden group cursor-pointer transition-transform hover:-translate-y-1">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="A bright, modern student hostel room featuring a comfortable twin bed with clean white linens, a wooden study desk with a modern chair, and a large window letting in natural sunlight. The room is decorated in soft, warm tones with a minimalist aesthetic, perfect for a peaceful study environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCREt8m7Ow0jgdOg-SGbZjZPxHW25OMHZ5znHCYkmnsacAvEh7Fa7jJHnZLi9GKWz_7gcPHI3NW8lcE0Smgh3yteNaDcxrBHfKBp8TFul76CX7XSpPiiydOoLjO5xEVZMs6Sgovd8GRWBWJ28LXWnUZhBBV75dwvzUbVLS1T0HKjvlBKGycLGMO1yc_4-er9EvLgLMW79NcIB3xdThJvzOZB6IvPJWpKxKsd1TP73Rx_WMS0a-1YR8v">
+<button class="absolute top-4 right-4 bg-white/80 p-2 rounded-full backdrop-blur-sm text-primary-accent hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="p-lg">
+<h3 class="font-headline-md text-headline-md text-heading-text mb-1">Sunrise Villa</h3>
+<div class="flex justify-between items-center mb-3">
+<span class="font-headline-md text-headline-md text-primary-accent">₹8,500<span class="text-sm font-normal text-sub-text">/mo</span></span>
+<span class="text-sub-text font-label-md text-label-md flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> 0.5 km</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">Single</span>
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">AC</span>
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">Food Included</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white card-radius shadow-soft overflow-hidden group cursor-pointer transition-transform hover:-translate-y-1">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="A cozy, well-lit shared room in a modern PG accommodation. Two comfortable single beds with neat bedding. There are individual study desks next to each bed. Soft, ambient lighting creating a warm and inviting atmosphere suitable for students." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4Kt1_c4bBovI-SUfOzzuumHG-wXTL79DMzhw-YAuzjPVXNpauBcfMSNK7NEQkQvhm2_BT2bE_aMbIZoHaASvnCieLldc1f591Md_Q99KQmEUO7ViBLfNzbhOqlmvcsKyJYSPYSdUGU99UV2IP_fhvPIsGBgaD5fqqfGBdADH1XfT_voQnYFvSThtuKNqXFzrdZTqQ_0gIUor36UVeAdPOrZt0LfffeyMd6JTjac5pGHPT90HjRrEO">
+<button class="absolute top-4 right-4 bg-white/80 p-2 rounded-full backdrop-blur-sm text-primary-accent hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="p-lg">
+<h3 class="font-headline-md text-headline-md text-heading-text mb-1">Cozy Nook PG</h3>
+<div class="flex justify-between items-center mb-3">
+<span class="font-headline-md text-headline-md text-primary-accent">₹6,000<span class="text-sm font-normal text-sub-text">/mo</span></span>
+<span class="text-sub-text font-label-md text-label-md flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> 1.2 km</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">Double</span>
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">Non-AC</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white card-radius shadow-soft overflow-hidden group cursor-pointer transition-transform hover:-translate-y-1">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="A premium executive suite in a student housing complex. Features a large plush bed, a modern ergonomic workstation, an en-suite bathroom door, and large bay windows. The decor is sophisticated with deep forest greens and soft neutral tones, conveying a luxury student living experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFFgoYFTIel05NeU4wJHRHq--jtBS-jkmwsQ-M38WwdKI_4fZd9eVvX_Ul6ga3FwDbSNYZ_AkmOpDui8v-8UtgLBnRL-Xp9GpTsRbjMcLMm8c-V3ZAzTXNdu49dRZNZrnJ18KaolmAVDBTHp77TiRTe2v5oGMTE7QkTROcBFL8KayIJxymToFhyjkKkasI0-NAs-qbSsjsEJ99SxW1yjqADjhVnDw9CjzTCtKdgvFuCqTK6n1iDyTH">
+<button class="absolute top-4 right-4 bg-white/80 p-2 rounded-full backdrop-blur-sm text-primary-accent hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="p-lg">
+<h3 class="font-headline-md text-headline-md text-heading-text mb-1">The Elite Residencies</h3>
+<div class="flex justify-between items-center mb-3">
+<span class="font-headline-md text-headline-md text-primary-accent">₹12,000<span class="text-sm font-normal text-sub-text">/mo</span></span>
+<span class="text-sub-text font-label-md text-label-md flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> 2.5 km</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">Single</span>
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">AC</span>
+<span class="bg-secondary-accent/30 text-primary-accent px-2 py-1 rounded-md font-label-sm text-label-sm">Gym</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Upcoming Meetings -->
+<section>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-heading-text mb-4">Upcoming Meetings</h2>
+<div class="bg-white card-radius shadow-soft overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-surface-variant">
+<th class="p-4 font-label-sm text-label-sm text-sub-text uppercase tracking-wider">PG Name</th>
+<th class="p-4 font-label-sm text-label-sm text-sub-text uppercase tracking-wider">Owner</th>
+<th class="p-4 font-label-sm text-label-sm text-sub-text uppercase tracking-wider">Date / Time</th>
+<th class="p-4 font-label-sm text-label-sm text-sub-text uppercase tracking-wider">Status</th>
+<th class="p-4"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-4 font-body-md text-body-md font-medium text-heading-text">Silver Oaks Residency</td>
+<td class="p-4 font-body-md text-body-md text-sub-text">Mrs. Gupta</td>
+<td class="p-4 font-body-md text-body-md text-heading-text">15 Oct, 10:00 AM</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-primary-accent text-white">Accepted</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-primary hover:text-primary-accent p-2 rounded-full hover:bg-surface-variant"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-4 font-body-md text-body-md font-medium text-heading-text">Green Valley Stay</td>
+<td class="p-4 font-body-md text-body-md text-sub-text">Mr. Sharma</td>
+<td class="p-4 font-body-md text-body-md text-heading-text">16 Oct, 02:30 PM</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-secondary-accent text-primary-accent">Pending</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-primary hover:text-primary-accent p-2 rounded-full hover:bg-surface-variant"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-4 font-body-md text-body-md font-medium text-heading-text">Blue Sky Boys Hostel</td>
+<td class="p-4 font-body-md text-body-md text-sub-text">Amit Patel</td>
+<td class="p-4 font-body-md text-body-md text-heading-text">12 Oct, 11:00 AM</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-variant text-sub-text">Rejected</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-primary hover:text-primary-accent p-2 rounded-full hover:bg-surface-variant"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

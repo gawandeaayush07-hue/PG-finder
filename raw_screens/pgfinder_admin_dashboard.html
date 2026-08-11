@@ -1,0 +1,388 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder Admin - Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "surface": "#faf9f6",
+                            "inverse-primary": "#aeceb6",
+                            "tertiary-fixed": "#ffd9dc",
+                            "outline": "#727972",
+                            "surface-container-high": "#e9e8e5",
+                            "on-tertiary-container": "#d7a5a9",
+                            "surface-container-low": "#f4f4f0",
+                            "background": "#faf9f6",
+                            "tertiary": "#462428",
+                            "surface-container-lowest": "#ffffff",
+                            "on-primary-fixed-variant": "#314d3b",
+                            "surface-tint": "#486551",
+                            "on-secondary-fixed-variant": "#324d2f",
+                            "error-container": "#ffdad6",
+                            "surface-bright": "#faf9f6",
+                            "primary-fixed-dim": "#aeceb6",
+                            "inverse-surface": "#2f312f",
+                            "primary-container": "#2e4a38",
+                            "on-primary-fixed": "#042011",
+                            "on-secondary": "#ffffff",
+                            "primary-fixed": "#caead2",
+                            "outline-variant": "#c2c8c1",
+                            "secondary-container": "#caecc2",
+                            "surface-container": "#eeeeeb",
+                            "secondary-fixed-dim": "#afcfa7",
+                            "on-tertiary-fixed-variant": "#623c40",
+                            "on-secondary-container": "#4f6c4a",
+                            "secondary": "#496645",
+                            "error": "#ba1a1a",
+                            "on-error-container": "#93000a",
+                            "on-primary-container": "#99b9a2",
+                            "on-tertiary": "#ffffff",
+                            "on-surface": "#1a1c1a",
+                            "on-secondary-fixed": "#062107",
+                            "on-primary": "#ffffff",
+                            "on-surface-variant": "#424843",
+                            "primary": "#183323",
+                            "surface-container-highest": "#e3e2df",
+                            "inverse-on-surface": "#f1f1ed",
+                            "surface-dim": "#dadad7",
+                            "on-error": "#ffffff",
+                            "on-background": "#1a1c1a",
+                            "secondary-fixed": "#caecc2",
+                            "surface-variant": "#e3e2df",
+                            "tertiary-fixed-dim": "#eeb9be",
+                            "on-tertiary-fixed": "#301216",
+                            "tertiary-container": "#5f3a3e"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "unit": "4px",
+                            "xl": "40px",
+                            "sm": "8px",
+                            "margin-mobile": "16px",
+                            "gutter": "24px",
+                            "margin-desktop": "64px",
+                            "md": "16px",
+                            "xs": "4px",
+                            "lg": "24px",
+                            "max-width": "1280px"
+                    },
+                    "fontFamily": {
+                            "label-md": [
+                                    "Inter"
+                            ],
+                            "headline-lg-mobile": [
+                                    "Inter"
+                            ],
+                            "body-lg": [
+                                    "Inter"
+                            ],
+                            "headline-md": [
+                                    "Inter"
+                            ],
+                            "headline-lg": [
+                                    "Inter"
+                            ],
+                            "label-sm": [
+                                    "Inter"
+                            ],
+                            "display-lg": [
+                                    "Inter"
+                            ],
+                            "body-md": [
+                                    "Inter"
+                            ]
+                    },
+                    "fontSize": {
+                            "label-md": [
+                                    "14px",
+                                    {
+                                            "lineHeight": "20px",
+                                            "letterSpacing": "0.01em",
+                                            "fontWeight": "500"
+                                    }
+                            ],
+                            "headline-lg-mobile": [
+                                    "24px",
+                                    {
+                                            "lineHeight": "32px",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "body-lg": [
+                                    "18px",
+                                    {
+                                            "lineHeight": "28px",
+                                            "fontWeight": "400"
+                                    }
+                            ],
+                            "headline-md": [
+                                    "24px",
+                                    {
+                                            "lineHeight": "32px",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "headline-lg": [
+                                    "32px",
+                                    {
+                                            "lineHeight": "40px",
+                                            "letterSpacing": "-0.01em",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "label-sm": [
+                                    "12px",
+                                    {
+                                            "lineHeight": "16px",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "display-lg": [
+                                    "48px",
+                                    {
+                                            "lineHeight": "56px",
+                                            "letterSpacing": "-0.02em",
+                                            "fontWeight": "700"
+                                    }
+                            ],
+                            "body-md": [
+                                    "16px",
+                                    {
+                                            "lineHeight": "24px",
+                                            "fontWeight": "400"
+                                    }
+                            ]
+                    }
+            },
+                },
+            }
+    </script>
+<style>
+        body {
+            background-color: #DCEEDD; /* Forest Mint background */
+        }
+        .shadow-level-1 {
+            box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08);
+        }
+        .card-radius {
+            border-radius: 24px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface antialiased flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col gap-xs py-md w-64 h-screen fixed left-0 top-0 pt-16 bg-surface-container-low dark:bg-inverse-surface border-r border-outline-variant dark:border-outline z-20">
+<div class="px-lg mb-lg">
+<h1 class="font-headline-md text-headline-md text-primary">Management</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Internal Portal</p>
+</div>
+<div class="flex-1 overflow-y-auto w-full px-sm">
+<ul class="flex flex-col gap-unit w-full">
+<!-- Active Item -->
+<li>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container font-semibold rounded-lg mx-2 transition-transform scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+</li>
+<!-- Inactive Items -->
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high mx-2 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">pending_actions</span>
+<span class="font-label-md text-label-md">Pending Approvals</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high mx-2 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="font-label-md text-label-md">All Listings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high mx-2 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">person_apron</span>
+<span class="font-label-md text-label-md">Owners</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high mx-2 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="font-label-md text-label-md">Students</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high mx-2 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">report</span>
+<span class="font-label-md text-label-md">Reports/Flags</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="mt-auto w-full px-sm pb-md">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high mx-2 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="w-full h-16 sticky top-0 bg-surface dark:bg-surface-dim flex justify-between items-center px-lg max-w-full z-10">
+<div class="flex items-center gap-md">
+<!-- Mobile menu button -->
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">PGFinder Admin</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:bg-surface-container-high p-sm rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-sm rounded-full transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-outline-variant ml-sm">
+<img alt="Admin profile photo" class="w-full h-full object-cover" data-alt="A professional close up portrait of an Indian administrator in a modern office setting. Soft, natural light. Minimalist background. High quality photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACl5JIq0sOSeBbdBrIGx6q9w9q5IbkjFQQkWKCRjQpXl0Lzb37sCqxzTgJdE6dnaIWpSXuoIEMJeh6yYj2xgGMnooS6dR5bwGzaMIWfqAtYP3-luZ8EwDmTOdk7wdj0Y4QGZ2Fe0s8v7OdfdaPzNOiiBMrEy4xLqQt_0wYnh9MOz3fYcmmqC2LDIG0-pPKITci3SiPeRQAMslvWjnAPC-fGqQJDm6eZlM8aldSOCJEgm9bNiHJPU8Z">
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-margin-mobile md:p-gutter xl:p-margin-desktop max-w-max-width mx-auto w-full flex flex-col gap-xl">
+<!-- Dashboard Header -->
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-sm">Dashboard Overview</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Here's what's happening today.</p>
+</div>
+<!-- Overview Section (Stats Cards) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest card-radius p-lg shadow-level-1 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-lg">
+<p class="font-label-md text-label-md text-on-surface-variant">Total Listings</p>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">home_work</span>
+</div>
+</div>
+<h3 class="font-display-lg text-display-lg text-primary-container">1,240</h3>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest card-radius p-lg shadow-level-1 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-lg">
+<p class="font-label-md text-label-md text-on-surface-variant">Pending Approvals</p>
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+</div>
+<h3 class="font-display-lg text-display-lg text-primary-container">42</h3>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest card-radius p-lg shadow-level-1 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-lg">
+<p class="font-label-md text-label-md text-on-surface-variant">Active Owners</p>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">person_apron</span>
+</div>
+</div>
+<h3 class="font-display-lg text-display-lg text-primary-container">856</h3>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest card-radius p-lg shadow-level-1 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-lg">
+<p class="font-label-md text-label-md text-on-surface-variant">Flagged Listings</p>
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined">report</span>
+</div>
+</div>
+<h3 class="font-display-lg text-display-lg text-primary-container">12</h3>
+</div>
+</section>
+<!-- Pending Approvals Section -->
+<section class="bg-surface-container-lowest card-radius p-lg shadow-level-1 flex flex-col gap-lg overflow-hidden">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<h3 class="font-headline-md text-headline-md text-primary">Pending Approvals</h3>
+<div class="flex items-center gap-sm w-full md:w-auto">
+<div class="relative w-full md:w-64">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-xl pr-sm py-sm rounded-lg border border-[#B8D9B0] focus:border-primary-container focus:border-2 focus:ring-0 bg-surface font-body-md text-body-md" placeholder="Search..." type="text">
+</div>
+<button class="flex items-center gap-xs px-md py-sm border border-[#B8D9B0] rounded-lg text-primary-container font-label-md bg-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+                            Filter
+                        </button>
+</div>
+</div>
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="border-b border-outline-variant text-on-surface-variant font-label-md text-label-md">
+<th class="pb-sm pl-sm font-medium">Listing</th>
+<th class="pb-sm font-medium">Owner</th>
+<th class="pb-sm font-medium">City</th>
+<th class="pb-sm font-medium">Submitted</th>
+<th class="pb-sm pr-sm font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="py-md pl-sm">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Exterior view of a modern student housing building. Clean, bright, well-lit. Daytime shot with blue sky. Mint and white architectural details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsWLkN9JpWu1ZmfqijTdfEJJIbqK_i2DGzIZLEJv-viVtEVYEDvzmwFOPT_B--lcmTRIOo2LAger2q0ta7z3LFVL6TxPKZg-831PXyrTVkC2hTFxZWvJCRBEmM-AXKJuJ1XXkyQZrCwOHqsPZ48InyaFjpg3zNYYMlEPBxO8myn0lPl2FSg0ewSFWKwF9QF-1ch1cH_Lhk9UGdalaiAo8ycJo0Rs7UoLs3dI3VYhrnYeTZlKTRKhwh">
+</div>
+<span class="font-medium text-primary">Green Ivy Stay</span>
+</div>
+</td>
+<td class="py-md">Amit Patel</td>
+<td class="py-md">Bengaluru</td>
+<td class="py-md text-on-surface-variant">Oct 24, 2023</td>
+<td class="py-md pr-sm text-right">
+<div class="flex justify-end gap-sm">
+<button class="px-md py-sm bg-primary-container text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary transition-colors">Approve</button>
+<button class="px-md py-sm border-2 border-primary-container text-primary-container rounded-xl font-label-md text-label-md hover:bg-secondary-container transition-colors">View Details</button>
+<button class="px-md py-sm text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined">close</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="py-md pl-sm">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Cozy interior room of a student hostel. Twin beds, study desks. Soft natural lighting from window. Clean and minimalist setup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASVNMBHd8aDE6h1_FxUCH_7mVMWknXo_b578vXXD2pkZAwLIcxnSI-9rftN5eXBXCUFoOvzeg0e95yiL4Cm7YxZ8-RnqTbCmngKD2y9UZUI2owOjbysfGrSyU9MEfdkoWriEJZkRbh3x_s2raU2AYc7ZyQW0rjblXSNZ1_O-wAPBUtsawaVCcszRqZtEKhFCCjVg-SRXJ7tu99LFE3e6z96wWWnhPCZ7VzXxQonISn5T1_KeUVO94s">
+</div>
+<span class="font-medium text-primary">Sunrise Boys Hostel</span>
+</div>
+</td>
+<td class="py-md">Rohan Sharma</td>
+<td class="py-md">Pune</td>
+<td class="py-md text-on-surface-variant">Oct 23, 2023</td>
+<td class="py-md pr-sm text-right">
+<div class="flex justify-end gap-sm">
+<button class="px-md py-sm bg-primary-container text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary transition-colors">Approve</button>
+<button class="px-md py-sm border-2 border-primary-container text-primary-container rounded-xl font-label-md text-label-md hover:bg-secondary-container transition-colors">View Details</button>
+<button class="px-md py-sm text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined">close</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+</body></html>

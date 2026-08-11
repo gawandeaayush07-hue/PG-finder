@@ -1,0 +1,349 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Student Reviews Hub - PGFinder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#2e4a38",
+                      "surface-dim": "#dadad7",
+                      "on-background": "#1a1c1a",
+                      "on-tertiary-fixed-variant": "#623c40",
+                      "on-tertiary-container": "#d7a5a9",
+                      "tertiary-fixed": "#ffd9dc",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "inverse-primary": "#aeceb6",
+                      "primary": "#183323",
+                      "on-secondary-fixed-variant": "#324d2f",
+                      "tertiary": "#462428",
+                      "secondary-fixed": "#caecc2",
+                      "on-secondary-fixed": "#062107",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed-dim": "#aeceb6",
+                      "tertiary-container": "#5f3a3e",
+                      "surface-tint": "#486551",
+                      "on-surface-variant": "#424843",
+                      "on-secondary-container": "#4f6c4a",
+                      "background": "#faf9f6",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed": "#042011",
+                      "on-surface": "#1a1c1a",
+                      "outline": "#727972",
+                      "outline-variant": "#c2c8c1",
+                      "secondary-container": "#caecc2",
+                      "surface-container-low": "#f4f4f0",
+                      "secondary": "#496645",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#e3e2df",
+                      "secondary-fixed-dim": "#afcfa7",
+                      "surface-container-high": "#e9e8e5",
+                      "surface-container": "#eeeeeb",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed": "#caead2",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#314d3b",
+                      "inverse-surface": "#2f312f",
+                      "on-tertiary-fixed": "#301216",
+                      "surface-bright": "#faf9f6",
+                      "on-secondary": "#ffffff",
+                      "surface": "#faf9f6",
+                      "inverse-on-surface": "#f1f1ed",
+                      "surface-variant": "#e3e2df",
+                      "tertiary-fixed-dim": "#eeb9be",
+                      "on-primary-container": "#99b9a2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "max-width": "1280px",
+                      "xl": "40px",
+                      "lg": "24px",
+                      "md": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "64px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #DCEEDD;
+            color: #1a1c1a;
+        }
+        
+        .ambient-shadow-sm {
+            box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08);
+        }
+
+        .ambient-shadow-md {
+            box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12);
+        }
+        
+        .input-border {
+            border: 1px solid #B8D9B0;
+        }
+        
+        .input-border:focus {
+            border: 2px solid #2E4A38;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row font-body-md">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full flex-col p-md bg-surface-container-lowest h-full w-64 rounded-r-xl shadow-sm z-40">
+<div class="mb-xl px-4">
+<h1 class="font-headline-md text-headline-md text-primary">PGFinder</h1>
+</div>
+<div class="flex items-center gap-3 mb-xl px-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a cheerful university student in a softly lit, modern student housing common area. The student is casually dressed, bathed in warm natural light coming from a nearby window. The background features subtle mint green and deep forest green accents, reflecting a calm and residential atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp1ouS31Huc_tVJ8Tk-0RzYeCH-DcgGGbPG8DM9sr11NqWs37XOCScq_J25NlLb__u9-HtEqn4RD5gCc_K7Rmjwzlh0nf29hptZ-o51bHeOL3DyevJRiHmwHpo2fehwr6MWf24CDXpgJrSizX5FJ_Q_4c4vLrxFHEOqBznwtVEwoMP3QarXyZCawTYRDC5KKTkjANyWEP38eAhK9FEx99U6hAKOwoKLffbF2wT2a8Tx3mtqPF5mN7B">
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Welcome Home</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Student Portal</p>
+</div>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-98 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-98 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-md text-label-md">My Bookings</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-98 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+</li>
+<li>
+<a class="bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 flex items-center gap-3 active:scale-98 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-98 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto pt-4">
+<button class="w-full bg-[#2E4A38] text-white py-3 rounded-[12px] font-label-md text-label-md hover:opacity-90 transition-opacity">
+                Rent Now
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 w-full max-w-max-width mx-auto p-margin-mobile md:p-margin-desktop min-h-screen">
+<!-- Header Section -->
+<header class="mb-xl">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">Student Reviews Hub</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your feedback and share your experiences.</p>
+</header>
+<!-- Bento Grid Layout for Content -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Pending Reviews (Requires Action) - Spans 8 columns on large screens -->
+<section class="lg:col-span-8 flex flex-col gap-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface">Pending Reviews</h3>
+<!-- Review Card 1 -->
+<div class="bg-surface-container-lowest rounded-[24px] p-lg ambient-shadow-sm flex flex-col sm:flex-row gap-lg">
+<div class="w-full sm:w-48 h-32 rounded-[24px] sm:rounded-tl-[24px] sm:rounded-bl-none sm:rounded-tr-none sm:rounded-br-none overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover rounded-[24px] sm:rounded-none" data-alt="A brightly lit, modern student bedroom featuring a comfortable bed, a wooden study desk, and large windows revealing a leafy exterior. The room feels spacious and airy, painted in soft, calming tones with subtle mint green textiles that evoke a tranquil, high-end residential atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSgGewuXM3IjzJB2ZFFTjvnGLR1TJS7eONKFnZRH6itt0N4ubULg6WBPbo0gBV2WtRXlk5FKK9okA4bEVUzsQCduH1ZmDSBjStB0LnXqfTI8dCCMAvxKDl6-zcZp-2alJ_0qerSJEr82IDou-7wOvzTAPXK6yztpRc-xb7wNZvblkdCRoEIDzKh-35XSKo_oaqWDnBd3jY17JhfL-M-_nMFUbMrdBdfIiriYIt7P2PgnrWW-BxSSi2">
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface leading-tight">Greenwood Heights</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Stayed: Fall Semester 2023</p>
+</div>
+</div>
+<div class="flex gap-sm mb-md flex-wrap">
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-3 py-1 rounded-full font-label-md text-label-md">Studio</span>
+<span class="bg-[#B8D9B0] text-[#2E4A38] px-3 py-1 rounded-full font-label-md text-label-md">Near Campus</span>
+</div>
+</div>
+<div class="bg-background p-md rounded-xl input-border">
+<p class="font-label-md text-label-md text-on-surface-variant mb-2">Rate your stay</p>
+<div class="flex gap-1 text-outline-variant mb-3 cursor-pointer">
+<span class="material-symbols-outlined hover:text-[#2E4A38] transition-colors">star</span>
+<span class="material-symbols-outlined hover:text-[#2E4A38] transition-colors">star</span>
+<span class="material-symbols-outlined hover:text-[#2E4A38] transition-colors">star</span>
+<span class="material-symbols-outlined hover:text-[#2E4A38] transition-colors">star</span>
+<span class="material-symbols-outlined hover:text-[#2E4A38] transition-colors">star</span>
+</div>
+<textarea class="w-full bg-surface-container-lowest input-border rounded-[12px] p-3 font-body-md text-body-md resize-none h-24 mb-3" placeholder="Share your experience..."></textarea>
+<button class="bg-[#2E4A38] text-white px-6 py-2 rounded-[12px] font-label-md text-label-md hover:opacity-90 transition-opacity">
+                                Submit Review
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Past Reviews Summary - Spans 4 columns on large screens -->
+<section class="lg:col-span-4 flex flex-col gap-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface">Your History</h3>
+<div class="bg-surface-container-lowest rounded-[24px] p-lg ambient-shadow-sm flex flex-col gap-md">
+<!-- Past Review Item -->
+<div class="border-b border-surface-variant pb-md last:border-0 last:pb-0">
+<div class="flex justify-between items-start mb-xs">
+<h5 class="font-label-md text-label-md text-on-surface font-semibold">The Ivy Residences</h5>
+<div class="flex text-[#2E4A38]">
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm text-outline-variant" data-icon="star">star</span>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-sm">Reviewed on Oct 12, 2023</p>
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">Great location, super close to the library. The amenities were clean and well-maintained. Highly recommend for quiet study environments.</p>
+</div>
+<!-- Past Review Item -->
+<div class="border-b border-surface-variant pb-md last:border-0 last:pb-0 pt-md">
+<div class="flex justify-between items-start mb-xs">
+<h5 class="font-label-md text-label-md text-on-surface font-semibold">Oakwood Apartments</h5>
+<div class="flex text-[#2E4A38]">
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm text-outline-variant" data-icon="star">star</span>
+<span class="material-symbols-outlined text-sm text-outline-variant" data-icon="star">star</span>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-sm">Reviewed on May 05, 2023</p>
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">Decent place, but the Wi-Fi was spotty in the evenings. Management was responsive though.</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest flex justify-around items-center px-lg py-md border-t-0 ambient-shadow-md z-50">
+<a class="text-on-surface-variant flex flex-col items-center gap-1 p-2" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant flex flex-col items-center gap-1 p-2" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-sm text-label-sm">Bookings</span>
+</a>
+<a class="text-primary flex flex-col items-center gap-1 p-2" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm font-semibold">Profile</span>
+</a>
+</nav>
+</body></html>

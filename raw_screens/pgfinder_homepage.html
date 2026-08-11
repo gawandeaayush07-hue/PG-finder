@@ -1,0 +1,457 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder | Find the Perfect PG Near Your College</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e3e2df",
+                        "primary-container": "#2e4a38",
+                        "on-secondary-container": "#4f6c4a",
+                        "on-background": "#1a1c1a",
+                        "primary-fixed": "#caead2",
+                        "secondary-fixed-dim": "#afcfa7",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#eeb9be",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#324d2f",
+                        "on-error": "#ffffff",
+                        "primary": "#183323",
+                        "surface-container-high": "#e9e8e5",
+                        "outline": "#727972",
+                        "outline-variant": "#c2c8c1",
+                        "on-primary-fixed": "#042011",
+                        "surface": "#faf9f6",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#aeceb6",
+                        "tertiary-fixed": "#ffd9dc",
+                        "surface-container-low": "#f4f4f0",
+                        "on-error-container": "#93000a",
+                        "secondary": "#496645",
+                        "on-surface": "#1a1c1a",
+                        "error": "#ba1a1a",
+                        "background": "#faf9f6",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#314d3b",
+                        "inverse-primary": "#aeceb6",
+                        "tertiary-container": "#5f3a3e",
+                        "surface-container-highest": "#e3e2df",
+                        "surface-container": "#eeeeeb",
+                        "on-secondary-fixed": "#062107",
+                        "surface-dim": "#dadad7",
+                        "tertiary": "#462428",
+                        "inverse-on-surface": "#f1f1ed",
+                        "surface-tint": "#486551",
+                        "on-primary-container": "#99b9a2",
+                        "inverse-surface": "#2f312f",
+                        "on-surface-variant": "#424843",
+                        "secondary-container": "#caecc2",
+                        "on-tertiary-fixed-variant": "#623c40",
+                        "on-tertiary-fixed": "#301216",
+                        "secondary-fixed": "#caecc2",
+                        "on-tertiary-container": "#d7a5a9",
+                        "surface-bright": "#faf9f6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "max-width": "1280px",
+                        "lg": "24px",
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "xl": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Utilities for the specific brand requested */
+        .bg-soft-mint { background-color: #DCEEDD; }
+        .text-deep-green { color: #2E4A38; }
+        .bg-deep-green { background-color: #2E4A38; }
+        .border-deep-green { border-color: #2E4A38; }
+        .bg-light-sage { background-color: #B8D9B0; }
+        
+        .shadow-level-1 { box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08); }
+        .shadow-level-2 { box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12); }
+        
+        .card-radius { border-radius: 24px; }
+        .btn-radius { border-radius: 12px; }
+        .input-radius { border-radius: 12px; }
+        
+        /* Smooth interactions */
+        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12); }
+        
+        /* Glassmorphism for floating UI elements */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-soft-mint text-on-surface font-body-md antialiased selection:bg-primary-container selection:text-on-primary">
+<!-- Top Navigation Bar -->
+<nav class="sticky top-0 z-50 bg-surface dark:bg-surface-dim shadow-[0px_4px_20px_rgba(46,74,56,0.08)]">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto h-20">
+<!-- Brand Logo -->
+<a class="flex items-center gap-sm group" href="#">
+<img alt="PGFinder Logo" class="h-10 w-10 object-contain rounded-md transition-transform group-hover:scale-105 duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf9bUL-b_6c920ovxs7Oq9hn9LodkhS4NyiOU7BilW79IG9SoeFaEWX09IP6rYjORMJLpHX6SPrc5xjxXt3WOOwCgMdt6ll_KFvHUSKhLjkr-A94ypDh6nOEo2hKedJJUK_7TwFLHO7O8dPbgKcA66AR3btZ5wmr1imRM4asUrBLcyli4HYUf3Vd_b1syCDodBDJnIjdswe7FLHIoIxcb8FJ7Jl3JkUfLYKaT47RU6AW0lVf_IIm6S">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">PGFinder</span>
+</a>
+<!-- Desktop Navigation Links -->
+<div class="hidden md:flex items-center gap-lg">
+<a class="text-primary dark:text-primary-fixed font-semibold border-b-2 border-primary dark:border-primary-fixed pb-1 px-2 font-label-md text-label-md" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-md font-label-md text-label-md" href="#">Find a PG</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-md font-label-md text-label-md" href="#">List Your PG</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-md font-label-md text-label-md" href="#">Contact</a>
+</div>
+<!-- Actions -->
+<div class="hidden md:flex items-center gap-md">
+<a class="text-primary dark:text-primary-fixed font-label-md text-label-md hover:text-primary-container transition-colors font-medium" href="#">Log In</a>
+<a class="bg-deep-green text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-full hover:bg-primary transition-colors hover:scale-95 duration-150 ease-in-out font-medium" href="#">Sign Up</a>
+</div>
+<!-- Mobile Menu Toggle -->
+<button aria-label="Toggle Menu" class="md:hidden text-primary p-2 focus:outline-none">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main>
+<!-- Hero Section: Asymmetric Layout -->
+<section class="relative pt-12 pb-24 md:pt-20 md:pb-32 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto overflow-hidden">
+<!-- Decorative Background Element -->
+<div class="absolute top-0 right-0 w-[50vw] h-[50vw] md:w-[40vw] md:h-[40vw] bg-light-sage rounded-full blur-[120px] opacity-40 -z-10 translate-x-1/4 -translate-y-1/4"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Content: Typography & Search -->
+<div class="lg:col-span-6 z-10 flex flex-col gap-8">
+<div class="flex flex-col gap-4">
+<span class="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-white px-4 py-1.5 rounded-full w-max text-sm font-medium text-deep-green shadow-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            Verified Listings Only
+                        </span>
+<h1 class="font-display-lg text-display-lg text-deep-green max-w-[15ch]">
+                            Find the Perfect PG Near Your College
+                        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[45ch]">
+                            Search by distance, price, and amenities — verified listings, no brokers. A tranquil home for your student journey.
+                        </p>
+</div>
+<!-- Complex Search Bar Component -->
+<div class="glass-panel p-3 rounded-2xl shadow-level-2 mt-4 flex flex-col md:flex-row gap-3 relative max-w-[600px]">
+<div class="relative flex-1">
+<label class="sr-only" for="college-search">Select College</label>
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant text-[20px]" style="font-variation-settings: 'FILL' 0;">school</span>
+</div>
+<input class="w-full h-12 pl-10 pr-4 bg-white border border-[#B8D9B0] input-radius text-on-surface placeholder:text-outline-variant focus:border-deep-green focus:border-2 focus:ring-0 transition-all font-body-md" id="college-search" placeholder="Select College or Area..." type="text">
+</div>
+<div class="relative flex-1 md:max-w-[180px]">
+<label class="sr-only" for="price-range">Price Range</label>
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant text-[20px]" style="font-variation-settings: 'FILL' 0;">payments</span>
+</div>
+<select class="w-full h-12 pl-10 pr-10 bg-white border border-[#B8D9B0] input-radius text-on-surface focus:border-deep-green focus:border-2 focus:ring-0 transition-all font-body-md appearance-none cursor-pointer" id="price-range">
+<option disabled="" selected="" value="">Price Range</option>
+<option value="low">Under ₹5,000</option>
+<option value="mid">₹5,000 - ₹10,000</option>
+<option value="high">Above ₹10,000</option>
+</select>
+<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant text-[20px]" style="font-variation-settings: 'FILL' 0;">expand_more</span>
+</div>
+</div>
+<button class="bg-deep-green text-on-primary h-12 px-6 btn-radius hover:bg-primary transition-colors flex items-center justify-center gap-2 font-label-md text-label-md shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">search</span>
+                            Search PGs
+                        </button>
+</div>
+</div>
+<!-- Right Content: Image Composition -->
+<div class="lg:col-span-6 relative h-[500px] lg:h-[600px] hidden md:block">
+<!-- Background Shape -->
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-4/5 h-[110%] bg-light-sage rounded-[60px] rounded-br-[120px] -z-10 transform -rotate-3"></div>
+<!-- Top Image Card -->
+<div class="absolute top-10 right-10 w-3/4 h-[300px] bg-white rounded-3xl shadow-level-2 p-3 transform rotate-2 hover:rotate-0 transition-transform duration-500 overflow-hidden">
+<img class="w-full h-full object-cover rounded-2xl" data-alt="A brightly lit, modern student housing room featuring a clean desk, a neatly made bed with white linens, and sunlight streaming through a large window. Soft mint walls and potted indoor plants add an organic, serene atmosphere. High-end real estate photography, shallow depth of field, natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBww10ZNK22CqL1MKpLilSEPmeFJIVw9ezy4Hz5PIQ0v7iZKKUwKVd-JwHNJ7L1vERXYod-a6gima6xDCefXNwYoZzKUK3BgdkxR2jP53nBvoPK9gBJvC8BKzDGVo9yPrryFW1gSp8YGrTkkxLVbGdsfvhhcp8SjNvU-ZuvwbX6gZZCdzli0QPqzFzGeppIWthUYjqlrJEEzN_We4gkkt8ttCe1FV8Jvh7UhEWK7UPI2UT0nooWRwDE">
+<!-- Floating Tag -->
+<div class="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-green-600 text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-sm text-label-sm text-deep-green">Available Now</span>
+</div>
+</div>
+<!-- Bottom Image Card -->
+<div class="absolute bottom-10 left-0 w-2/3 h-[250px] bg-white rounded-3xl shadow-level-2 p-3 transform -rotate-3 hover:rotate-0 transition-transform duration-500 overflow-hidden">
+<img class="w-full h-full object-cover rounded-2xl" data-alt="A comfortable, minimalist common area in a premium student PG. Featuring a soft green sectional sofa, a warm wooden coffee table, and large windows revealing a city view. The lighting is soft and natural, emphasizing a tranquil, high-end residential environment designed for young professionals and students." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_4ybjU8pDatqwKDFx7yva0oyA8eEKSKVdYNvbkXDSa1eUFNIGSANy90ZGVdumrxBDn55S4wcAUmYWWG7vUMk-O-h4ZnsSXfrCAPzpYw5GRGQr4YNBz9fX4lqfMuh-d9ijYnf1yqIg8qtZH-SV5b2vSydtxKABuBeXQakcn4p4Z7871PSbdTERPy6KuZ_xOjEoUxQkQrQbmNQPk_i4CJ9QNutMfcNy68Y5l8AA6XVs5J34TyceWBrR">
+</div>
+</div>
+</div>
+</section>
+<!-- Spacer -->
+<div class="w-full h-xl"></div>
+<!-- How It Works Section: Bento Grid Inspired -->
+<section class="py-16 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-deep-green mb-4">How It Works</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[50ch] mx-auto">Find your next home in three simple steps, designed to be completely stress-free.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Step 1 -->
+<div class="bg-white p-8 card-radius shadow-level-1 hover-lift text-center flex flex-col items-center gap-4 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-light-sage/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="w-16 h-16 rounded-full bg-light-sage flex items-center justify-center text-deep-green mb-2">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 0;">location_on</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-deep-green">Search Nearby PGs</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter your college or desired area to instantly discover verified properties nearby.</p>
+</div>
+<!-- Step 2 -->
+<div class="bg-white p-8 card-radius shadow-level-1 hover-lift text-center flex flex-col items-center gap-4 relative overflow-hidden group md:translate-y-8">
+<div class="absolute top-0 right-0 w-24 h-24 bg-light-sage/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="w-16 h-16 rounded-full bg-light-sage flex items-center justify-center text-deep-green mb-2">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 0;">compare_arrows</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-deep-green">Compare &amp; Shortlist</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Review amenities, real photos, and transparent pricing to find your perfect match.</p>
+</div>
+<!-- Step 3 -->
+<div class="bg-white p-8 card-radius shadow-level-1 hover-lift text-center flex flex-col items-center gap-4 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-light-sage/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="w-16 h-16 rounded-full bg-light-sage flex items-center justify-center text-deep-green mb-2">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 0;">event_available</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-deep-green">Book a Visit</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Schedule a tour directly through the platform. No brokers, no hidden fees.</p>
+</div>
+</div>
+</section>
+<!-- Spacer -->
+<div class="w-full h-xl"></div>
+<!-- Featured PGs Section -->
+<section class="py-16 px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-deep-green mb-2">Featured Properties</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Handpicked, highly-rated accommodations near top campuses.</p>
+</div>
+<a class="flex items-center gap-2 text-deep-green font-label-md text-label-md hover:underline font-medium group" href="#">
+                    View all listings
+                    <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</a>
+</div>
+<!-- Horizontal Scrolling Row for Mobile, Grid for Desktop -->
+<div class="flex overflow-x-auto md:grid md:grid-cols-3 gap-8 pb-8 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar">
+<!-- Card 1 -->
+<div class="min-w-[300px] md:min-w-0 bg-white card-radius shadow-level-1 hover-lift flex flex-col snap-start shrink-0">
+<div class="relative h-56 w-full p-2">
+<img class="w-full h-full object-cover rounded-t-[20px] rounded-b-lg" data-alt="Exterior view of a modern student housing complex painted in soft neutral tones. The building features large glass windows, small balconies with plants, and a secure entrance. Shot on a sunny day with clear blue skies, emphasizing a safe, premium, and welcoming residential environment for students." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm8lPh-Mh5caZDv8otgb_zbadZcAdDju396GSImXWmGWluVmY84Ux_xLoF2VC-lYMdHWMG7FUq-Gc0MuQ2j9d3i5fuRXHrsmha7p_8co2PX0ntqHVv6_Br2Nk3Nze04cTAl_RZnhWqnSwPN9FXk0Xo28PH3UowicNa3OeV-QyOCj-HpXLTxT6pajpTJ52a6nxk81CjYC-nxto-OsTinCozpc9oPhYTwyCf0sebvQNOHzVcEb-PhLVG">
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+<span class="font-label-sm text-label-sm text-deep-green font-bold">₹8,500/mo</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow gap-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-deep-green mb-1 line-clamp-1">Green Leaf Residences</h3>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="font-body-sm text-sm">North Campus Area</span>
+</div>
+</div>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-light-sage text-deep-green font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">directions_walk</span>
+                                5 mins to college
+                            </span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full border border-outline-variant">
+                                Boys PG
+                            </span>
+</div>
+<!-- Action -->
+<button class="w-full mt-2 py-3 border-2 border-deep-green text-deep-green font-label-md text-label-md btn-radius hover:bg-light-sage/30 transition-colors">
+                            View Details
+                        </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="min-w-[300px] md:min-w-0 bg-white card-radius shadow-level-1 hover-lift flex flex-col snap-start shrink-0">
+<div class="relative h-56 w-full p-2">
+<img class="w-full h-full object-cover rounded-t-[20px] rounded-b-lg" data-alt="Interior shot of a premium twin-sharing PG room. Neatly arranged with two modern single beds, individual study desks, and ample wooden wardrobes. Soft, bright lighting, light green accent wall, clean and inviting layout designed for productive student living. High quality, wide angle architectural photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5pCTp3k1FCq-3XHGKV2oHeHVb_nLeF_SRifbW1gBGQf1IZsbzXAtLlT1oezipOlG2E1C-Lbxz0u0OtnOFYnghKi85o7hNPV1TwW2CLmY78QjC2EZR4oYFpDI0v6pmhWGQJzBbZNjyhXVaOKzIfif84mndDETJUI8S_C4-P3_eYwPZHbuVYKvq6m334Dy4d5NSKcWCdz1AQHHE1eLuv34s3JklKR_hYO-rWjmvhaBcpvh9GmyeRmYs">
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+<span class="font-label-sm text-label-sm text-deep-green font-bold">₹12,000/mo</span>
+</div>
+<div class="absolute top-4 left-4 bg-deep-green text-white px-3 py-1 rounded-full shadow-sm">
+<span class="font-label-sm text-label-sm">Premium</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow gap-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-deep-green mb-1 line-clamp-1">The Scholar's Abode</h3>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="font-body-sm text-sm">South Ext. Zone</span>
+</div>
+</div>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-light-sage text-deep-green font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">directions_bus</span>
+                                15 mins to college
+                            </span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full border border-outline-variant">
+                                Girls PG
+                            </span>
+</div>
+<!-- Action -->
+<button class="w-full mt-2 py-3 border-2 border-deep-green text-deep-green font-label-md text-label-md btn-radius hover:bg-light-sage/30 transition-colors">
+                            View Details
+                        </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="min-w-[300px] md:min-w-0 bg-white card-radius shadow-level-1 hover-lift flex flex-col snap-start shrink-0">
+<div class="relative h-56 w-full p-2">
+<img class="w-full h-full object-cover rounded-t-[20px] rounded-b-lg" data-alt="A bright, clean communal dining and kitchen area inside a modern student housing facility. Features long wooden tables, contemporary pendant lighting, and stainless steel appliances. The atmosphere is warm, social, and tidy, lit by warm ambient light and sunlight from adjacent windows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4hh1JlQ4KvtIzEejGlq2kDX8wyYd07ileen21WMo05pUVbgXr82GC0qxNgJgwEcVNV9zvGpdCFlxdqBWM9sjz3EQsbC4V_JyJPpR7IaNcQRD4aWU4IkAn0TsIKQsd1QG6Asx70RVi5865nAajbIxkjK6rgKNDjekuae8fohn0AMydAJR3wTdQA476d4dzl-pkl1XDCOV3VBevwnTZmlqY38catB9sxOq7MhcwBznkiCK8aFPM0eRA">
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+<span class="font-label-sm text-label-sm text-deep-green font-bold">₹6,000/mo</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow gap-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-deep-green mb-1 line-clamp-1">Harmony House</h3>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="font-body-sm text-sm">Tech Park Road</span>
+</div>
+</div>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-light-sage text-deep-green font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">directions_walk</span>
+                                10 mins to college
+                            </span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full border border-outline-variant">
+                                Co-ed PG
+                            </span>
+</div>
+<!-- Action -->
+<button class="w-full mt-2 py-3 border-2 border-deep-green text-deep-green font-label-md text-label-md btn-radius hover:bg-light-sage/30 transition-colors">
+                            View Details
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer from JSON Configuration -->
+<footer class="bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container w-full py-xl px-margin-mobile md:px-margin-desktop mt-20">
+<div class="max-w-max-width mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-12">
+<!-- Brand Column -->
+<div class="flex flex-col gap-4">
+<a class="flex items-center gap-2" href="#">
+<!-- Reusing Logo for context, inverted if possible, but keeping original asset as requested -->
+<span class="font-headline-md text-headline-md font-bold text-on-primary dark:text-on-primary-container">PGFinder</span>
+</a>
+<p class="font-body-md text-body-md text-on-primary/80 mt-2 max-w-[250px]">
+                        Making student housing discovery transparent, easy, and stress-free.
+                    </p>
+</div>
+<!-- Quick Links -->
+<div class="flex flex-col gap-3">
+<h4 class="font-headline-md text-lg font-semibold mb-2">Explore</h4>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">Find a PG</a>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">About Us</a>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">Careers</a>
+</div>
+<!-- Support Links -->
+<div class="flex flex-col gap-3">
+<h4 class="font-headline-md text-lg font-semibold mb-2">Support</h4>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">FAQ</a>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">Contact Support</a>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">Terms of Service</a>
+</div>
+<!-- For Owners -->
+<div class="flex flex-col gap-3">
+<h4 class="font-headline-md text-lg font-semibold mb-2">For Owners</h4>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">List Your PG</a>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">Owner Dashboard</a>
+<a class="font-body-md text-body-md text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary hover:underline transition-opacity" href="#">Trust &amp; Safety</a>
+</div>
+</div>
+<!-- Bottom Divider & Copyright -->
+<div class="border-t border-on-primary/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-label-sm text-label-sm text-on-primary/80">© 2024 PGFinder. All rights reserved.</p>
+<!-- Social Icons -->
+<div class="flex items-center gap-4">
+<a class="w-10 h-10 rounded-full bg-on-primary/10 flex items-center justify-center hover:bg-on-primary/20 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">public</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-on-primary/10 flex items-center justify-center hover:bg-on-primary/20 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">share</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-on-primary/10 flex items-center justify-center hover:bg-on-primary/20 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">mail</span>
+</a>
+</div>
+</div>
+</div>
+</footer>
+<style>
+        /* Utility for hiding scrollbar in the horizontal list while keeping functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</body></html>

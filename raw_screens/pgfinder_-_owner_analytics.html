@@ -1,0 +1,326 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder - Owner Analytics &amp; Vacancy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#324d2f",
+                        "on-surface-variant": "#424843",
+                        "surface-container-highest": "#e3e2df",
+                        "surface-dim": "#dadad7",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#99b9a2",
+                        "secondary": "#496645",
+                        "primary-fixed-dim": "#aeceb6",
+                        "on-tertiary-container": "#d7a5a9",
+                        "tertiary": "#462428",
+                        "surface-bright": "#faf9f6",
+                        "surface": "#faf9f6",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#4f6c4a",
+                        "background": "#faf9f6",
+                        "inverse-surface": "#2f312f",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#caead2",
+                        "secondary-fixed": "#caecc2",
+                        "primary-container": "#2e4a38",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#042011",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#727972",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#aeceb6",
+                        "primary": "#183323",
+                        "tertiary-container": "#5f3a3e",
+                        "on-tertiary-fixed-variant": "#623c40",
+                        "surface-container-low": "#f4f4f0",
+                        "on-background": "#1a1c1a",
+                        "on-primary-fixed-variant": "#314d3b",
+                        "on-tertiary-fixed": "#301216",
+                        "surface-container": "#eeeeeb",
+                        "on-secondary-fixed": "#062107",
+                        "on-surface": "#1a1c1a",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#486551",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#caecc2",
+                        "inverse-on-surface": "#f1f1ed",
+                        "tertiary-fixed": "#ffd9dc",
+                        "outline-variant": "#c2c8c1",
+                        "surface-container-high": "#e9e8e5",
+                        "tertiary-fixed-dim": "#eeb9be",
+                        "secondary-fixed-dim": "#afcfa7",
+                        "surface-variant": "#e3e2df"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xs": "4px",
+                        "max-width": "1280px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "xl": "40px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #DCEEDD; /* Custom background as requested */
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .soft-shadow-level-1 {
+            box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08);
+        }
+        .soft-shadow-level-2 {
+            box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12);
+        }
+    </style>
+</head>
+<body class="text-on-background min-h-screen flex">
+<!-- TopNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-lg w-full max-w-max-width mx-auto fixed docked full-width top-0 z-50 h-16">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">PGFinder</div>
+<!-- Hamburger Menu Icon for Mobile -->
+<button class="p-sm text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</nav>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden md:flex flex-col h-screen w-64 left-0 top-0 fixed bg-surface-container-low dark:bg-surface-container-highest border-r border-outline-variant p-md z-40">
+<div class="mb-xl px-sm">
+<div class="font-headline-md text-headline-md font-bold text-primary">PGFinder</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Portal Management</div>
+</div>
+<button class="bg-primary-container text-on-primary w-full py-md rounded-xl font-label-md text-label-md mb-xl flex items-center justify-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+            Add New Listing
+        </button>
+<nav class="flex-1 space-y-sm">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">explore</span>
+                Discovery
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">favorite</span>
+                Favorites
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">domain</span>
+                Listings
+            </a>
+<!-- Active State -->
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-xl font-bold duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+                Verification
+            </a>
+</nav>
+<div class="mt-auto space-y-sm pt-lg border-t border-outline-variant">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-xl duration-200 ease-in-out font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full md:ml-64 pt-20 md:pt-lg px-margin-mobile md:px-margin-desktop pb-xl max-w-max-width mx-auto transition-all duration-300">
+<header class="mb-xl">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Performance &amp; Vacancy</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-sm">Overview of your properties' performance over the last 30 days.</p>
+</header>
+<!-- Stats Cards Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-xl">
+<!-- Stat Card 1 -->
+<div class="bg-surface rounded-2xl p-lg soft-shadow-level-1 border border-[#B8D9B0] flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<span class="font-label-md text-label-md text-on-surface-variant">Total Views (Last 30 days)</span>
+<div class="bg-primary-container/10 p-sm rounded-full text-primary-container">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+</div>
+<div class="flex items-baseline gap-sm">
+<span class="font-display-lg text-display-lg text-primary">12,450</span>
+<span class="font-label-sm text-label-sm text-secondary flex items-center">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> 8.5%
+                    </span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface rounded-2xl p-lg soft-shadow-level-1 border border-[#B8D9B0] flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<span class="font-label-md text-label-md text-on-surface-variant">Inquiry Conversion Rate (%)</span>
+<div class="bg-primary-container/10 p-sm rounded-full text-primary-container">
+<span class="material-symbols-outlined">chat_bubble</span>
+</div>
+</div>
+<div class="flex items-baseline gap-sm">
+<span class="font-display-lg text-display-lg text-primary">14.2%</span>
+<span class="font-label-sm text-label-sm text-secondary flex items-center">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> 2.1%
+                    </span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface rounded-2xl p-lg soft-shadow-level-1 border border-[#B8D9B0] flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<span class="font-label-md text-label-md text-on-surface-variant">Current Vacancy (Rooms)</span>
+<div class="bg-error-container/20 p-sm rounded-full text-error">
+<span class="material-symbols-outlined">meeting_room</span>
+</div>
+</div>
+<div class="flex items-baseline gap-sm">
+<span class="font-display-lg text-display-lg text-primary">5</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/ 45 Total</span>
+</div>
+</div>
+</section>
+<!-- Chart Section (Mockup) -->
+<section class="bg-surface rounded-2xl p-lg soft-shadow-level-1 border border-[#B8D9B0] mb-xl">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-headline-md text-headline-md text-primary">Listing Views over Time</h2>
+<div class="flex gap-sm">
+<button class="font-label-sm text-label-sm px-md py-xs rounded-full bg-secondary-container text-on-secondary-container">30 Days</button>
+<button class="font-label-sm text-label-sm px-md py-xs rounded-full bg-transparent text-on-surface-variant hover:bg-surface-container-low">7 Days</button>
+</div>
+</div>
+<!-- Simple Mock Chart using Tailwind Grid & Heights -->
+<div class="w-full h-64 flex items-end justify-between gap-xs pb-md border-b border-outline-variant relative">
+<!-- Y-Axis labels (Mock) -->
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-on-surface-variant font-label-sm text-label-sm py-sm -ml-lg opacity-50 hidden md:flex">
+<span>1000</span>
+<span>500</span>
+<span>0</span>
+</div>
+<!-- Chart Bars -->
+<div class="w-full bg-primary-container rounded-t-sm h-[40%] hover:opacity-80 transition-opacity"></div>
+<div class="w-full bg-primary-container rounded-t-sm h-[60%] hover:opacity-80 transition-opacity"></div>
+<div class="w-full bg-primary-container rounded-t-sm h-[45%] hover:opacity-80 transition-opacity"></div>
+<div class="w-full bg-primary-container rounded-t-sm h-[70%] hover:opacity-80 transition-opacity"></div>
+<div class="w-full bg-primary-container rounded-t-sm h-[90%] hover:opacity-80 transition-opacity"></div>
+<div class="w-full bg-primary-container rounded-t-sm h-[50%] hover:opacity-80 transition-opacity"></div>
+<div class="w-full bg-primary-container rounded-t-sm h-[85%] hover:opacity-80 transition-opacity"></div>
+<div class="w-full bg-primary-container rounded-t-sm h-[75%] hover:opacity-80 transition-opacity"></div>
+</div>
+<div class="w-full flex justify-between pt-sm text-on-surface-variant font-label-sm text-label-sm">
+<span>Week 1</span>
+<span>Week 2</span>
+<span>Week 3</span>
+<span>Week 4</span>
+</div>
+</section>
+<!-- Table Section -->
+<section class="bg-surface rounded-2xl overflow-hidden soft-shadow-level-1 border border-[#B8D9B0]">
+<div class="p-lg border-b border-[#B8D9B0] flex justify-between items-center bg-surface-container-low">
+<h2 class="font-headline-md text-headline-md text-primary">Unit Performance</h2>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant font-label-sm text-label-sm text-on-surface-variant bg-surface-bright">
+<th class="py-md px-lg font-semibold">Unit Name</th>
+<th class="py-md px-lg font-semibold">Views</th>
+<th class="py-md px-lg font-semibold">Inquiries</th>
+<th class="py-md px-lg font-semibold">Status</th>
+<th class="py-md px-lg font-semibold text-right">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface">
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors">
+<td class="py-md px-lg font-medium text-primary">Greenwood Apt 101</td>
+<td class="py-md px-lg text-on-surface-variant">1,245</td>
+<td class="py-md px-lg text-on-surface-variant">42</td>
+<td class="py-md px-lg">
+<span class="bg-[#B8D9B0]/30 text-primary-container font-label-sm text-label-sm px-md py-xs rounded-full border border-[#B8D9B0]">Occupied</span>
+</td>
+<td class="py-md px-lg text-right">
+<button class="bg-transparent border-2 border-primary-container text-primary-container font-label-sm text-label-sm px-md py-sm rounded-lg hover:bg-primary-container hover:text-on-primary transition-colors">
+                                    Update Status
+                                </button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors">
+<td class="py-md px-lg font-medium text-primary">Greenwood Apt 102</td>
+<td class="py-md px-lg text-on-surface-variant">890</td>
+<td class="py-md px-lg text-on-surface-variant">15</td>
+<td class="py-md px-lg">
+<span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-md py-xs rounded-full border border-error-container">Vacant</span>
+</td>
+<td class="py-md px-lg text-right">
+<button class="bg-transparent border-2 border-primary-container text-primary-container font-label-sm text-label-sm px-md py-sm rounded-lg hover:bg-primary-container hover:text-on-primary transition-colors">
+                                    Update Status
+                                </button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors">
+<td class="py-md px-lg font-medium text-primary">Sunrise Studio B</td>
+<td class="py-md px-lg text-on-surface-variant">2,100</td>
+<td class="py-md px-lg text-on-surface-variant">120</td>
+<td class="py-md px-lg">
+<span class="bg-[#B8D9B0]/30 text-primary-container font-label-sm text-label-sm px-md py-xs rounded-full border border-[#B8D9B0]">Occupied</span>
+</td>
+<td class="py-md px-lg text-right">
+<button class="bg-transparent border-2 border-primary-container text-primary-container font-label-sm text-label-sm px-md py-sm rounded-lg hover:bg-primary-container hover:text-on-primary transition-colors">
+                                    Update Status
+                                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+</body></html>

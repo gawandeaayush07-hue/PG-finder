@@ -1,0 +1,335 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Account Settings - PGFinder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#2e4a38",
+                    "surface-dim": "#dadad7",
+                    "on-background": "#1a1c1a",
+                    "on-tertiary-fixed-variant": "#623c40",
+                    "on-tertiary-container": "#d7a5a9",
+                    "tertiary-fixed": "#ffd9dc",
+                    "on-error": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#aeceb6",
+                    "primary": "#183323",
+                    "on-secondary-fixed-variant": "#324d2f",
+                    "tertiary": "#462428",
+                    "secondary-fixed": "#caecc2",
+                    "on-secondary-fixed": "#062107",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#aeceb6",
+                    "tertiary-container": "#5f3a3e",
+                    "surface-tint": "#486551",
+                    "on-surface-variant": "#424843",
+                    "on-secondary-container": "#4f6c4a",
+                    "background": "#faf9f6",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#042011",
+                    "on-surface": "#1a1c1a",
+                    "outline": "#727972",
+                    "outline-variant": "#c2c8c1",
+                    "secondary-container": "#caecc2",
+                    "surface-container-low": "#f4f4f0",
+                    "secondary": "#496645",
+                    "error": "#ba1a1a",
+                    "surface-container-highest": "#e3e2df",
+                    "secondary-fixed-dim": "#afcfa7",
+                    "surface-container-high": "#e9e8e5",
+                    "surface-container": "#eeeeeb",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#caead2",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#314d3b",
+                    "inverse-surface": "#2f312f",
+                    "on-tertiary-fixed": "#301216",
+                    "surface-bright": "#faf9f6",
+                    "on-secondary": "#ffffff",
+                    "surface": "#faf9f6",
+                    "inverse-on-surface": "#f1f1ed",
+                    "surface-variant": "#e3e2df",
+                    "tertiary-fixed-dim": "#eeb9be",
+                    "on-primary-container": "#99b9a2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "max-width": "1280px",
+                    "xl": "40px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "64px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": [
+                            "Inter"
+                    ],
+                    "label-md": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "display-lg": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #DCEEDD; } /* Soft mint background overriding config background for this specific screen request */
+        
+        /* Custom Shadows as per spec */
+        .shadow-level-1 { box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08); }
+        .shadow-level-2 { box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12); }
+        
+        /* Custom inputs */
+        .pg-input {
+            border: 1px solid #B8D9B0;
+            border-radius: 12px;
+            background-color: #FFFFFF;
+            transition: all 0.2s ease-in-out;
+        }
+        .pg-input:focus {
+            border-color: #2E4A38;
+            border-width: 2px;
+            outline: none;
+            box-shadow: none;
+        }
+        
+        /* Custom Buttons */
+        .pg-btn-primary {
+            background-color: #2E4A38;
+            color: #FFFFFF;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .pg-btn-primary:hover {
+            background-color: #183323;
+            transform: translateY(-1px);
+        }
+        .pg-btn-primary:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<nav class="bg-background dark:bg-on-background sticky z-50 flex justify-between items-center px-lg py-md w-full max-w-max-width mx-auto">
+<div class="flex items-center gap-lg">
+<a class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim font-bold tracking-tight" href="#">PGFinder</a>
+<div class="hidden md:flex gap-lg items-center ml-xl font-body-md text-body-md">
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:scale-95 duration-200" href="#">Find Housing</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:scale-95 duration-200" href="#">List Property</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:scale-95 duration-200" href="#">How it Works</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:scale-95 duration-200" href="#">About Us</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<!-- Active tab indicator fallback logic applied here, but main nav is secondary to the settings context. Leaving normal. -->
+<button class="font-body-md text-body-md text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low px-4 py-2 rounded-xl transition-colors">Sign In</button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex flex-1 w-full max-w-max-width mx-auto">
+<!-- SideNavBar (Shared Component) - Rendered because Settings/Profile is a top-level context for logged in users -->
+<aside class="hidden md:flex fixed left-0 top-0 h-full flex-col p-md bg-surface-container-lowest dark:bg-surface-container shadow-sm h-full w-64 rounded-r-xl z-40 pt-[80px]">
+<!-- Using pt-[80px] to offset fixed header roughly -->
+<div class="mb-xl px-4 mt-lg">
+<img class="w-16 h-16 rounded-full object-cover mb-4" data-alt="A small, circular profile avatar showing a cheerful young student with short dark hair, wearing a casual grey hoodie, set against a soft, bright white background. The lighting is high-key and flattering, emphasizing a fresh, modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHA0Kgbl-k7o89VjgTAcIRlowbbPaNJMWytf7CoRrg-9ksuAb6hSygXkMREhx3mjJr3B5G0gVN8YSmQyWixJW_eZan6kz_OmsdCDi5HMHs44D3fAXptArlbjKyVoryDFcrM7owD48jFzk2rVPuzs1mLogSu8UBZ9ObORwfDfQY4yQH12iGi7gpHXGTmgZbSNjhtC0vKjUPWZuDVbY5COO4tiVTU5dOMCix7pcoSVK5wrp6wBGWqHpZ">
+<h2 class="font-headline-md text-headline-md text-primary font-bold">Welcome Home</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">Student Portal</p>
+</div>
+<nav class="flex flex-col gap-sm flex-1 font-label-md text-label-md">
+<a class="text-on-surface-variant dark:text-outline-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all active:scale-98 duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+<a class="text-on-surface-variant dark:text-outline-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all active:scale-98 duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                    My Bookings
+                </a>
+<a class="text-on-surface-variant dark:text-outline-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all active:scale-98 duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    Payments
+                </a>
+<!-- Active Tab: Profile/Settings -->
+<a class="bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-lg px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all active:scale-98 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                    Profile
+                </a>
+<a class="text-on-surface-variant dark:text-outline-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all active:scale-98 duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                    Support
+                </a>
+</nav>
+<div class="mt-auto px-4 pb-4">
+<button class="w-full pg-btn-primary py-3 font-label-md text-label-md font-bold">Rent Now</button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 px-margin-mobile md:px-margin-desktop py-xl md:ml-64 w-full">
+<header class="mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary hidden md:block">Account Settings</h1>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary md:hidden">Account Settings</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Manage your profile, security, and preferences.</p>
+</header>
+<!-- Settings Central Card -->
+<div class="bg-surface-container-lowest rounded-[24px] shadow-level-1 overflow-hidden">
+<div class="flex flex-col md:flex-row">
+<!-- Internal Tabs / Vertical Navigation -->
+<div class="w-full md:w-64 border-b md:border-b-0 md:border-r border-surface-variant p-lg flex md:flex-col gap-2 overflow-x-auto">
+<button class="font-label-md text-label-md px-4 py-3 rounded-xl text-left bg-surface-container-low text-primary font-semibold whitespace-nowrap md:whitespace-normal">Personal Information</button>
+<button class="font-label-md text-label-md px-4 py-3 rounded-xl text-left text-on-surface-variant hover:bg-surface-container-low transition-colors whitespace-nowrap md:whitespace-normal">Password &amp; Security</button>
+<button class="font-label-md text-label-md px-4 py-3 rounded-xl text-left text-on-surface-variant hover:bg-surface-container-low transition-colors whitespace-nowrap md:whitespace-normal">Notifications</button>
+</div>
+<!-- Settings Forms Content Area -->
+<div class="flex-1 p-lg md:p-xl max-w-3xl">
+<!-- Section: Personal Information -->
+<section class="flex flex-col gap-lg">
+<div class="flex items-center gap-lg pb-lg border-b border-surface-variant">
+<img class="w-24 h-24 rounded-full object-cover shadow-sm" data-alt="A close-up, high-quality circular profile picture of a young professional woman smiling warmly. She is wearing a light green sweater that compliments the serene, soft mint and deep forest green color palette of the application design. The background is a crisp, bright white." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3tBtGhh3dYr7YuMqqWuzz23ehwpFW8CNNrdApYm2FIc5O7xi9DbporW52dJ3JAYHhmIXBr8oVxqWHmmpdUIDM5vzsgr7jsBJhN8dwgSa_LzNSNe10Iyj6pkEPuSE7Znydrxm6428Vdc5XZWhPLPYbvgP9o3VUZF2f7nBDD405J3Ih0KV6iJylrVqfvQ0-WSHrYkwDFtq48Z0UG8u71_4lG8H5UM_wuRlrrMzKX8vu9BC81biFeRMi">
+<div class="flex flex-col gap-2">
+<button class="px-4 py-2 border-2 border-primary text-primary rounded-xl font-label-md text-label-md font-semibold hover:bg-surface-container-low transition-colors">Change Photo</button>
+<button class="px-4 py-2 text-error font-label-md text-label-md hover:underline text-left">Remove</button>
+</div>
+</div>
+<form class="flex flex-col gap-lg">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant">First Name</label>
+<input class="pg-input px-4 py-3 font-body-md text-body-md" type="text" value="Jane">
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Last Name</label>
+<input class="pg-input px-4 py-3 font-body-md text-body-md" type="text" value="Doe">
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Email Address</label>
+<input class="pg-input px-4 py-3 font-body-md text-body-md" type="email" value="jane.doe@example.com">
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Phone Number</label>
+<input class="pg-input px-4 py-3 font-body-md text-body-md" type="tel" value="+1 (555) 123-4567">
+</div>
+<div class="pt-lg flex justify-end">
+<button class="pg-btn-primary px-8 py-3 font-label-md text-label-md font-semibold flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="save">save</span>
+                                        Save Changes
+                                    </button>
+</div>
+</form>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container dark:bg-surface-container-lowest w-full py-xl px-lg flex flex-col md:flex-row justify-between items-center gap-lg mt-auto relative z-50">
+<div class="font-headline-md text-headline-md text-primary font-bold">PGFinder</div>
+<div class="flex flex-wrap justify-center gap-lg font-label-sm text-label-sm">
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-opacity hover:opacity-80" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-opacity hover:opacity-80" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-opacity hover:opacity-80" href="#">Cookies</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-opacity hover:opacity-80" href="#">Contact Support</a>
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant dark:text-outline-variant">
+            © 2024 PGFinder Student Housing. All rights reserved.
+        </div>
+</footer>
+</body></html>

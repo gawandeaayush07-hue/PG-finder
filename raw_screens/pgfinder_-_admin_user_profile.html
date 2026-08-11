@@ -1,0 +1,292 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder Admin - User Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#2e4a38",
+                        "surface-dim": "#dadad7",
+                        "on-background": "#1a1c1a",
+                        "on-tertiary-fixed-variant": "#623c40",
+                        "on-tertiary-container": "#d7a5a9",
+                        "tertiary-fixed": "#ffd9dc",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#aeceb6",
+                        "primary": "#183323",
+                        "on-secondary-fixed-variant": "#324d2f",
+                        "tertiary": "#462428",
+                        "secondary-fixed": "#caecc2",
+                        "on-secondary-fixed": "#062107",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#aeceb6",
+                        "tertiary-container": "#5f3a3e",
+                        "surface-tint": "#486551",
+                        "on-surface-variant": "#424843",
+                        "on-secondary-container": "#4f6c4a",
+                        "background": "#faf9f6",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#042011",
+                        "on-surface": "#1a1c1a",
+                        "outline": "#727972",
+                        "outline-variant": "#c2c8c1",
+                        "secondary-container": "#caecc2",
+                        "surface-container-low": "#f4f4f0",
+                        "secondary": "#496645",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e3e2df",
+                        "secondary-fixed-dim": "#afcfa7",
+                        "surface-container-high": "#e9e8e5",
+                        "surface-container": "#eeeeeb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#caead2",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#314d3b",
+                        "inverse-surface": "#2f312f",
+                        "on-tertiary-fixed": "#301216",
+                        "surface-bright": "#faf9f6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#faf9f6",
+                        "inverse-on-surface": "#f1f1ed",
+                        "surface-variant": "#e3e2df",
+                        "tertiary-fixed-dim": "#eeb9be",
+                        "on-primary-container": "#99b9a2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "max-width": "1280px",
+                        "xl": "40px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    },
+                    boxShadow: {
+                        'level-1': '0px 4px 20px rgba(46, 74, 56, 0.08)',
+                        'level-2': '0px 12px 32px rgba(46, 74, 56, 0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #DCEEDD; /* Mint backdrop as requested in style guide */
+        }
+        .card-radius { border-radius: 24px; }
+        .btn-radius { border-radius: 12px; }
+        .input-radius { border-radius: 12px; }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased min-h-screen pb-xl">
+<!-- Main Content Canvas (No Nav Shell per instructions for transactional/focused pages) -->
+<main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+<!-- Back Action -->
+<button class="flex items-center gap-sm text-primary mb-lg hover:opacity-80 transition-opacity font-label-md text-label-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+            Back to Users
+        </button>
+<!-- Header Section -->
+<header class="bg-surface-container-lowest card-radius shadow-level-1 p-lg md:p-xl mb-gutter flex flex-col md:flex-row md:items-center justify-between gap-lg relative overflow-hidden">
+<!-- Decorative background element -->
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-secondary-container rounded-full opacity-30 blur-3xl pointer-events-none"></div>
+<div class="flex items-center gap-lg relative z-10">
+<div class="relative">
+<img class="w-24 h-24 rounded-full object-cover border-4 border-surface-container-lowest shadow-sm" data-alt="A professional headshot of a middle-aged woman in a softly lit, modern interior setting. The lighting is bright and inviting, fitting a clean, high-end minimalist student housing platform aesthetic with soft mint and deep forest green subtle undertones in the background blur." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKBModKFcoyUsICY8sW5C_lWo0LdPyB00J90ixsH7ohTpSHSjZTgGFA0fzpri19pqTDkO1ikBp1JwOWyJgEdBrm-KHK1_wKH_ZVEgt_EAvLytABxGIaOJtWPl_tb7gja3rEExewtBPABzqcRgMzmmmk7Q13ue1-Hb3ARkDASiTPib7TaCFAxzQsDt3KvjygUFPYe2z3u9rGe4dKk2TBeAPAw5LsKeUa37OoiORPK4tFhg6bxb2MnAn">
+<div class="absolute bottom-0 right-0 w-6 h-6 bg-secondary rounded-full border-2 border-surface-container-lowest flex items-center justify-center" title="Verified Owner">
+<span class="material-symbols-outlined text-white text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Sarah Jenkins</h1>
+<div class="flex flex-wrap items-center gap-sm font-body-md text-body-md text-on-surface-variant">
+<span class="bg-primary-container text-on-primary rounded-full px-3 py-1 font-label-sm text-label-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">manage_accounts</span>
+                            Verified Owner
+                        </span>
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                            Joined Mar 2022
+                        </span>
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                            Boston, MA
+                        </span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-md relative z-10">
+<button class="btn-radius bg-transparent border-2 border-primary-container text-primary-container px-lg py-sm font-label-md text-label-md flex items-center gap-sm hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">mail</span>
+                    Message User
+                </button>
+<button class="btn-radius bg-error text-on-error px-lg py-sm font-label-md text-label-md flex items-center gap-sm hover:opacity-90 transition-opacity shadow-sm">
+<span class="material-symbols-outlined">block</span>
+                    Suspend Account
+                </button>
+</div>
+</header>
+<!-- Grid Layout for Details -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Left Column: Stats & Contact -->
+<div class="flex flex-col gap-gutter">
+<!-- Key Stats -->
+<section class="bg-surface-container-lowest card-radius shadow-level-1 p-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-lg flex items-center gap-sm border-b border-surface-variant pb-sm">
+<span class="material-symbols-outlined">bar_chart</span>
+                        Overview
+                    </h2>
+<div class="grid grid-cols-2 gap-md">
+<div class="bg-surface p-md rounded-xl border border-secondary-fixed border-opacity-50">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">Active Listings</span>
+<span class="font-display-lg text-display-lg text-primary">14</span>
+</div>
+<div class="bg-surface p-md rounded-xl border border-secondary-fixed border-opacity-50">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">Total Bookings</span>
+<span class="font-display-lg text-display-lg text-primary">128</span>
+</div>
+<div class="bg-surface p-md rounded-xl border border-secondary-fixed border-opacity-50">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">Avg Rating</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg text-primary">4.8</span>
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="bg-error-container p-md rounded-xl border border-error border-opacity-20">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">Reports</span>
+<span class="font-display-lg text-display-lg text-error">2</span>
+</div>
+</div>
+</section>
+<!-- Contact Information -->
+<section class="bg-surface-container-lowest card-radius shadow-level-1 p-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-lg flex items-center gap-sm border-b border-surface-variant pb-sm">
+<span class="material-symbols-outlined">contact_page</span>
+                        Contact Info
+                    </h2>
+<ul class="space-y-md font-body-md text-body-md">
+<li class="flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary mt-1">mail</span>
+<div>
+<span class="block text-on-surface-variant font-label-sm text-label-sm">Email Address</span>
+<a class="text-primary hover:underline" href="mailto:sarah.jenkins@example.com">sarah.jenkins@example.com</a>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded ml-2 align-middle">VERIFIED</span>
+</div>
+</li>
+<li class="flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary mt-1">call</span>
+<div>
+<span class="block text-on-surface-variant font-label-sm text-label-sm">Phone Number</span>
+<span class="text-on-surface">+1 (555) 123-4567</span>
+</div>
+</li>
+<li class="flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary mt-1">home_work</span>
+<div>
+<span class="block text-on-surface-variant font-label-sm text-label-sm">Business Address</span>
+<span class="text-on-surface">128 Commonwealth Ave<br>Boston, MA 02116</span>
+</div>
+</li>
+</ul>
+</section>
+</div>
+<!-- Right Column: Activity Log & Listings -->
+<div class="lg:col-span-2 flex flex-col gap-gutter">
+<!-- Activity Log -->
+<section class="bg-surface-container-lowest card-radius shadow-level-1 p-lg flex-grow">
+<div class="flex justify-between items-center mb-lg border-b border-surface-variant pb-sm">
+<h2 class="font-headline-md text-headline-md text-primary flex items-center gap-sm">
+<span class="material-symbols-outlined">history</span>
+                            Activity Log
+                        </h2>
+<button class="text-secondary hover:text-primary transition-colors font-label-md text-label-md flex items-center gap-xs">
+                            Filter
+                            <span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<div class="relative border-l-2 border-surface-variant ml-4 pl-lg space-y-xl mt-md">
+<!-- Activity Item 1 -->
+<div class="relative">
+<div class="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-primary ring-4 ring-surface-container-lowest"></div>
+<div class="mb-xs flex items-center gap-sm">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-label-sm text-label-sm uppercase tracking-wide">Listing Updated</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Today, 10:42 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Updated pricing for <a class="font-medium text-primary hover:underline" href="#">"Sunny Loft near BU Campus"</a>.</p>
+</div>
+<!-- Activity Item 2 -->
+<div class="relative">
+<div class="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-surface-variant ring-4 ring-surface-container-lowest"></div>
+<div class="mb-xs flex items-center gap-sm">
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded font-label-sm text-label-sm uppercase tracking-wide">Message Sent</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Yesterday, 4:15 PM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Replied to booking inquiry from student user <a class="text-primary hover:underline" href="#">@alex_s</a>.</p>
+</div>
+<!-- Activity Item 3 -->
+<div class="relative">
+<div class="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-error ring-4 ring-surface-container-lowest"></div>
+<div class="mb-xs flex items-center gap-sm">
+<span class="bg-error-container text-error px-2 py-0.5 rounded font-label-sm text-label-sm uppercase tracking-wide">Report Received</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 12, 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">User reported for inaccurate listing photos. Status: <span class="font-medium">Resolved by Admin</span>.</p>
+<div class="mt-2 bg-surface p-3 rounded-lg border border-surface-variant text-sm text-on-surface-variant">
+                                Admin note: Owner provided updated photos matching current condition. Warning issued.
+                            </div>
+</div>
+<!-- Activity Item 4 -->
+<div class="relative">
+<div class="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-surface-variant ring-4 ring-surface-container-lowest"></div>
+<div class="mb-xs flex items-center gap-sm">
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded font-label-sm text-label-sm uppercase tracking-wide">Login</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 10, 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Successful login from IP 192.168.1.1 (Boston, MA).</p>
+</div>
+</div>
+<div class="mt-lg pt-md border-t border-surface-variant text-center">
+<button class="font-label-md text-label-md text-primary hover:underline">View Full History</button>
+</div>
+</section>
+</div>
+</div>
+</main>
+</body></html>

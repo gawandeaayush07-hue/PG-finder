@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #183323;
+  --color-primary-container: #2e4a38;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #99b9a2;
+  --color-primary-fixed: #caead2;
+  --color-primary-fixed-dim: #aeceb6;
+  --color-on-primary-fixed: #042011;
+  --color-on-primary-fixed-variant: #314d3b;
+
+  --brand-green-dark: #0f1f15;
+
+  --color-secondary: #496645;
+  --color-secondary-container: #caecc2;
+  --color-on-secondary-container: #4f6c4a;
+  --color-secondary-fixed: #caecc2;
+  --color-secondary-fixed-dim: #afcfa7;
+  --color-on-secondary-fixed: #062107;
+  --color-on-secondary-fixed-variant: #324d2f;
+
+  --color-tertiary: #462428;
+  --color-tertiary-container: #5f3a3e;
+  --color-on-tertiary-container: #d7a5a9;
+  --color-tertiary-fixed: #ffd9dc;
+  --color-tertiary-fixed-dim: #eeb9be;
+  --color-on-tertiary-fixed: #301216;
+  --color-on-tertiary-fixed-variant: #623c40;
+
+  --color-background: #faf9f6;
+  --color-surface: #faf9f6;
+  --color-surface-dim: #dadad7;
+  --color-surface-bright: #faf9f6;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f4f0;
+  --color-surface-container: #eeeeeb;
+  --color-surface-container-high: #e9e8e5;
+  --color-surface-container-highest: #e3e2df;
+  --color-on-surface: #1a1c1a;
+  --color-on-surface-variant: #424843;
+  --color-outline: #727972;
+  --color-outline-variant: #c2c8c1;
+  --color-inverse-surface: #2f312f;
+  --color-inverse-on-surface: #f1f1ed;
+  --color-inverse-primary: #aeceb6;
+  --color-surface-tint: #486551;
+  --color-surface-variant: #e3e2df;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+  
+  --color-soft-mint: #DCEEDD;
+  --color-deep-green: #2E4A38;
+  --color-light-sage: #B8D9B0;
+  
+  --radius-card-radius: 24px;
+  --radius-btn-radius: 12px;
+  --radius-input-radius: 12px;
+  
+  --shadow-level-1: 0px 4px 20px rgba(46, 74, 56, 0.08);
+  --shadow-level-2: 0px 12px 32px rgba(46, 74, 56, 0.12);
+  
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 64px;
+  --spacing-max-width: 1280px;
+  --spacing-gutter: 24px;
+  --spacing-xl: 40px;
+  --spacing-lg: 24px;
+  --spacing-md: 16px;
+  --spacing-sm: 8px;
+  --spacing-xs: 4px;
+  --spacing-unit: 4px;
+}
+
+/* Custom Base styles */
+body {
+  background-color: #faf9f6;
+  color: #1a1c1a;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+}
+
+/* Custom Classes */
+.bg-soft-mint { background-color: #DCEEDD; }
+.text-deep-green { color: #2E4A38; }
+.bg-deep-green { background-color: #2E4A38; }
+.border-deep-green { border-color: #2E4A38; }
+.bg-light-sage { background-color: #B8D9B0; }
+
+.shadow-level-1 { box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08); }
+.shadow-level-2 { box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12); }
+
+.card-radius { border-radius: 24px; }
+.btn-radius { border-radius: 12px; }
+.input-radius { border-radius: 12px; }
+
+/* Smooth interactions */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12);
+}
+
+/* Glassmorphism for floating UI elements */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Scrollbar styling */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes popUp {
+  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-pop-up {
+  animation: popUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

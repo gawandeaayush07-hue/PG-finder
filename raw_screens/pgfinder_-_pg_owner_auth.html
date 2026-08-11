@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder - Owner Sign Up / Log In</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#4f6c4a",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#caecc2",
+                    "secondary": "#496645",
+                    "inverse-surface": "#2f312f",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1a1c1a",
+                    "primary-fixed": "#caead2",
+                    "surface-container": "#eeeeeb",
+                    "surface-variant": "#e3e2df",
+                    "surface-container-highest": "#e3e2df",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#486551",
+                    "secondary-container": "#caecc2",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#d7a5a9",
+                    "inverse-on-surface": "#f1f1ed",
+                    "primary-container": "#2e4a38",
+                    "on-primary-container": "#99b9a2",
+                    "inverse-primary": "#aeceb6",
+                    "background": "#faf9f6",
+                    "surface-container-high": "#e9e8e5",
+                    "tertiary-container": "#5f3a3e",
+                    "on-tertiary-fixed": "#301216",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#424843",
+                    "on-tertiary-fixed-variant": "#623c40",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#aeceb6",
+                    "outline": "#727972",
+                    "on-surface": "#1a1c1a",
+                    "surface-container-low": "#f4f4f0",
+                    "on-primary-fixed-variant": "#314d3b",
+                    "on-primary-fixed": "#042011",
+                    "tertiary-fixed": "#ffd9dc",
+                    "on-secondary-fixed": "#062107",
+                    "tertiary": "#462428",
+                    "secondary-fixed-dim": "#afcfa7",
+                    "tertiary-fixed-dim": "#eeb9be",
+                    "surface": "#faf9f6",
+                    "outline-variant": "#c2c8c1",
+                    "on-secondary-fixed-variant": "#324d2f",
+                    "surface-bright": "#faf9f6",
+                    "surface-dim": "#dadad7",
+                    "primary": "#183323",
+                    "custom-mint": "#DCEEDD",
+                    "custom-subtext": "#7A8F7A"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "margin-desktop": "64px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "xl": "40px",
+                    "max-width": "1280px",
+                    "unit": "4px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .shadow-level-1 { box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08); }
+        .input-border { border-color: #B8D9B0; }
+        .input-focus:focus { border-color: #2E4A38; border-width: 2px; outline: none; }
+    </style>
+</head>
+<body class="bg-custom-mint min-h-screen flex items-center justify-center p-margin-mobile md:p-lg">
+<main class="w-full max-w-md bg-white rounded-2xl shadow-level-1 p-xl">
+<!-- Header -->
+<div class="text-center mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary mb-xs">PGFinder</h1>
+<p class="font-body-md text-body-md text-custom-subtext">For PG Owners</p>
+</div>
+<!-- Tabs -->
+<div class="flex border-b input-border mb-lg">
+<button class="flex-1 pb-sm font-label-md text-label-md text-primary-container border-b-2 border-primary-container font-semibold transition-colors" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+<button class="flex-1 pb-sm font-label-md text-label-md text-on-surface-variant hover:text-primary-container transition-colors" id="tab-login" onclick="switchTab('login')">Log In</button>
+</div>
+<!-- Sign Up Form -->
+<form class="space-y-md" id="form-signup">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="signup-name">Owner Full Name</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="signup-name" placeholder="Enter full name" type="text">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="signup-phone">Phone Number</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="signup-phone" placeholder="Enter phone number" type="tel">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="signup-email">Email</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="signup-email" placeholder="Enter email address" type="email">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="signup-pgname">PG Name</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="signup-pgname" placeholder="Enter PG name" type="text">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="signup-city">City</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="signup-city" placeholder="Enter city" type="text">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="signup-password">Password</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="signup-password" placeholder="Create password" type="password">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="signup-confirm-password">Confirm Password</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="signup-confirm-password" placeholder="Confirm password" type="password">
+</div>
+<button class="w-full bg-primary-container text-white rounded-lg py-sm font-label-md text-label-md mt-lg hover:opacity-90 transition-opacity" type="button">Create Owner Account</button>
+</form>
+<!-- Log In Form -->
+<form class="space-y-md hidden" id="form-login">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="login-email">Email</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="login-email" placeholder="Enter email address" type="email">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-xs" for="login-password">Password</label>
+<input class="w-full rounded-lg border input-border px-md py-sm font-body-md text-body-md text-on-surface input-focus" id="login-password" placeholder="Enter password" type="password">
+</div>
+<div class="text-right">
+<a class="font-label-sm text-label-sm text-primary-container hover:underline" href="#">Forgot Password?</a>
+</div>
+<button class="w-full bg-primary-container text-white rounded-lg py-sm font-label-md text-label-md mt-lg hover:opacity-90 transition-opacity" type="button">Log In</button>
+</form>
+<!-- Footer -->
+<div class="mt-xl text-center">
+<a class="font-label-sm text-label-sm text-primary-container hover:underline" href="#">Are you a student looking for a PG? Click here</a>
+</div>
+</main>
+<script>
+        function switchTab(tab) {
+            const signupTab = document.getElementById('tab-signup');
+            const loginTab = document.getElementById('tab-login');
+            const signupForm = document.getElementById('form-signup');
+            const loginForm = document.getElementById('form-login');
+
+            if (tab === 'signup') {
+                signupTab.classList.add('border-primary-container', 'text-primary-container', 'font-semibold', 'border-b-2');
+                signupTab.classList.remove('text-on-surface-variant');
+                
+                loginTab.classList.remove('border-primary-container', 'text-primary-container', 'font-semibold', 'border-b-2');
+                loginTab.classList.add('text-on-surface-variant');
+
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            } else {
+                loginTab.classList.add('border-primary-container', 'text-primary-container', 'font-semibold', 'border-b-2');
+                loginTab.classList.remove('text-on-surface-variant');
+                
+                signupTab.classList.remove('border-primary-container', 'text-primary-container', 'font-semibold', 'border-b-2');
+                signupTab.classList.add('text-on-surface-variant');
+
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            }
+        }
+    </script>
+</body></html>

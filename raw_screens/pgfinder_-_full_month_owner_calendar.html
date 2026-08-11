@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PGFinder - Owner Availability Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#2e4a38",
+                        "surface-dim": "#dadad7",
+                        "on-background": "#1a1c1a",
+                        "on-tertiary-fixed-variant": "#623c40",
+                        "on-tertiary-container": "#d7a5a9",
+                        "tertiary-fixed": "#ffd9dc",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#aeceb6",
+                        "primary": "#183323",
+                        "on-secondary-fixed-variant": "#324d2f",
+                        "tertiary": "#462428",
+                        "secondary-fixed": "#caecc2",
+                        "on-secondary-fixed": "#062107",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#aeceb6",
+                        "tertiary-container": "#5f3a3e",
+                        "surface-tint": "#486551",
+                        "on-surface-variant": "#424843",
+                        "on-secondary-container": "#4f6c4a",
+                        "background": "#DCEEDD", /* Custom Forest Mint Background */
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#042011",
+                        "on-surface": "#1a1c1a",
+                        "outline": "#727972",
+                        "outline-variant": "#B8D9B0", /* Custom Secondary Color */
+                        "secondary-container": "#caecc2",
+                        "surface-container-low": "#f4f4f0",
+                        "secondary": "#496645",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e3e2df",
+                        "secondary-fixed-dim": "#afcfa7",
+                        "surface-container-high": "#e9e8e5",
+                        "surface-container": "#eeeeeb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#caead2",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#314d3b",
+                        "inverse-surface": "#2f312f",
+                        "on-tertiary-fixed": "#301216",
+                        "surface-bright": "#faf9f6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#ffffff",
+                        "inverse-on-surface": "#f1f1ed",
+                        "surface-variant": "#e3e2df",
+                        "tertiary-fixed-dim": "#eeb9be",
+                        "on-primary-container": "#99b9a2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem", /* Custom 24px Radius */
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "max-width": "1280px",
+                        "xl": "40px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    },
+                    "boxShadow": {
+                        'level-1': '0px 4px 20px rgba(46, 74, 56, 0.08)',
+                        'level-2': '0px 12px 32px rgba(46, 74, 56, 0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #DCEEDD; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        .level-1-shadow { box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08); }
+        .level-2-shadow { box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12); }
+    </style>
+</head>
+<body class="h-full overflow-hidden text-on-surface">
+<div class="flex h-full w-full">
+<!-- Shared Component: SideNavBar -->
+<aside class="hidden md:flex h-full w-64 rounded-r-xl shadow-sm bg-surface-container-lowest flex-col p-md fixed left-0 top-0 z-20">
+<div class="flex flex-col gap-sm mb-lg px-4">
+<div class="font-headline-md text-headline-md text-primary">PGFinder</div>
+<div class="font-label-md text-label-md text-on-surface-variant font-medium">Owner Portal</div>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<!-- Active Tab: Dashboard (Closest fit for management) -->
+<a class="bg-primary-container text-on-primary rounded-lg px-4 py-3 flex items-center gap-3 active:scale-95 duration-200 shadow-sm" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-md text-label-md">My Bookings</span>
+</a>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-container-low transition-all rounded-lg active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-4 border-t border-outline-variant/30 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a young professional property owner smiling confidently, set against a soft, bright background that matches a modern minimalist light-mode aesthetic, creating a feeling of trust and professionalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxzP0FtT7kMV_sZB1RMCg3_TEjkaKU0ldkp2flSt4qPp-xx5_SedePOb9SxWwhP6ZHdhUpwQeFOndbpVebfGkZVrqTNhGiDUIJl-bdylmn5QDAa_ra_Qzy8DJ2H9Dt4vhbprOxe0cbM4yNjqNWBW5YP4N6Apx_MwRXjeGHweBKH62o3FVLQsWV3gXA8XaO9jfwFYqS0f2MFXP-Kip0UWvzpBBW0mlMqG2qH846EOySKmxMCFTGWBeV"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface">Welcome Home</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Owner Portal</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 h-full overflow-y-auto overflow-x-hidden p-margin-mobile md:p-margin-desktop bg-[#DCEEDD]">
+<header class="mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary">Availability Calendar</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Manage room statuses and block out maintenance dates.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-gutter max-w-max-width mx-auto">
+<!-- Calendar Section -->
+<section class="lg:col-span-3"><div class="bg-surface rounded-2xl level-1-shadow p-lg h-full flex flex-col">
+<div class="flex justify-between items-center mb-lg">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<h2 class="font-headline-md text-headline-md text-on-surface">October 2024</h2>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex gap-2">
+<select class="bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>Greenwood Heights (All Rooms)</option>
+<option>Room 101 - Master</option>
+<option>Room 102 - Standard</option>
+</select>
+</div>
+</div>
+<div class="flex-grow">
+<div class="grid grid-cols-7 gap-px bg-outline-variant/30 border border-outline-variant/30 rounded-xl overflow-hidden"><div class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant text-center py-3">Sun</div><div class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant text-center py-3">Mon</div><div class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant text-center py-3">Tue</div><div class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant text-center py-3">Wed</div><div class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant text-center py-3">Thu</div><div class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant text-center py-3">Fri</div><div class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant text-center py-3">Sat</div><div class="bg-surface p-3 min-h-[120px] opacity-40"><span class="text-label-sm">29</span></div><div class="bg-surface p-3 min-h-[120px] opacity-40"><span class="text-label-sm">30</span></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">1</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full" title="Occupied"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">2</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full" title="Occupied"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">3</span><div class="mt-2 space-y-1"><div class="flex gap-1"><div class="flex-1 h-1.5 bg-primary-container rounded-full"></div><div class="flex-1 h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">4</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">5</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">6</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface-container-low p-3 min-h-[120px] ring-1 ring-inset ring-primary/20 cursor-pointer group"><span class="text-label-sm font-bold text-primary">7</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-surface-dim rounded-full" title="Maintenance"></div></div></div><div class="bg-surface-container-low p-3 min-h-[120px] ring-1 ring-inset ring-primary/20 cursor-pointer group"><span class="text-label-sm font-bold text-primary">8</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-surface-dim rounded-full" title="Maintenance"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">9</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">10</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">11</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">12</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">13</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">14</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">15</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">16</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">17</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">18</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">19</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">20</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">21</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">22</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">23</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">24</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">25</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">26</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">27</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">28</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">29</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-primary-container rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">30</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-surface-dim rounded-full" title="Maintenance"></div></div></div><div class="bg-surface p-3 min-h-[120px] hover:bg-surface-container-low cursor-pointer transition-colors group"><span class="text-label-sm font-medium">31</span><div class="mt-2 space-y-1"><div class="h-1.5 bg-[#B8D9B0] rounded-full"></div></div></div><div class="bg-surface p-3 min-h-[120px] opacity-40"><span class="text-label-sm">1</span></div><div class="bg-surface p-3 min-h-[120px] opacity-40"><span class="text-label-sm">2</span></div></div>
+</div>
+</div></section>
+<!-- Legend & Action Sidebar -->
+<section class="lg:col-span-1 flex flex-col gap-lg">
+<!-- Legend Card -->
+<div class="bg-surface rounded-2xl level-1-shadow p-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Status Legend</h3>
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-primary-container"></div>
+<span class="font-body-md text-body-md text-on-surface">Occupied</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-[#B8D9B0]"></div>
+<span class="font-body-md text-body-md text-on-surface">Vacant</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-surface-dim border border-outline-variant"></div>
+<span class="font-body-md text-body-md text-on-surface">Maintenance / Blocked</span>
+</div>
+</div>
+</div>
+<!-- Action Card -->
+<div class="bg-surface rounded-2xl level-1-shadow p-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Update Status</h3>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Selected Dates</label>
+<input class="bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 font-body-md text-body-md text-on-surface outline-none cursor-not-allowed" readonly="" type="text" value="Oct 7 - Oct 8"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Set Status</label>
+<select class="bg-surface border border-outline-variant rounded-lg px-3 py-2 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>Maintenance</option>
+<option>Occupied (Manual)</option>
+<option>Vacant</option>
+</select>
+</div>
+<button class="mt-2 w-full bg-primary-container text-on-primary font-label-md text-label-md py-3 rounded-[12px] hover:opacity-90 transition-opacity flex justify-center items-center gap-2">
+<span class="material-symbols-outlined" data-icon="save">save</span> Update Status
+                        </button>
+<button class="w-full bg-transparent border-2 border-primary-container text-primary-container font-label-md text-label-md py-2.5 rounded-[12px] hover:bg-primary-container hover:text-on-primary transition-colors">
+                            Clear Selection
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

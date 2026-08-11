@@ -1,0 +1,344 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Edit PG Listing - PGFinder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e3e2df",
+                        "primary-fixed-dim": "#aeceb6",
+                        "secondary-fixed": "#caecc2",
+                        "inverse-on-surface": "#f1f1ed",
+                        "on-primary-fixed-variant": "#314d3b",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#eeb9be",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2f312f",
+                        "tertiary": "#462428",
+                        "on-tertiary-container": "#d7a5a9",
+                        "on-primary-fixed": "#042011",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#727972",
+                        "surface-container-low": "#f4f4f0",
+                        "primary-container": "#2e4a38",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#faf9f6",
+                        "tertiary-container": "#5f3a3e",
+                        "inverse-primary": "#aeceb6",
+                        "surface": "#faf9f6",
+                        "on-background": "#1a1c1a",
+                        "surface-tint": "#486551",
+                        "on-tertiary-fixed-variant": "#623c40",
+                        "primary-fixed": "#caead2",
+                        "primary": "#183323",
+                        "secondary-fixed-dim": "#afcfa7",
+                        "on-surface-variant": "#424843",
+                        "on-surface": "#1a1c1a",
+                        "surface-container-high": "#e9e8e5",
+                        "on-secondary-container": "#4f6c4a",
+                        "outline-variant": "#c2c8c1",
+                        "surface-container": "#eeeeeb",
+                        "on-secondary-fixed-variant": "#324d2f",
+                        "on-primary-container": "#99b9a2",
+                        "on-tertiary-fixed": "#301216",
+                        "on-secondary-fixed": "#062107",
+                        "error": "#ba1a1a",
+                        "secondary": "#496645",
+                        "background": "#faf9f6",
+                        "surface-dim": "#dadad7",
+                        "surface-container-highest": "#e3e2df",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffd9dc",
+                        "secondary-container": "#caecc2",
+                        "on-tertiary": "#ffffff",
+                        "mint-bg": "#DCEEDD",
+                        "sage": "#B8D9B0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "sm": "8px",
+                        "max-width": "1280px",
+                        "xl": "40px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "lg": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #DCEEDD; /* soft mint */
+        }
+        .soft-shadow {
+            box-shadow: 0px 4px 20px rgba(46, 74, 56, 0.08);
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #B8D9B0;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2E4A38;
+        }
+        .form-input-custom {
+            @apply w-full bg-white rounded-xl border border-sage px-4 py-3 focus:outline-none focus:border-2 focus:border-primary-container transition-colors;
+        }
+        .form-label-custom {
+            @apply block font-label-md text-label-md text-on-surface-variant mb-2;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-background min-h-screen pt-16 md:pl-64">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface shadow-sm font-body-md text-body-md">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary">PGFinder</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-primary hover:text-primary-fixed-dim transition-colors cursor-pointer active:scale-95 transition-transform p-2 rounded-full hover:bg-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-sage cursor-pointer active:scale-95 transition-transform">
+<img alt="Owner Profile Picture" class="w-full h-full object-cover" data-alt="A close up portrait of a young professional property owner smiling in a softly lit, modern living room setting. The lighting is warm and inviting, complementing the modern minimalist aesthetic of the student housing platform. Colors are subtle pastels with crisp white highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDj95z5U7XjmO_-KU2IN4Lc5CRyofJF3FWSbJrSiLenZs8CP44WSzWg0dPwXe1pWL-769aWg_2yIuQvP6IEtd3Ca403xbI1aoVx8FAXRYx5Leokg7-qEFrUwhZ4y3eLgqw-6D6CSIsfTOb73jJi2w3kXWdFsOB7rqToblCQTuqiYRKQMXkX79AZ5H9XStFpvDVWhIGl_D3bohsuTrAMVIc_7iiSejeE58vPfGIUILNI-0Ace2l0s2sJ">
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex-col p-md bg-surface-container-low border-r border-outline-variant">
+<div class="mb-8 px-4 flex flex-col items-center text-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-sage">
+<img alt="Owner Profile" class="w-full h-full object-cover" data-alt="A portrait of an experienced property manager smiling warmly in a bright, modern office space with subtle green plant accents in the background. The mood is trustworthy and professional, fitting a high-end student housing platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCSOh45NvwPuXTWdreM5zFgfMBCwWT-_hEIm0xYq7MX3KrjMLuMoox24X0Vd66kFESK9UrXrBGa4wFxB-cjjMOXmJLOpa-3aa5q8Px1AnNsT2RZbBoff63YytKXPVg3IIwzb8HwkRlAegUwD7rNJ6fLFcZS3KrL6WpAQ78nOHWrMazgB9XULcDfaTslzaywKgDcecyyMOmeNADEuUDPNKYkAxBv4GU-hIlttm2FquK4nj-z1J5GmJy">
+</div>
+<h3 class="font-headline-md text-headline-md font-bold text-primary">Property Owner</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Managing 3 PG Units</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Overview
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary-container text-on-secondary-container font-bold transition-all cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+                My Listing
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Meeting Requests
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">star</span>
+                Reviews
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="max-w-max-width mx-auto p-margin-mobile md:p-margin-desktop pb-32">
+<header class="mb-xl">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-primary mb-2">Edit PG Listing</h1>
+<p class="text-on-surface-variant text-body-md font-body-md">Update your property details to attract more tenants.</p>
+</header>
+<form class="space-y-xl">
+<!-- Card 1: Owner Profile -->
+<section class="bg-surface rounded-2xl p-lg soft-shadow">
+<h2 class="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sage">person</span>
+                    Owner Profile
+                </h2>
+<div class="flex flex-col md:flex-row gap-8">
+<div class="flex flex-col items-center space-y-4">
+<div class="w-32 h-32 rounded-full bg-surface-variant relative overflow-hidden flex items-center justify-center border border-sage group cursor-pointer">
+<span class="material-symbols-outlined text-4xl text-outline group-hover:hidden">add_a_photo</span>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white font-label-sm text-label-sm">Upload</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max size: 5MB</span>
+</div>
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="form-label-custom">Full Name</label>
+<input class="form-input-custom" type="text" value="Sarah Jenkins">
+</div>
+<div>
+<label class="form-label-custom">Phone Number</label>
+<input class="form-input-custom" type="tel" value="+1 (555) 123-4567">
+</div>
+<div class="md:col-span-2">
+<label class="form-label-custom">Email Address</label>
+<input class="form-input-custom" type="email" value="sarah.j@example.com">
+</div>
+</div>
+</div>
+</section>
+<!-- Card 2: PG Details -->
+<section class="bg-surface rounded-2xl p-lg soft-shadow">
+<h2 class="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sage">home_work</span>
+                    PG Details
+                </h2>
+<div class="space-y-6">
+<div>
+<label class="form-label-custom">PG Name</label>
+<input class="form-input-custom" type="text" value="Serenity Student Housing">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-4">
+<label class="form-label-custom">Full Address</label>
+<textarea class="form-input-custom resize-none" rows="4">123 University Ave, Green Campus District, Cityville</textarea>
+<div class="p-4 bg-surface-container-low rounded-xl border border-sage flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container">directions_walk</span>
+<div>
+<p class="font-label-md text-label-md text-primary">Distance to Main Campus</p>
+<p class="font-body-md text-body-md text-on-surface-variant">0.8 miles (approx. 15 min walk)</p>
+</div>
+</div>
+</div>
+<div class="h-full min-h-[200px] rounded-xl overflow-hidden border border-sage bg-surface-variant relative">
+<!-- Map Placeholder -->
+<img alt="Map Location" class="w-full h-full object-cover" data-alt="A clean, minimalist map interface showing a location pin near a university campus area. The map uses a soft mint green and light gray color palette with subtle roads and green park areas, maintaining the modern, residential aesthetic of the platform." data-location="Cityville" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjg2qlxvTEXu8ORYTsm-8HeHdUFhiKky50FHcidO3ChbErpDXsXyXPHZMtsQlW0Ef0FoeKez5FpLFOM_ZHGLqR8pAJLRNH2haAb2EKeuhfqS9acz9Lb6llFPy6dUzmDgSbUstpikvmqDdnMRRndfbtzHW2Qr5qVdZ9cqUziiRXH_dnm-36NxGAkPfLDLDLGSuOxOmPAYSEaEbw1AdR_qiXOOgde-ks52utR5qrX7inAAL2S6cBLsBn">
+<div class="absolute bottom-4 right-4 flex flex-col gap-2">
+<button class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-primary hover:bg-surface-variant" type="button"><span class="material-symbols-outlined">add</span></button>
+<button class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-primary hover:bg-surface-variant" type="button"><span class="material-symbols-outlined">remove</span></button>
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant pt-6 mt-6">
+<h3 class="font-headline-md text-headline-md text-primary mb-4 text-lg">Room Configuration</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Single Room -->
+<div class="p-4 rounded-xl border border-sage bg-surface-bright relative">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-md text-label-md text-primary flex items-center gap-2"><span class="material-symbols-outlined text-lg">bed</span> Single</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="space-y-3">
+<div>
+<label class="form-label-custom text-xs">Price / Month ($)</label>
+<input class="form-input-custom py-2" type="number" value="850">
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="form-label-custom text-xs">Total Seats</label>
+<input class="form-input-custom py-2" type="number" value="10">
+</div>
+<div>
+<label class="form-label-custom text-xs">Vacant</label>
+<input class="form-input-custom py-2" type="number" value="2">
+</div>
+</div>
+</div>
+</div>
+<!-- Shared Room -->
+<div class="p-4 rounded-xl border border-sage bg-surface-bright relative">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-md text-label-md text-primary flex items-center gap-2"><span class="material-symbols-outlined text-lg">people</span> Shared (2)</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="space-y-3">
+<div>
+<label class="form-label-custom text-xs">Price / Month ($)</label>
+<input class="form-input-custom py-2" type="number" value="600">
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="form-label-custom text-xs">Total Seats</label>
+<input class="form-input-custom py-2" type="number" value="20">
+</div>
+<div>
+<label class="form-label-custom text-xs">Vacant</label>
+<input class="form-input-custom py-2" type="number" value="5">
+</div>
+</div>
+</div>
+</div>
+<!-- Triple Room -->
+<div class="p-4 rounded-xl border border-sage bg-surface-bright relative opacity-60">
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-md text-label-md text-primary flex items-center gap-2"><span class="material-symbols-outlined text-lg">groups</span> Triple (3)</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value="">
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="space-y-3 pointer-events-none">
+<div>
+<label class="form-label-custom text-xs">Price / Month ($)</label>
+<input class="form-input-custom py-2 bg-surface-variant" placeholder="--" type="number">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</form>
+</main>
+<!-- Sticky Footer -->
+<div class="fixed bottom-0 left-0 md:left-64 right-0 bg-surface border-t border-outline-variant p-4 z-40 flex justify-end shadow-[0_-4px_20px_rgba(46,74,56,0.05)]">
+<div class="max-w-max-width w-full flex justify-end gap-4 px-margin-mobile md:px-margin-desktop">
+<button class="px-6 py-3 rounded-xl border-2 border-primary text-primary font-label-md text-label-md hover:bg-surface-variant transition-colors" type="button">
+                Preview Listing
+            </button>
+<button class="px-8 py-3 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-bold hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg" type="button">
+<span class="material-symbols-outlined text-sm">cloud_upload</span>
+                Save &amp; Publish Listing
+            </button>
+</div>
+</div>
+</body></html>

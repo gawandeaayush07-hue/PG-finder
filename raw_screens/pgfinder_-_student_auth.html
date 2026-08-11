@@ -1,0 +1,325 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PGFinder - Login &amp; Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#486551",
+                        "secondary-container": "#caecc2",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#faf9f6",
+                        "on-surface-variant": "#424843",
+                        "outline": "#727972",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#314d3b",
+                        "tertiary-fixed-dim": "#eeb9be",
+                        "primary-fixed": "#caead2",
+                        "inverse-primary": "#aeceb6",
+                        "primary-fixed-dim": "#aeceb6",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#ffd9dc",
+                        "surface-container-high": "#e9e8e5",
+                        "on-secondary-fixed": "#062107",
+                        "on-tertiary-fixed": "#301216",
+                        "on-surface": "#1a1c1a",
+                        "on-error": "#ffffff",
+                        "on-background": "#1a1c1a",
+                        "surface-container-low": "#f4f4f0",
+                        "primary-container": "#2e4a38",
+                        "tertiary-container": "#5f3a3e",
+                        "surface-variant": "#e3e2df",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#d7a5a9",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e3e2df",
+                        "background": "#faf9f6",
+                        "on-primary-container": "#99b9a2",
+                        "secondary-fixed-dim": "#afcfa7",
+                        "on-tertiary-fixed-variant": "#623c40",
+                        "secondary": "#496645",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#2f312f",
+                        "outline-variant": "#c2c8c1",
+                        "surface-dim": "#dadad7",
+                        "on-primary-fixed": "#042011",
+                        "surface-container": "#eeeeeb",
+                        "primary": "#183323",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#faf9f6",
+                        "inverse-on-surface": "#f1f1ed",
+                        "on-secondary-fixed-variant": "#324d2f",
+                        "on-secondary-container": "#4f6c4a",
+                        "secondary-fixed": "#caecc2",
+                        "tertiary": "#462428"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "max-width": "1280px",
+                        "margin-desktop": "64px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #DCEEDD; /* soft mint */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 24px;
+        }
+        
+        .auth-card {
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0px 12px 32px rgba(46, 74, 56, 0.12); /* Level 2 shadow */
+            width: 100%;
+            max-width: 480px;
+            padding: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-btn {
+            color: #424843; /* on-surface-variant */
+            font-weight: 500;
+            padding-bottom: 8px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            color: #2e4a38; /* primary-container */
+            font-weight: 600;
+            border-bottom-color: #2e4a38;
+        }
+
+        .input-field {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #B8D9B0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 16px;
+            color: #1a1c1a; /* on-surface */
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border: 2px solid #2e4a38;
+            padding: 11px 15px; /* offset border width */
+        }
+
+        .input-field::placeholder {
+            color: #727972; /* outline */
+        }
+
+        .btn-primary {
+            background-color: #2e4a38;
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #183323; /* primary */
+        }
+        
+        .btn-social {
+            background-color: transparent;
+            color: #2e4a38;
+            border: 1px solid #B8D9B0;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-social:hover {
+            background-color: #f4f4f0;
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+<main class="auth-card">
+<!-- Logo Header -->
+<div class="flex flex-col items-center mb-8">
+<img alt="PGFinder Logo" class="w-16 h-16 rounded-md mb-4 object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLuUYEPgXVlwss4gO_tYC1SSJDQzQZVzioWA6ptYrawImf7vEA8mwwCjvo435Ga-GIHfRoCTsNMk8sLwy3BpXmt5Eq31DXtH3hnWWp51ojuESjztihIf7MbRucKHNG0eDdlynzbwu09lJM8jOzGHHQlAGA-kI_5Qa_lNipHVK6VNTJh6nz-NEny52wPkuJTbwsuFVzT_Amuc_ZtEWA_Zmm-GrKjMJzFgFMfSw2-aVkXufV6_iH4brRq2rQ">
+<h1 class="font-headline-md text-headline-md text-primary-container text-center">Welcome to PGFinder</h1>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mt-2">Find your perfect student home.</p>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex border-b border-surface-variant mb-8">
+<button class="flex-1 text-center font-label-md text-label-md tab-btn active py-2" id="tab-login" onclick="switchTab('login')">Log In</button>
+<button class="flex-1 text-center font-label-md text-label-md tab-btn py-2" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+</div>
+<!-- Log In Form -->
+<div class="form-section active" id="form-login">
+<form onsubmit="event.preventDefault();">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Email</label>
+<input class="input-field" placeholder="student@university.edu" required="" type="email">
+</div>
+<div class="mb-2">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Password</label>
+<input class="input-field" placeholder="••••••••" required="" type="password">
+</div>
+<div class="flex justify-end mb-6">
+<a class="font-label-sm text-label-sm text-primary-container hover:underline" href="#">Forgot Password?</a>
+</div>
+<button class="btn-primary font-label-md text-label-md" type="submit">Log In</button>
+</form>
+</div>
+<!-- Sign Up Form -->
+<div class="form-section" id="form-signup">
+<form onsubmit="event.preventDefault();">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Full Name</label>
+<input class="input-field" placeholder="Alex Morgan" required="" type="text">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">College Name</label>
+<select class="input-field text-on-surface-variant bg-white" required="">
+<option disabled="" selected="" value="">Select your college</option>
+<option value="state">State University</option>
+<option value="city">City College</option>
+<option value="tech">Institute of Technology</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Email</label>
+<input class="input-field" placeholder="student@university.edu" required="" type="email">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Phone Number</label>
+<input class="input-field" placeholder="+1 (555) 000-0000" type="tel">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Password</label>
+<input class="input-field" placeholder="Create a strong password" required="" type="password">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Confirm Password</label>
+<input class="input-field" placeholder="Confirm your password" required="" type="password">
+</div>
+<button class="btn-primary font-label-md text-label-md mt-4" type="submit">Create Account</button>
+</form>
+</div>
+<!-- Divider & Social Login -->
+<div class="mt-8 mb-8">
+<div class="relative flex items-center justify-center">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-surface-variant"></div>
+</div>
+<div class="relative bg-white px-4 font-label-sm text-label-sm text-outline">
+                    or continue with
+                </div>
+</div>
+<div class="mt-6">
+<button class="btn-social font-label-md text-label-md">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+                    Google
+                </button>
+</div>
+</div>
+<!-- Footer Link -->
+<div class="text-center mt-6">
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+                Are you a PG owner? <a class="text-primary-container hover:underline font-semibold" href="#">List your property here</a>
+</p>
+</div>
+</main>
+<script>
+        function switchTab(tabId) {
+            // Update buttons
+            document.getElementById('tab-login').classList.remove('active');
+            document.getElementById('tab-signup').classList.remove('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Update forms
+            document.getElementById('form-login').classList.remove('active');
+            document.getElementById('form-signup').classList.remove('active');
+            document.getElementById('form-' + tabId).classList.add('active');
+        }
+    </script>
+</body></html>
