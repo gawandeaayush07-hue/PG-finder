@@ -82,6 +82,15 @@ export const Navbar: React.FC = () => {
                 Find a PG
               </Link>
               <Link 
+                href="/premium" 
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors flex items-center gap-1 ${
+                  pathname.startsWith('/premium') ? 'text-primary font-bold bg-secondary-container/40' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px] text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
+                <span>Premium</span>
+              </Link>
+              <Link 
                 href="/about" 
                 className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
                   isActive('/about') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
@@ -278,6 +287,10 @@ export const Navbar: React.FC = () => {
             <>
               <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Home</Link>
               <Link href="/search" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Find a PG</Link>
+              <Link href="/premium" onClick={() => setMobileMenuOpen(false)} className="text-emerald-800 font-bold py-1 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[18px] text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
+                <span>Premium Plans</span>
+              </Link>
               <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">About Us</Link>
               <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Contact</Link>
               {role === 'STUDENT' && (

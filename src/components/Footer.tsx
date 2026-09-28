@@ -24,6 +24,9 @@ export const Footer: React.FC = () => {
             <Link href="/search" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Find a PG
             </Link>
+            <Link href="/premium" className="font-body-md text-body-md text-emerald-300 font-semibold hover:text-white hover:underline transition-opacity flex items-center gap-1">
+              <span>★ Premium Plans</span>
+            </Link>
             <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               About Us
             </Link>
@@ -37,6 +40,9 @@ export const Footer: React.FC = () => {
             </Link>
             <Link href="/contact" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Contact Support
+            </Link>
+            <Link href="/premium/history" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
+              Subscription & Invoices
             </Link>
             <Link href="/privacy" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Privacy Policy

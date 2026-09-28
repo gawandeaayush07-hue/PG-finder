@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "outline": "#727972", "background": "#faf9f6", "surface-container-high": "#e9e8e5", "on-error": "#ffffff", "on-primary": "#ffffff", "error-container": "#ffdad6", "primary-fixed-dim": "#aeceb6", "on-tertiary-fixed": "#301216", "on-background": "#1a1c1a", "on-secondary-fixed-variant": "#324d2f", "primary-container": "#2e4a38", "surface-variant": "#e3e2df", "on-primary-fixed-variant": "#314d3b", "error": "#ba1a1a", "surface-bright": "#faf9f6", "surface-dim": "#dadad7", "on-primary-fixed": "#042011", "on-tertiary": "#ffffff", "inverse-primary": "#aeceb6", "surface-tint": "#486551", "on-error-container": "#93000a", "inverse-on-surface": "#f1f1ed", "on-secondary": "#ffffff", "on-tertiary-container": "#d7a5a9", "inverse-surface": "#2f312f", "secondary-fixed": "#caecc2", "primary-fixed": "#caead2", "tertiary": "#462428", "surface-container-low": "#f4f4f0", "primary": "#183323", "on-tertiary-fixed-variant": "#623c40", "surface-container-lowest": "#ffffff", "secondary": "#496645", "surface": "#faf9f6", "outline-variant": "#c2c8c1", "tertiary-container": "#5f3a3e", "secondary-container": "#caecc2", "on-surface": "#1a1c1a", "on-secondary-container": "#4f6c4a", "surface-container": "#eeeeeb", "tertiary-fixed": "#ffd9dc", "surface-container-highest": "#e3e2df", "on-surface-variant": "#424843", "on-primary-container": "#99b9a2", "on-secondary-fixed": "#062107", "secondary-fixed-dim": "#afcfa7", "tertiary-fixed-dim": "#eeb9be" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "16px", "xs": "4px", "max-width": "1280px", "lg": "24px", "xl": "40px", "gutter": "24px", "margin-desktop": "64px", "sm": "8px", "unit": "4px", "md": "16px" }, "fontFamily": { "headline-md": ["Inter"], "headline-lg-mobile": ["Inter"], "display-lg": ["Inter"], "headline-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "label-md": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }] } } } };</script></head><body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen flex flex-col"><header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(46,74,56,0.06)]"><div class="h-20 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin-desktop flex items-center justify-between"><a class="flex items-center gap-xs" data-path="premium-plans" href="#"><div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[24px]">roofing</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md text-primary tracking-tight">PGFinder</span><span class="font-label-sm text-label-sm text-secondary -mt-sm tracking-wide uppercase">Premium</span></div></a><nav class="hidden lg:flex items-center gap-sm bg-surface-container-low px-sm py-xs rounded-full" data-active-classes="bg-primary-container text-on-primary font-label-md rounded-xl shadow-[0_2px_8px_rgba(46,74,56,0.12)]"><a class="px-md py-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-full transition-all" data-path="find-a-pg" href="#">Find a PG</a><a class="px-md py-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-full transition-all" data-path="list-your-pg" href="#">List Your PG</a><a class="px-md py-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-full transition-all" data-path="how-it-works" href="#">How It Works</a><a class="px-md py-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-full transition-all" data-path="about-us" href="#">About Us</a><a class="px-md py-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-full transition-all" data-path="premium-plans" href="#">Premium</a></nav><div class="flex items-center gap-md"><div class="hidden sm:flex flex-col items-end"><span class="font-label-md text-label-md text-on-surface font-semibold">Alex Morgan</span><span class="px-xs py-[2px] bg-secondary-container text-on-secondary-container rounded-md font-label-sm text-label-sm leading-none">Student Account</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full flex-grow pt-20 bg-surface"><div class="flex flex-col w-full">
+<div class="max-w-[1280px] w-full mx-auto px-margin-mobile lg:px-margin-desktop py-lg lg:py-xl">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
+<div class="flex flex-col">
+<div class="flex items-center gap-xs text-secondary mb-xs">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Account Dashboard</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Aarav Sharma (STU-88210)</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight">My Premium & Payment History</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-xs max-w-2xl">
+          Manage your active one-time access, track validity, and view past official tax receipts.
+        </p>
+</div>
+<div class="flex items-center gap-sm self-start md:self-auto">
+<div class="inline-flex items-center gap-xs px-md py-sm bg-surface-container-high rounded-full">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary font-semibold">Active Full-Access</span>
+</div>
+</div>
+</div>
+<section class="relative bg-surface-container-lowest rounded-[24px] shadow-[0px_4px_24px_rgba(46,74,56,0.07)] p-lg lg:p-xl overflow-hidden mb-xl">
+<div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-secondary-container/30 blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-lg">
+<div class="flex flex-wrap items-center justify-between gap-md pb-md">
+<div class="flex items-center gap-md">
+<div class="w-14 h-14 rounded-2xl bg-secondary-container flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[32px]">workspace_premium</span>
+</div>
+<div>
+<div class="flex items-center gap-xs">
+<span class="font-headline-md text-headline-md text-primary">Yearly Premium</span>
+<span class="px-sm py-[3px] bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded-full">
+                  Active • 365 Days Pass
+                </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                Full unlocked university housing privileges with prioritized direct landlord connects.
+              </p>
+</div>
+</div>
+<div class="flex flex-col items-start sm:items-end">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Remaining Validity</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg text-primary font-bold tracking-tight">348</span>
+<span class="font-headline-md text-headline-md text-secondary">Days Left</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-lg flex flex-col gap-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-xs font-label-md text-label-md">
+<span class="text-on-surface font-semibold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">timelapse</span>
+              365-Day Validity Timeline
+            </span>
+<div class="flex items-center gap-md text-on-surface-variant">
+<span><strong>17 days</strong> elapsed (4.7%)</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary font-semibold">95.3% remaining</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-3.5 p-0.5 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full transition-all duration-1000 ease-out" style="width: 95.3%"></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-md pt-xs">
+<div class="flex flex-col bg-surface-container-lowest p-md rounded-xl">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Purchased On</span>
+<span class="font-body-md text-body-md text-primary font-semibold mt-xs">29 September 2026</span>
+<span class="font-label-sm text-label-sm text-outline">Verified instant activation</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-md rounded-xl">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Expiry Date</span>
+<span class="font-body-md text-body-md text-primary font-semibold mt-xs">29 September 2027</span>
+<span class="font-label-sm text-label-sm text-outline">Midnight (23:59 IST)</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-md rounded-xl">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Billing Type</span>
+<span class="font-body-md text-body-md text-secondary font-semibold mt-xs">One-Time Non-Recurring</span>
+<span class="font-label-sm text-label-sm text-outline">Prepaid campus plan</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-lg bg-surface-container-high/60 rounded-2xl p-lg">
+<div class="flex items-start gap-md max-w-2xl">
+<div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center text-primary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">format_image_left</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary font-semibold">One-Time Purchase Guarantee</span>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                This pass expires automatically on <strong>29 Sep 2027</strong>. There are strictly <strong>NO recurring subscriptions, auto-debits, or stored credit card mandates</strong>. You control renewals entirely.
+              </p>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-md shrink-0">
+<div class="flex flex-col text-left lg:text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Add extra year?</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Cumulative stack without losing days</span>
+</div>
+<button class="px-lg py-md bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md rounded-xl shadow-[0px_4px_16px_rgba(46,74,56,0.18)] transition-all flex items-center gap-xs active:scale-[0.98]" id="extend-btn">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>Add More Days / Extend Access</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<section class="flex flex-col gap-lg mb-xl">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-xs">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Features & Unlocks</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Active Premium Benefits</h2>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">
+          Synced across student Aarav Sharma's verified devices
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="bg-surface-container-lowest rounded-2xl p-lg shadow-[0px_4px_20px_rgba(46,74,56,0.06)] flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-container/70 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">radar</span>
+</div>
+<span class="px-xs py-0.5 bg-secondary-container text-on-secondary-container rounded font-label-sm text-label-sm">Active</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary text-[18px] leading-6">Advanced Filters & Curfew Radar</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">
+                Real-time gate timing filters, no-brokerage tags, and strict warden policy comparisons across campus areas.
+              </p>
+</div>
+</div>
+<div class="mt-lg pt-sm flex items-center gap-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Unlocked until Sep 2027</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-lg shadow-[0px_4px_20px_rgba(46,74,56,0.06)] flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-container/70 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">bookmarks</span>
+</div>
+<span class="px-xs py-0.5 bg-secondary-container text-on-secondary-container rounded font-label-sm text-label-sm">Active • 14 Saved</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary text-[18px] leading-6">Unlimited Saved PGs & Matrix</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">
+                Side-by-side room comparison matrix including Wi-Fi speed benchmarks, food menu quality, and deposit metrics.
+              </p>
+</div>
+</div>
+<div class="mt-lg pt-sm flex items-center gap-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">folder_special</span>
+<span>14 accommodations in shortlist</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-lg shadow-[0px_4px_20px_rgba(46,74,56,0.06)] flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-container/70 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">perm_phone_msg</span>
+</div>
+<span class="px-xs py-0.5 bg-secondary-container text-on-secondary-container rounded font-label-sm text-label-sm">Unlocked</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary text-[18px] leading-6">Direct Verified Owner Phone Numbers</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">
+                Zero agent intervention. Contact verified caretakers and property owners directly without lead lockouts.
+              </p>
+</div>
+</div>
+<div class="mt-lg pt-sm flex items-center gap-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">call</span>
+<span>Direct dialing activated</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-lg shadow-[0px_4px_20px_rgba(46,74,56,0.06)] flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-container/70 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">chat</span>
+</div>
+<span class="px-xs py-0.5 bg-secondary-container text-on-secondary-container rounded font-label-sm text-label-sm">Active</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary text-[18px] leading-6">WhatsApp Instant Room Alerts</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">
+                Instant pings the second a room opens within 1.5 km of your university department with budget matching.
+              </p>
+</div>
+</div>
+<div class="mt-lg pt-sm flex items-center gap-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">notifications_active</span>
+<span>Push triggers active</span>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mb-xl">
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-[24px] shadow-[0px_4px_20px_rgba(46,74,56,0.06)] p-lg flex flex-col justify-between">
+<div class="flex flex-col gap-xs mb-md">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Access Continuity</span>
+<h3 class="font-headline-md text-headline-md text-primary">Extend Validity Policy</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Purchasing additional days now adds directly to your current expiry date without losing remaining time (e.g. +365 days stacks directly onto 29 Sep 2027 to become 29 Sep 2028).
+          </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md pt-sm">
+<div class="p-md rounded-xl bg-surface-container-low flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">calendar_add_on</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-primary font-semibold">Zero Overlap Waste</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Full 348 days stay intact</p>
+</div>
+</div>
+<div class="p-md rounded-xl bg-surface-container-low flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-primary font-semibold">Immediate Tax Invoice</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">GST compliant student receipt</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-[24px] p-lg flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-xs text-primary mb-xs">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-label-md text-label-md font-semibold">Have Questions on Billing?</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Need an official invoice formatted for your university hostel reimbursement grant or scholarship program?
+          </p>
+</div>
+<div class="pt-md">
+<button class="w-full py-sm px-md rounded-xl bg-surface-container-lowest text-primary font-label-md text-label-md hover:bg-surface-container-high transition-colors shadow-sm flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">contact_support</span>
+<span>Contact University Desk</span>
+</button>
+</div>
+</div>
+</div>
+<section class="flex flex-col gap-md">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-xs">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Ledger & Compliance</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Purchase History & Tax Receipts</h2>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">All transactions are one-time payments processed via RBI-authorized gateways</span>
+</div>
+<div class="bg-surface-container-lowest rounded-[24px] shadow-[0px_4px_24px_rgba(46,74,56,0.07)] overflow-hidden">
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[840px]">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+<th class="py-md px-lg">Date</th>
+<th class="py-md px-md">Plan Name</th>
+<th class="py-md px-md">Duration</th>
+<th class="py-md px-md">Amount</th>
+<th class="py-md px-md">Payment Mode</th>
+<th class="py-md px-md">Status</th>
+<th class="py-md px-md">Transaction ID</th>
+<th class="py-md px-lg text-right">Action / Receipt</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md divide-y divide-surface-container-high">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-lg px-lg font-semibold text-primary whitespace-nowrap">
+                  29 Sep 2026
+                </td>
+<td class="py-lg px-md font-semibold text-primary">
+                  Yearly Premium
+                </td>
+<td class="py-lg px-md text-on-surface-variant">
+                  365 Days
+                </td>
+<td class="py-lg px-md font-semibold text-primary">
+                  ₹30
+                </td>
+<td class="py-lg px-md text-on-surface-variant">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_balance_wallet</span>
+<span>UPI (GPay)</span>
+</div>
+</td>
+<td class="py-lg px-md whitespace-nowrap">
+<span class="px-sm py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Paid
+                  </span>
+</td>
+<td class="py-lg px-md font-mono text-[13px] text-on-surface-variant whitespace-nowrap">
+                  PGF-TXN-9482019
+                </td>
+<td class="py-lg px-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-xs">
+<button class="px-sm py-1.5 rounded-lg bg-surface-container text-primary hover:bg-surface-container-high transition-colors font-label-sm text-label-sm font-semibold flex items-center gap-1" onclick="showReceiptModal('PGF-TXN-9482019', '29 Sep 2026', 'Yearly Premium', '₹30', 'UPI (GPay)')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>View Receipt</span>
+</button>
+<button class="px-sm py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-colors font-label-sm text-label-sm font-semibold flex items-center gap-1" onclick="triggerDownload('PGF-TXN-9482019')">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>PDF</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-lg px-lg font-semibold text-primary whitespace-nowrap">
+                  15 Aug 2025
+                </td>
+<td class="py-lg px-md font-semibold text-primary">
+                  Monthly Premium
+                </td>
+<td class="py-lg px-md text-on-surface-variant">
+                  30 Days
+                </td>
+<td class="py-lg px-md font-semibold text-primary">
+                  ₹10
+                </td>
+<td class="py-lg px-md text-on-surface-variant">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_balance_wallet</span>
+<span>UPI (PhonePe)</span>
+</div>
+</td>
+<td class="py-lg px-md whitespace-nowrap">
+<span class="px-sm py-1 bg-surface-container-high text-on-surface-variant rounded-full font-label-sm text-label-sm font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    Expired
+                  </span>
+</td>
+<td class="py-lg px-md font-mono text-[13px] text-on-surface-variant whitespace-nowrap">
+                  PGF-TXN-8104821
+                </td>
+<td class="py-lg px-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-xs">
+<button class="px-sm py-1.5 rounded-lg bg-surface-container text-primary hover:bg-surface-container-high transition-colors font-label-sm text-label-sm font-semibold flex items-center gap-1" onclick="showReceiptModal('PGF-TXN-8104821', '15 Aug 2025', 'Monthly Premium', '₹10', 'UPI (PhonePe)')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>View Receipt</span>
+</button>
+<button class="px-sm py-1.5 rounded-lg bg-surface-container text-primary hover:bg-surface-container-high transition-colors font-label-sm text-label-sm font-semibold flex items-center gap-1" onclick="triggerDownload('PGF-TXN-8104821')">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>PDF</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+<div class="fixed inset-0 z-50 hidden bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-md" id="receipt-modal">
+<div class="bg-surface-container-lowest max-w-lg w-full rounded-[24px] shadow-2xl p-xl flex flex-col gap-lg relative">
+<div class="flex items-center justify-between pb-sm border-b border-surface-container-high">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">roofing</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary text-[20px]">Tax Invoice & Receipt</span>
+</div>
+<button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant" onclick="closeReceiptModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="flex justify-between font-label-md text-label-md">
+<span class="text-on-surface-variant">Invoice Reference:</span>
+<span class="font-mono text-primary font-semibold" id="modal-txnid">PGF-TXN-9482019</span>
+</div>
+<div class="flex justify-between font-label-md text-label-md">
+<span class="text-on-surface-variant">Date of Issue:</span>
+<span class="text-primary font-semibold" id="modal-date">29 Sep 2026</span>
+</div>
+<div class="flex justify-between font-label-md text-label-md">
+<span class="text-on-surface-variant">Billed To:</span>
+<span class="text-primary font-semibold">Aarav Sharma (Student ID: 88210)</span>
+</div>
+<div class="flex justify-between font-label-md text-label-md">
+<span class="text-on-surface-variant">GSTIN (PGFinder Tech):</span>
+<span class="font-mono text-primary">07AAECP1829K1Z4</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-md flex flex-col gap-xs">
+<div class="flex justify-between font-label-md text-label-md">
+<span class="font-semibold text-primary" id="modal-plan">Yearly Premium (365 Days Access)</span>
+<span class="font-semibold text-primary" id="modal-amount">₹30.00</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>CGST (9%) + SGST (9%)</span>
+<span>Included (₹4.58)</span>
+</div>
+<div class="flex justify-between font-label-md text-label-md text-secondary font-semibold pt-xs">
+<span>Payment Gateway Mode:</span>
+<span id="modal-mode">UPI (GPay)</span>
+</div>
+</div>
+<div class="flex items-center justify-end gap-sm pt-xs">
+<button class="px-md py-sm rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" onclick="closeReceiptModal()">Close</button>
+<button class="px-lg py-sm rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-xs" onclick="printMockReceipt()">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>Print / Save PDF</span>
+</button>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 z-50 hidden bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-md" id="extend-modal">
+<div class="bg-surface-container-lowest max-w-md w-full rounded-[24px] shadow-2xl p-xl flex flex-col gap-lg">
+<div class="flex items-center justify-between pb-sm border-b border-surface-container-high">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary text-[20px]">Extend Validity</span>
+</div>
+<button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant" onclick="closeExtendModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Choose your extension pass. Extra days stack immediately onto your current expiry (29 Sep 2027) with no lost time:
+      </p>
+<div class="flex flex-col gap-sm">
+<div class="p-md rounded-xl bg-surface-container-low hover:bg-secondary-container/40 transition-colors cursor-pointer flex items-center justify-between">
+<div>
+<div class="font-label-md text-label-md text-primary font-bold">+ 365 Days (1 Full Year)</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">New expiry: 29 Sep 2028</div>
+</div>
+<span class="font-headline-md text-headline-md text-primary text-[18px]">₹30</span>
+</div>
+<div class="p-md rounded-xl bg-surface-container-low hover:bg-secondary-container/40 transition-colors cursor-pointer flex items-center justify-between">
+<div>
+<div class="font-label-md text-label-md text-primary font-bold">+ 180 Days (Semester Pass)</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">New expiry: 28 Mar 2028</div>
+</div>
+<span class="font-headline-md text-headline-md text-primary text-[18px]">₹20</span>
+</div>
+</div>
+<div class="p-xs bg-surface-container rounded-lg text-center font-label-sm text-label-sm text-on-surface-variant">
+        Prepaid one-time UPI payment. No recurring auto-debits.
+      </div>
+<div class="flex items-center justify-end gap-sm pt-xs">
+<button class="px-md py-sm rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" onclick="closeExtendModal()">Cancel</button>
+<button class="px-lg py-sm rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-xs" onclick="confirmExtend()">
+<span>Proceed to UPI</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+    function showReceiptModal(txnId, date, plan, amount, mode) {
+      document.getElementById('modal-txnid').textContent = txnId;
+      document.getElementById('modal-date').textContent = date;
+      document.getElementById('modal-plan').textContent = plan + ' (Tax Invoice)';
+      document.getElementById('modal-amount').textContent = amount + '.00';
+      document.getElementById('modal-mode').textContent = mode;
+      document.getElementById('receipt-modal').classList.remove('hidden');
+    }
+
+    function closeReceiptModal() {
+      document.getElementById('receipt-modal').classList.add('hidden');
+    }
+
+    function triggerDownload(txnId) {
+      const originalText = event.currentTarget.innerText;
+      const btn = event.currentTarget;
+      btn.innerText = 'Downloading...';
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check</span> Done';
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">download</span> PDF';
+        }, 1500);
+      }, 700);
+    }
+
+    function printMockReceipt() {
+      window.print();
+    }
+
+    const extendBtn = document.getElementById('extend-btn');
+    if (extendBtn) {
+      extendBtn.addEventListener('click', () => {
+        document.getElementById('extend-modal').classList.remove('hidden');
+      });
+    }
+
+    function closeExtendModal() {
+      document.getElementById('extend-modal').classList.add('hidden');
+    }
+
+    function confirmExtend() {
+      alert('Redirecting to secure RBI/UPI checkout portal. No cards will be auto-saved.');
+      closeExtendModal();
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest mt-auto shadow-[0_-1px_12px_rgba(46,74,56,0.04)]"><div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin-desktop py-xl"><div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-xl"><div class="flex flex-col gap-sm md:col-span-1"><div class="flex items-center gap-xs"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">roofing</span></div><span class="font-headline-md text-headline-md text-primary">PGFinder</span></div><p class="font-body-md text-body-md text-on-surface-variant mt-xs">Mindful, comfortable student accommodations curated for university life and peaceful focus.</p></div><div class="flex flex-col gap-sm"><span class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold">Trust & Safety</span><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="trust-safety" href="#">Verified Residences</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="trust-safety" href="#">Deposit Shield</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="trust-safety" href="#">Campus Network</a></div><div class="flex flex-col gap-sm"><span class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold">Support</span><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="support-center" href="#">Help Center</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="support-center" href="#">Contact Warden</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="support-center" href="#">FAQ</a></div><div class="flex flex-col gap-sm"><span class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold">Legal</span><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="terms-conditions" href="#">Terms of Service</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="terms-conditions" href="#">Privacy Policy</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" data-path="terms-conditions" href="#">Student Lease Rules</a></div></div><div class="pt-lg border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-md text-on-surface-variant"><p class="font-label-sm text-label-sm">© 2025 PGFinder Technologies Inc. All rights reserved.</p><div class="flex items-center gap-md font-label-sm text-label-sm"><a class="hover:text-primary transition-colors" data-path="terms-conditions" href="#">Privacy</a><a class="hover:text-primary transition-colors" data-path="terms-conditions" href="#">Security</a><a class="hover:text-primary transition-colors" data-path="terms-conditions" href="#">Cookies</a></div></div></div></footer></body></html>
