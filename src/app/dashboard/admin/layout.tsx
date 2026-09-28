@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { role } = usePersona();
+  const { role, requestRoleChange } = usePersona();
   const pathname = usePathname();
 
   const menuItems = [
@@ -26,8 +26,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <h2 className="text-2xl font-bold text-primary">Admin Portal</h2>
           <p className="text-on-surface-variant text-sm leading-relaxed">
             You are currently browsing as a <strong className="text-primary">{role}</strong>. 
-            To view this portal, please select the <strong>Admin</strong> role from the switcher in the top right.
+            To view this portal, please log in as an authorized administrator.
           </p>
+          <button
+            onClick={() => requestRoleChange('ADMIN')}
+            className="bg-[#2E4A38] text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-[#1f3326] transition-colors shadow-sm cursor-pointer"
+          >
+            Admin Login
+          </button>
         </div>
       </div>
     );

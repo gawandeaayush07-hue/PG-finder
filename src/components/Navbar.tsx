@@ -7,11 +7,15 @@ import { usePersona, UserRole } from '@/context/PersonaContext';
 import { Magnetic } from '@/components/animations/Magnetic';
 
 export const Navbar: React.FC = () => {
-  const { role, requestRoleChange } = usePersona();
+  const { role, requestRoleChange, isAdminAuthorized, logout } = usePersona();
   const router = useRouter();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const availableRoles: UserRole[] = (isAdminAuthorized || role === 'ADMIN')
+    ? ['GUEST', 'STUDENT', 'OWNER', 'ADMIN']
+    : ['GUEST', 'STUDENT', 'OWNER'];
 
   const handleRoleChange = (newRole: UserRole) => {
     requestRoleChange(newRole);
@@ -81,6 +85,14 @@ export const Navbar: React.FC = () => {
                 href="/about" 
                 className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
                   isActive('/about') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                }`}
+              >
+                About Us
+              </Link>
+              <Link 
+                href="/contact" 
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
+                  isActive('/contact') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
                 }`}
               >
                 Contact
@@ -194,7 +206,7 @@ export const Navbar: React.FC = () => {
                 <div className="px-3 py-1.5 text-xs text-outline-variant font-bold border-b border-outline-variant">
                   SWITCH PERSONA
                 </div>
-                {(['GUEST', 'STUDENT', 'OWNER', 'ADMIN'] as UserRole[]).map((r) => (
+                {availableRoles.map((r) => (
                   <button
                     key={r}
                     onClick={() => handleRoleChange(r)}
@@ -238,7 +250,7 @@ export const Navbar: React.FC = () => {
                 />
               </div>
               <button 
-                onClick={() => handleRoleChange('GUEST')} 
+                onClick={logout} 
                 className="text-xs font-semibold text-rose-600 hover:underline px-2 py-1 cursor-pointer"
               >
                 Log out
@@ -266,7 +278,8 @@ export const Navbar: React.FC = () => {
             <>
               <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Home</Link>
               <Link href="/search" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Find a PG</Link>
-              <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Contact</Link>
+              <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">About Us</Link>
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Contact</Link>
               {role === 'STUDENT' && (
                 <>
                   <Link href="/dashboard/student/shortlist" onClick={() => setMobileMenuOpen(false)} className="text-on-surface font-medium py-1">Shortlist</Link>

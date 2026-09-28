@@ -27,24 +27,21 @@ export const Footer: React.FC = () => {
             <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               About Us
             </Link>
-            <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
-              Careers
-            </Link>
           </div>
 
           {/* Support Links */}
           <div className="flex flex-col gap-3">
             <h4 className="font-headline-md text-lg font-semibold mb-2">Support</h4>
-            <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
+            <Link href="/faq" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               FAQ
             </Link>
-            <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
+            <Link href="/contact" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Contact Support
             </Link>
-            <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
+            <Link href="/privacy" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Privacy Policy
             </Link>
-            <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
+            <Link href="/terms" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Terms of Service
             </Link>
           </div>
@@ -58,7 +55,7 @@ export const Footer: React.FC = () => {
             <Link href="/dashboard/owner" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Owner Dashboard
             </Link>
-            <Link href="/about" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
+            <Link href="/trust" className="font-body-md text-body-md text-on-primary/80 hover:text-on-primary hover:underline transition-opacity">
               Trust &amp; Safety
             </Link>
           </div>

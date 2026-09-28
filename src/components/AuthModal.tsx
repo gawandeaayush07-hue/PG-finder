@@ -47,7 +47,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
             </h2>
             
             <p className="text-on-surface-variant text-base md:text-lg leading-relaxed mt-2 mb-4 px-2">
-              You are currently browsing as a <strong>GUEST</strong>. To view this dashboard, please log in or select the <strong>{roleName}</strong> role from the switcher in the top right.
+              Please authenticate with your credentials to access the <strong>{roleName}</strong> portal.
             </p>
             
             <button 

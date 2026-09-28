@@ -69,6 +69,9 @@ export interface ReportItem {
 interface PersonaContextType {
   role: UserRole;
   setRole: (role: UserRole) => void;
+  isAdminAuthorized: boolean;
+  setIsAdminAuthorized: (authorized: boolean) => void;
+  logout: () => void;
   listings: Listing[];
   setListings: React.Dispatch<React.SetStateAction<Listing[]>>;
   shortlist: string[];
@@ -266,6 +269,7 @@ const PersonaContext = createContext<PersonaContextType | undefined>(undefined);
 
 export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [role, setRole] = useState<UserRole>('GUEST');
+  const [isAdminAuthorized, setIsAdminAuthorized] = useState(false);
   const [authPendingRole, setAuthPendingRole] = useState<UserRole | null>(null);
   const [listings, setListings] = useState<Listing[]>(initialListings);
   const [shortlist, setShortlist] = useState<string[]>(['listing-2']);
@@ -279,14 +283,30 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     // Check if role is stored in localStorage to persist on reload
     const savedRole = localStorage.getItem('pgfinder_persona_role') as UserRole;
+    const savedAdmin = localStorage.getItem('pgfinder_is_admin') === 'true';
     if (savedRole) {
       setRole(savedRole);
+    }
+    if (savedAdmin || savedRole === 'ADMIN') {
+      setIsAdminAuthorized(true);
     }
   }, []);
 
   const handleSetRole = (newRole: UserRole) => {
     setRole(newRole);
     localStorage.setItem('pgfinder_persona_role', newRole);
+    if (newRole === 'ADMIN') {
+      setIsAdminAuthorized(true);
+      localStorage.setItem('pgfinder_is_admin', 'true');
+    }
+    setAuthPendingRole(null);
+  };
+
+  const logout = () => {
+    setRole('GUEST');
+    setIsAdminAuthorized(false);
+    localStorage.setItem('pgfinder_persona_role', 'GUEST');
+    localStorage.removeItem('pgfinder_is_admin');
     setAuthPendingRole(null);
   };
 
@@ -357,6 +377,9 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         role,
         setRole: handleSetRole,
+        isAdminAuthorized,
+        setIsAdminAuthorized,
+        logout,
         requestRoleChange,
         requireAuth,
         listings,

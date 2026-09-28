@@ -42,7 +42,7 @@ export function Preloader() {
       className="fixed inset-0 z-[100000] flex flex-col items-center justify-center bg-brand-green text-white"
     >
       <div className="overflow-hidden">
-        <h1 ref={textRef} className="text-5xl md:text-7xl font-bold mb-4 font-heading tracking-tight">
+        <h1 ref={textRef} className="text-5xl md:text-7xl font-bold mb-4 font-heading tracking-tight text-black">
           PGFinder
         </h1>
       </div>
