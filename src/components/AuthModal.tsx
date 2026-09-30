@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { UserRole } from '@/context/PersonaContext';
+import { createClient } from '@/lib/supabase/client';
 
 interface AuthModalProps {
   targetRole: UserRole;
@@ -11,18 +12,82 @@ interface AuthModalProps {
 
 export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onCancel }) => {
   const roleName = targetRole.charAt(0).toUpperCase() + targetRole.slice(1).toLowerCase();
+  const supabase = createClient();
   
   const [step, setStep] = useState<1 | 2>(1);
-  const [userId, setUserId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (userId.length >= 4 && password.length >= 4) {
-      onSuccess(targetRole);
-    } else {
-      setError('Invalid credentials. Please enter a valid ID and password (min 4 chars).');
+    setError('');
+    setIsLoading(true);
+
+    const isPlaceholderMode =
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+
+    if (isPlaceholderMode) {
+      setTimeout(() => {
+        setIsLoading(false);
+        if (email.length >= 3 && password.length >= 4) {
+          onSuccess(targetRole);
+        } else {
+          setError('Invalid credentials. Please enter a valid email and password (min 4 chars).');
+        }
+      }, 800);
+      return;
+    }
+
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        if (authError.message.toLowerCase().includes('invalid login credentials')) {
+          setError('Invalid credentials. Please check your email and password.');
+        } else {
+          setError(authError.message);
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        // Verify user possesses the authorized role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        const profileRole = (profile?.role as UserRole) || 'STUDENT';
+
+        if (targetRole === 'ADMIN' && profileRole !== 'ADMIN') {
+          setError('Access Denied: Your account does not have Administrator privileges.');
+          await supabase.auth.signOut();
+          setIsLoading(false);
+          return;
+        }
+
+        if (targetRole === 'OWNER' && profileRole !== 'OWNER' && profileRole !== 'ADMIN') {
+          setError('Access Denied: Your account does not have Property Owner privileges.');
+          await supabase.auth.signOut();
+          setIsLoading(false);
+          return;
+        }
+
+        onSuccess(profileRole);
+      }
+    } catch (err: unknown) {
+      console.error('Modal login error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,14 +133,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
 
             <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full text-left">
               <div>
-                <label className="block text-sm font-semibold mb-1 text-deep-green" htmlFor="userId">User ID</label>
+                <label className="block text-sm font-semibold mb-1 text-deep-green" htmlFor="email">Email Address</label>
                 <input 
-                  id="userId"
-                  type="text" 
-                  className="w-full border border-outline-variant rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-brand-green"
-                  placeholder="e.g., john_doe"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
+                  id="email"
+                  type="email" 
+                  required
+                  className="w-full border border-outline-variant rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-brand-green text-sm"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
@@ -83,7 +149,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
                 <input 
                   id="password"
                   type="password" 
-                  className="w-full border border-outline-variant rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-brand-green"
+                  required
+                  className="w-full border border-outline-variant rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-brand-green text-sm"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -96,15 +163,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
                 <button 
                   type="button" 
                   onClick={() => setStep(1)}
-                  className="px-6 py-3 rounded-full font-semibold text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                  disabled={isLoading}
+                  className="px-6 py-3 rounded-full font-semibold text-on-surface hover:bg-surface-container transition-colors cursor-pointer disabled:opacity-50"
                 >
                   Back
                 </button>
                 <button 
                   type="submit"
-                  className="px-8 py-3 rounded-full font-bold bg-[#2E4A38] text-white hover:bg-[#1f3326] transition-colors shadow-sm cursor-pointer"
+                  disabled={isLoading}
+                  className="px-8 py-3 rounded-full font-bold bg-[#2E4A38] text-white hover:bg-[#1f3326] transition-colors shadow-sm cursor-pointer disabled:bg-zinc-400 flex items-center justify-center gap-2"
                 >
-                  Confirm Login
+                  {isLoading ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Verifying...
+                    </>
+                  ) : (
+                    'Confirm Login'
+                  )}
                 </button>
               </div>
             </form>

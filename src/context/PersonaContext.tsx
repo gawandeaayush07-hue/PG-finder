@@ -1,8 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
+import type { Database, UserRole as DbUserRole } from '@/types/database';
 
 export type UserRole = 'GUEST' | 'STUDENT' | 'OWNER' | 'ADMIN';
+export type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export interface Review {
   id: string;
@@ -67,11 +71,20 @@ export interface ReportItem {
 }
 
 interface PersonaContextType {
+  // Authoritative Authentication State
+  user: User | null;
+  profile: Profile | null;
   role: UserRole;
   setRole: (role: UserRole) => void;
   isAdminAuthorized: boolean;
   setIsAdminAuthorized: (authorized: boolean) => void;
-  logout: () => void;
+  isLoadingAuth: boolean;
+  logout: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
+  requestRoleChange: (role: UserRole) => void;
+  requireAuth: () => void;
+
+  // Existing Mock Data State (preserved for listings, search, bookings)
   listings: Listing[];
   setListings: React.Dispatch<React.SetStateAction<Listing[]>>;
   shortlist: string[];
@@ -87,8 +100,6 @@ interface PersonaContextType {
   setSearchQuery: (query: string) => void;
   priceRange: string;
   setPriceRange: (range: string) => void;
-  requestRoleChange: (role: UserRole) => void;
-  requireAuth: () => void;
 }
 
 const initialListings: Listing[] = [
@@ -268,9 +279,15 @@ import { AuthModal } from '@/components/AuthModal';
 const PersonaContext = createContext<PersonaContextType | undefined>(undefined);
 
 export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<UserRole>('GUEST');
+  const [supabase] = useState(() => createClient());
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [role, setRoleState] = useState<UserRole>('GUEST');
   const [isAdminAuthorized, setIsAdminAuthorized] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [authPendingRole, setAuthPendingRole] = useState<UserRole | null>(null);
+
+  // Listing, booking, and search states
   const [listings, setListings] = useState<Listing[]>(initialListings);
   const [shortlist, setShortlist] = useState<string[]>(['listing-2']);
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
@@ -279,35 +296,147 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState('');
 
-  // Sync role based on some routes if needed, or keep manual
-  useEffect(() => {
-    // Check if role is stored in localStorage to persist on reload
-    const savedRole = localStorage.getItem('pgfinder_persona_role') as UserRole;
-    const savedAdmin = localStorage.getItem('pgfinder_is_admin') === 'true';
-    if (savedRole) {
-      setRole(savedRole);
-    }
-    if (savedAdmin || savedRole === 'ADMIN') {
-      setIsAdminAuthorized(true);
-    }
-  }, []);
+  // Authoritatively fetch user's profile from Supabase public.profiles
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
+      if (error) {
+        // If profile row is not yet provisioned by the trigger, retry once or fallback to STUDENT
+        console.warn('Profile fetch note:', error.message);
+        return null;
+      }
+      return data as Profile;
+    } catch (err) {
+      console.error('Error fetching authoritative profile:', err);
+      return null;
+    }
+  }, [supabase]);
+
+  // Refresh profile action available to context consumers (e.g. after updating settings)
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    const p = await fetchProfile(user.id);
+    if (p) {
+      setProfile(p);
+      setRoleState(p.role as UserRole);
+      setIsAdminAuthorized(p.role === 'ADMIN');
+    }
+  }, [user, fetchProfile]);
+
+  // Initial Auth Lifecycle & Realtime Session Listener via Supabase Auth
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initSession() {
+      try {
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser();
+
+        if (!isMounted) return;
+
+        if (currentUser) {
+          setUser(currentUser);
+          const p = await fetchProfile(currentUser.id);
+          if (isMounted) {
+            if (p) {
+              setProfile(p);
+              setRoleState(p.role as UserRole);
+              setIsAdminAuthorized(p.role === 'ADMIN');
+            } else {
+              // Fallback role from user metadata if database profile is propagating
+              const metaRole = (currentUser.user_metadata?.role as UserRole) || 'STUDENT';
+              setRoleState(metaRole === 'ADMIN' ? 'STUDENT' : metaRole);
+              setIsAdminAuthorized(false);
+            }
+          }
+        } else {
+          // If no authenticated user exists, clear session state to GUEST
+          setUser(null);
+          setProfile(null);
+          setRoleState('GUEST');
+          setIsAdminAuthorized(false);
+        }
+      } catch (err) {
+        console.error('Auth initialization error:', err);
+        if (isMounted) {
+          setUser(null);
+          setProfile(null);
+          setRoleState('GUEST');
+          setIsAdminAuthorized(false);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingAuth(false);
+        }
+      }
+    }
+
+    initSession();
+
+    // Subscribe to auth state changes (SIGN_IN, SIGN_OUT, TOKEN_REFRESHED)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
+
+      if (event === 'SIGNED_OUT' || !session?.user) {
+        setUser(null);
+        setProfile(null);
+        setRoleState('GUEST');
+        setIsAdminAuthorized(false);
+        setIsLoadingAuth(false);
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        setUser(session.user);
+        const p = await fetchProfile(session.user.id);
+        if (isMounted) {
+          if (p) {
+            setProfile(p);
+            setRoleState(p.role as UserRole);
+            setIsAdminAuthorized(p.role === 'ADMIN');
+          } else {
+            const metaRole = (session.user.user_metadata?.role as UserRole) || 'STUDENT';
+            setRoleState(metaRole === 'ADMIN' ? 'STUDENT' : metaRole);
+          }
+          setIsLoadingAuth(false);
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase, fetchProfile]);
+
+  // Backward compatible setRole handler
   const handleSetRole = (newRole: UserRole) => {
-    setRole(newRole);
-    localStorage.setItem('pgfinder_persona_role', newRole);
+    // If not authenticated or in preview mode, allow client persona switching for demo
+    setRoleState(newRole);
     if (newRole === 'ADMIN') {
       setIsAdminAuthorized(true);
-      localStorage.setItem('pgfinder_is_admin', 'true');
     }
     setAuthPendingRole(null);
   };
 
-  const logout = () => {
-    setRole('GUEST');
-    setIsAdminAuthorized(false);
-    localStorage.setItem('pgfinder_persona_role', 'GUEST');
-    localStorage.removeItem('pgfinder_is_admin');
-    setAuthPendingRole(null);
+  // Authoritative Supabase Sign Out
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error('Error signing out:', err);
+    } finally {
+      setUser(null);
+      setProfile(null);
+      setRoleState('GUEST');
+      setIsAdminAuthorized(false);
+      setAuthPendingRole(null);
+    }
   };
 
   const requestRoleChange = (newRole: UserRole) => {
@@ -350,13 +479,12 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setVerificationPipeline((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status } : item))
     );
-    // If approved, verify the corresponding listing
     if (status === 'Approved') {
       setVerificationPipeline((prevPipeline) => {
-        const item = prevPipeline.find(p => p.id === id);
+        const item = prevPipeline.find((p) => p.id === id);
         if (item) {
-          setListings(prevListings =>
-            prevListings.map(l =>
+          setListings((prevListings) =>
+            prevListings.map((l) =>
               l.title === item.listingTitle ? { ...l, verified: true } : l
             )
           );
@@ -375,11 +503,15 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   return (
     <PersonaContext.Provider
       value={{
+        user,
+        profile,
         role,
         setRole: handleSetRole,
         isAdminAuthorized,
         setIsAdminAuthorized,
+        isLoadingAuth,
         logout,
+        refreshProfile,
         requestRoleChange,
         requireAuth,
         listings,

@@ -259,7 +259,10 @@ export const Navbar: React.FC = () => {
                 />
               </div>
               <button 
-                onClick={logout} 
+                onClick={async () => {
+                  await logout();
+                  router.push('/');
+                }} 
                 className="text-xs font-semibold text-rose-600 hover:underline px-2 py-1 cursor-pointer"
               >
                 Log out

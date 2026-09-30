@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
-  const { role } = usePersona();
+  const { role, profile, isLoadingAuth } = usePersona();
   const pathname = usePathname();
 
   const menuItems = [
@@ -17,6 +17,16 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   ];
 
   const isActive = (path: string) => pathname === path;
+
+  // Prevent flicker during initial session load
+  if (isLoadingAuth) {
+    return (
+      <div className="w-full max-w-max-width mx-auto px-margin-mobile py-28 text-center flex flex-col items-center justify-center gap-3">
+        <span className="w-8 h-8 border-3 border-deep-green border-t-transparent rounded-full animate-spin"></span>
+        <span className="text-xs text-on-surface-variant font-medium">Verifying authorization...</span>
+      </div>
+    );
+  }
 
   // Role guard: check if user is in student mode or admin mode (which can access everything)
   if (role !== 'STUDENT' && role !== 'ADMIN') {
@@ -40,6 +50,10 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     );
   }
 
+  const studentName = profile?.full_name || 'Aarav Malhotra';
+  const collegeName = profile?.college_name || 'IIT Delhi Student';
+  const avatarUrl = profile?.avatar_url || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&h=100&q=80';
+
   return (
     <div className="w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
@@ -50,14 +64,14 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
             <div className="flex items-center gap-3 border-b border-outline-variant pb-4">
               <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-low">
                 <img
-                  src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&h=100&q=80"
+                  src={avatarUrl}
                   alt="Student Avatar"
                   className="object-cover w-full h-full"
                 />
               </div>
               <div>
-                <h3 className="font-bold text-primary text-sm">Aarav Malhotra</h3>
-                <span className="text-[11px] text-on-surface-variant font-medium">IIT Delhi Student</span>
+                <h3 className="font-bold text-primary text-sm">{studentName}</h3>
+                <span className="text-[11px] text-on-surface-variant font-medium">{collegeName}</span>
               </div>
             </div>
 

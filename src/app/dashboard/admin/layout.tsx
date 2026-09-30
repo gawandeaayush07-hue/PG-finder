@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { role, requestRoleChange } = usePersona();
+  const { role, profile, isLoadingAuth, requestRoleChange } = usePersona();
   const pathname = usePathname();
 
   const menuItems = [
@@ -16,6 +16,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
 
   const isActive = (path: string) => pathname === path;
+
+  // Prevent flicker during initial session load
+  if (isLoadingAuth) {
+    return (
+      <div className="w-full max-w-max-width mx-auto px-margin-mobile py-28 text-center flex flex-col items-center justify-center gap-3">
+        <span className="w-8 h-8 border-3 border-deep-green border-t-transparent rounded-full animate-spin"></span>
+        <span className="text-xs text-on-surface-variant font-medium">Verifying authorization...</span>
+      </div>
+    );
+  }
 
   // Role guard: check if user is in admin mode
   if (role !== 'ADMIN') {
@@ -39,6 +49,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
+  const adminName = profile?.full_name || 'System Admin';
+  const avatarUrl = profile?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&h=100&q=80';
+
   return (
     <div className="w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
@@ -49,13 +62,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="flex items-center gap-3 border-b border-outline-variant pb-4">
               <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-low">
                 <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&h=100&q=80"
+                  src={avatarUrl}
                   alt="Admin Avatar"
                   className="object-cover w-full h-full"
                 />
               </div>
               <div>
-                <h3 className="font-bold text-primary text-sm">System Admin</h3>
+                <h3 className="font-bold text-primary text-sm">{adminName}</h3>
                 <span className="text-[11px] text-on-surface-variant font-medium">Full Access Mode</span>
               </div>
             </div>
