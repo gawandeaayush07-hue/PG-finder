@@ -287,10 +287,18 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [authPendingRole, setAuthPendingRole] = useState<UserRole | null>(null);
 
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDevDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode;
+
   // Listing, booking, and search states
   const [listings, setListings] = useState<Listing[]>(initialListings);
-  const [shortlist, setShortlist] = useState<string[]>(['listing-2']);
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [shortlist, setShortlist] = useState<string[]>(() => (isDevDemo ? ['listing-2'] : []));
+  const [bookings, setBookings] = useState<Booking[]>(() => (isDevDemo ? initialBookings : []));
   const [verificationPipeline, setVerificationPipeline] = useState<VerificationItem[]>(initialVerificationPipeline);
   const [reports, setReports] = useState<ReportItem[]>(initialReports);
   const [searchQuery, setSearchQuery] = useState('');
@@ -342,6 +350,9 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
         if (currentUser) {
           setUser(currentUser);
+          // Real authenticated user: do not keep mock bookings or mock shortlist
+          setBookings((prev) => (prev === initialBookings ? [] : prev.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2')));
+          setShortlist((prev) => (prev.length === 1 && prev[0] === 'listing-2' ? [] : prev.filter((id) => id !== 'listing-2')));
           const p = await fetchProfile(currentUser.id);
           if (isMounted) {
             if (p) {
@@ -361,6 +372,10 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setProfile(null);
           setRoleState('GUEST');
           setIsAdminAuthorized(false);
+          if (!isDevDemo) {
+            setBookings([]);
+            setShortlist([]);
+          }
         }
       } catch (err) {
         console.error('Auth initialization error:', err);
@@ -369,6 +384,10 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setProfile(null);
           setRoleState('GUEST');
           setIsAdminAuthorized(false);
+          if (!isDevDemo) {
+            setBookings([]);
+            setShortlist([]);
+          }
         }
       } finally {
         if (isMounted) {
@@ -391,8 +410,15 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setRoleState('GUEST');
         setIsAdminAuthorized(false);
         setIsLoadingAuth(false);
+        if (!isDevDemo) {
+          setBookings([]);
+          setShortlist([]);
+        }
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
         setUser(session.user);
+        // Real authenticated user: do not keep mock bookings or mock shortlist
+        setBookings((prev) => (prev === initialBookings ? [] : prev.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2')));
+        setShortlist((prev) => (prev.length === 1 && prev[0] === 'listing-2' ? [] : prev.filter((id) => id !== 'listing-2')));
         const p = await fetchProfile(session.user.id);
         if (isMounted) {
           if (p) {
@@ -412,7 +438,7 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase, fetchProfile]);
+  }, [supabase, fetchProfile, isDevDemo]);
 
   // Backward compatible setRole handler
   const handleSetRole = (newRole: UserRole) => {
@@ -436,6 +462,13 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setRoleState('GUEST');
       setIsAdminAuthorized(false);
       setAuthPendingRole(null);
+      if (isDevDemo) {
+        setBookings(initialBookings);
+        setShortlist(['listing-2']);
+      } else {
+        setBookings([]);
+        setShortlist([]);
+      }
     }
   };
 

@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { usePersona, UserRole } from '@/context/PersonaContext';
 import { Magnetic } from '@/components/animations/Magnetic';
+import { getInitials } from '@/lib/utils';
 
 export const Navbar: React.FC = () => {
-  const { role, requestRoleChange, isAdminAuthorized, logout } = usePersona();
+  const { role, profile, user, requestRoleChange, isAdminAuthorized, logout } = usePersona();
   const router = useRouter();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -245,18 +246,21 @@ export const Navbar: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-deep-green hidden sm:block">
-                <img
-                  src={
-                    role === 'STUDENT'
-                      ? 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&h=100&q=80'
-                      : role === 'OWNER'
-                      ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80'
-                      : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&h=100&q=80'
-                  }
-                  alt="User Avatar"
-                  className="object-cover w-full h-full"
-                />
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-deep-green hidden sm:flex items-center justify-center bg-surface-container-high shrink-0">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt={profile.full_name || 'User Avatar'}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <span className="font-bold text-deep-green text-xs select-none">
+                    {getInitials(
+                      profile?.full_name || (user?.user_metadata?.full_name as string) || (user?.email ? user.email.split('@')[0] : null),
+                      user?.email
+                    )}
+                  </span>
+                )}
               </div>
               <button 
                 onClick={async () => {

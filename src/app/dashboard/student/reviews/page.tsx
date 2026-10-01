@@ -1,10 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { usePersona } from '@/context/PersonaContext';
 
 export default function StudentReviews() {
-  const { listings, setListings, bookings } = usePersona();
+  const { listings, setListings, user, profile } = usePersona();
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
 
   // Review states
   const [selectedPgId, setSelectedPgId] = useState('');
@@ -12,8 +21,44 @@ export default function StudentReviews() {
   const [comment, setComment] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  // Allow reviewing any PG from bookings or list
+  // Allow reviewing any PG from listings
   const reviewablePgs = listings;
+
+  const authorName =
+    profile?.full_name?.trim() ||
+    (user?.user_metadata?.full_name as string)?.trim() ||
+    (user?.email ? user.email.split('@')[0] : '') ||
+    (isDemo ? 'Aarav Malhotra' : 'Student');
+
+  // Real user: filter out mock seed reviews
+  const userReviews = isDemo
+    ? [
+        {
+          id: 'mock-rev-1',
+          listingTitle: 'Green Leaf Residences',
+          rating: 5,
+          date: '2026-08-01',
+          comment: 'Very clean rooms and nice food. Ramesh Uncle is very helpful.',
+        },
+        {
+          id: 'mock-rev-2',
+          listingTitle: "The Scholar's Abode",
+          rating: 4,
+          date: '2026-07-28',
+          comment: 'Excellent high-speed Wi-Fi, perfect for study. Quiet environment.',
+        },
+      ]
+    : listings.flatMap((l) =>
+        (l.reviews || [])
+          .filter((r) => profile?.full_name && r.author === profile.full_name)
+          .map((r) => ({
+            id: r.id,
+            listingTitle: l.title,
+            rating: r.rating,
+            date: r.date,
+            comment: r.comment,
+          }))
+      );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +70,7 @@ export default function StudentReviews() {
         if (l.id === selectedPgId) {
           const newReview = {
             id: `rev-${Date.now()}`,
-            author: 'Aarav Malhotra', // Mock student name
+            author: authorName,
             rating,
             date: new Date().toISOString().split('T')[0],
             comment,
@@ -58,6 +103,49 @@ export default function StudentReviews() {
         <p className="text-xs text-on-surface-variant mt-1">
           Share your experience to help fellow student community members find their next home.
         </p>
+      </div>
+
+      {/* My Reviews Section */}
+      <div className="flex flex-col gap-4">
+        <h2 className="text-base font-bold text-[#333333]">My Reviews</h2>
+        {userReviews.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {userReviews.map((rev) => (
+              <div key={rev.id} className="border border-outline-variant rounded-xl p-4 flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold text-sm text-primary">{rev.listingTitle}</h3>
+                  <span className="text-xs text-on-surface-variant">{rev.date}</span>
+                </div>
+                <div className="flex items-center gap-1 text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className="material-symbols-outlined text-[16px]"
+                      style={{ fontVariationSettings: `'FILL' ${i < rev.rating ? 1 : 0}` }}
+                    >
+                      star
+                    </span>
+                  ))}
+                </div>
+                <p className="text-xs text-on-surface-variant">{rev.comment}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 flex flex-col items-center gap-3">
+            <span className="material-symbols-outlined text-4xl text-outline-variant">rate_review</span>
+            <p className="text-sm font-medium text-on-surface-variant">No reviews written yet</p>
+            <p className="text-xs text-on-surface-variant max-w-sm">
+              You haven&apos;t written any reviews yet. Share your feedback on visited properties to help other students.
+            </p>
+            <Link
+              href="/search"
+              className="bg-deep-green hover:bg-primary text-on-primary px-6 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer mt-1"
+            >
+              Explore PGs
+            </Link>
+          </div>
+        )}
       </div>
 
       {submitted && (

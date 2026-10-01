@@ -5,10 +5,23 @@ import { usePersona } from '@/context/PersonaContext';
 import Link from 'next/link';
 
 export default function StudentShortlist() {
-  const { listings, shortlist, toggleShortlist } = usePersona();
+  const { listings, shortlist, toggleShortlist, user } = usePersona();
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  // Real user: filter out mock seed shortlist
+  const effectiveShortlist = isDemo
+    ? shortlist
+    : shortlist.filter((id) => id !== 'listing-2' || !isPlaceholderMode);
 
   // Find shortlisted properties
-  const shortlistedListings = listings.filter((l) => shortlist.includes(l.id));
+  const shortlistedListings = listings.filter((l) => effectiveShortlist.includes(l.id));
 
   return (
     <div className="bg-white rounded-card p-6 shadow-level-1 border border-outline-variant flex flex-col gap-6">
@@ -78,10 +91,16 @@ export default function StudentShortlist() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 flex flex-col items-center gap-3">
-          <span className="material-symbols-outlined text-5xl text-outline-variant" style={{ fontVariationSettings: "'FILL' 0" }}>favorite_border</span>
-          <p className="text-sm text-on-surface-variant">Your shortlist is empty. Start exploring properties to save your favorites!</p>
-          <Link href="/search" className="bg-deep-green text-on-primary text-xs font-bold px-6 py-2.5 rounded-full mt-2 cursor-pointer">
+        <div className="text-center py-10 flex flex-col items-center gap-3">
+          <span className="material-symbols-outlined text-4xl text-outline-variant" style={{ fontVariationSettings: "'FILL' 0" }}>favorite_border</span>
+          <p className="text-sm font-medium text-on-surface-variant">No shortlisted PGs yet</p>
+          <p className="text-xs text-on-surface-variant max-w-sm">
+            Your shortlist is empty. Start exploring properties to save your favorites!
+          </p>
+          <Link
+            href="/search"
+            className="bg-deep-green hover:bg-primary text-on-primary px-6 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer mt-1"
+          >
             Explore PGs
           </Link>
         </div>

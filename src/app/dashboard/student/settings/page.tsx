@@ -8,10 +8,18 @@ export default function StudentSettings() {
   const { user, profile, refreshProfile } = usePersona();
   const supabase = createClient();
 
-  const [name, setName] = useState('Aarav Malhotra');
-  const [email, setEmail] = useState('aarav@student.in');
-  const [college, setCollege] = useState('IIT Delhi');
-  const [phone, setPhone] = useState('+91 98989 89898');
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  const [name, setName] = useState(() => (isDemo ? 'Aarav Malhotra' : ''));
+  const [email, setEmail] = useState(() => (isDemo ? 'aarav@student.in' : ''));
+  const [college, setCollege] = useState(() => (isDemo ? 'IIT Delhi' : ''));
+  const [phone, setPhone] = useState(() => (isDemo ? '+91 98989 89898' : ''));
   
   const [idFile, setIdFile] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -22,11 +30,15 @@ export default function StudentSettings() {
     if (profile) {
       if (profile.full_name) setName(profile.full_name);
       if (profile.email) setEmail(profile.email);
+      else if (user?.email) setEmail(user.email);
       if (profile.college_name) setCollege(profile.college_name);
       if (profile.phone) setPhone(profile.phone);
       if (profile.student_id_doc_url) setIdFile(profile.student_id_doc_url);
-    } else if (user?.email) {
-      setEmail(user.email);
+    } else if (user) {
+      if (user.user_metadata?.full_name) setName(user.user_metadata.full_name);
+      if (user.email) setEmail(user.email);
+      if (user.user_metadata?.college_name) setCollege(user.user_metadata.college_name);
+      if (user.user_metadata?.phone) setPhone(user.user_metadata.phone);
     }
   }, [profile, user]);
 

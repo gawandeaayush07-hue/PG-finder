@@ -4,9 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
+import { getInitials } from '@/lib/utils';
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
-  const { role, profile, isLoadingAuth } = usePersona();
+  const { role, profile, user, isLoadingAuth } = usePersona();
   const pathname = usePathname();
 
   const menuItems = [
@@ -50,9 +51,27 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     );
   }
 
-  const studentName = profile?.full_name || 'Aarav Malhotra';
-  const collegeName = profile?.college_name || 'IIT Delhi Student';
-  const avatarUrl = profile?.avatar_url || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&h=100&q=80';
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  const studentName =
+    profile?.full_name?.trim() ||
+    (user?.user_metadata?.full_name as string)?.trim() ||
+    (user?.email ? user.email.split('@')[0] : '') ||
+    (isDemo ? 'Aarav Malhotra' : 'Student');
+
+  const collegeName =
+    profile?.college_name?.trim() ||
+    (user?.user_metadata?.college_name as string)?.trim() ||
+    (isDemo ? 'IIT Delhi Student' : 'Student');
+
+  const avatarUrl = profile?.avatar_url || null;
+  const initials = getInitials(studentName, user?.email);
 
   return (
     <div className="w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl">
@@ -62,12 +81,18 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         <aside className="lg:col-span-3">
           <div className="bg-white rounded-card p-6 shadow-level-1 border border-outline-variant flex flex-col gap-6">
             <div className="flex items-center gap-3 border-b border-outline-variant pb-4">
-              <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-low">
-                <img
-                  src={avatarUrl}
-                  alt="Student Avatar"
-                  className="object-cover w-full h-full"
-                />
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-high shrink-0 flex items-center justify-center">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={studentName}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <span className="font-bold text-deep-green text-sm select-none">
+                    {initials}
+                  </span>
+                )}
               </div>
               <div>
                 <h3 className="font-bold text-primary text-sm">{studentName}</h3>
