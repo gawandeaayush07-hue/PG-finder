@@ -103,6 +103,7 @@ export default function AuthPage() {
           email,
           password,
           options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
             data: {
               full_name: name,
               role: targetRole,

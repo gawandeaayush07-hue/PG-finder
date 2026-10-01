@@ -12,15 +12,26 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
+  const pathname = request.nextUrl.pathname;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
   const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'placeholder-anon-key';
 
-  // If credentials are placeholder (development/local preview without env vars configured yet),
-  // allow the request through so static and client-side demo functionality continues without crashing.
-  if (
+  const isPlaceholderOrMissing =
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder')
-  ) {
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  // If credentials are placeholder or missing
+  if (isPlaceholderOrMissing) {
+    if (process.env.NODE_ENV === 'development') {
+      return supabaseResponse;
+    }
+
+    if (pathname.startsWith('/dashboard')) {
+      return NextResponse.redirect(new URL('/auth', request.url));
+    }
+
     return supabaseResponse;
   }
 
@@ -46,8 +57,6 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const pathname = request.nextUrl.pathname;
 
   // Protect /dashboard routes at the network boundary
   if (pathname.startsWith('/dashboard')) {
@@ -101,7 +110,14 @@ export async function updateSession(request: NextRequest) {
     const userRole = (profile?.role as UserRole) || 'STUDENT';
     const redirectTarget = request.nextUrl.searchParams.get('redirect');
 
-    if (redirectTarget) {
+    const isValidRedirect =
+      redirectTarget &&
+      redirectTarget.startsWith('/') &&
+      !redirectTarget.startsWith('//') &&
+      !redirectTarget.includes('://') &&
+      !redirectTarget.includes('\\');
+
+    if (isValidRedirect) {
       return NextResponse.redirect(new URL(redirectTarget, request.url));
     }
 
