@@ -26,8 +26,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
     setIsLoading(true);
 
     const isPlaceholderMode =
-      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+      process.env.NODE_ENV === 'development' &&
+      (!process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
 
     if (isPlaceholderMode) {
       setTimeout(() => {

@@ -33,8 +33,9 @@ export default function AuthPage() {
 
     // Check if Supabase credentials are configured or in placeholder mode
     const isPlaceholderMode =
-      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+      process.env.NODE_ENV === 'development' &&
+      (!process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
 
     if (isPlaceholderMode) {
       // In local preview/development before Supabase project credentials are provided in .env.local
