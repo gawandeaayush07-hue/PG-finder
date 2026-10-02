@@ -26,10 +26,12 @@ export interface Listing {
   image: string;
   images: string[];
   distanceText: string;
+  distanceKm?: number;
   type: 'Boys' | 'Girls' | 'Co-ed';
   premium: boolean;
   amenities: string[];
   rooms: { name: string; price: number; available: boolean }[];
+  ownerId?: string;
   owner: { name: string; phone: string; email: string; avatar: string };
   description: string;
   reviews: Review[];
