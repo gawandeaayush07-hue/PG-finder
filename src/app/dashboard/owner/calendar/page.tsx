@@ -4,9 +4,22 @@ import React, { useState } from 'react';
 import { usePersona } from '@/context/PersonaContext';
 
 export default function OwnerCalendar() {
-  const { bookings } = usePersona();
+  const { bookings, user } = usePersona();
   const [successMsg, setSuccessMsg] = useState('');
   
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  // Real user: filter out mock seed bookings
+  const ownerBookings = isDemo
+    ? bookings
+    : bookings.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2');
+
   // Slot states
   const [morningOpen, setMorningOpen] = useState(true);
   const [afternoonOpen, setAfternoonOpen] = useState(true);
@@ -26,7 +39,7 @@ export default function OwnerCalendar() {
   // Helper to find bookings for a specific day in August 2026
   const getBookingsForDay = (day: number) => {
     const dateString = `2026-08-${day < 10 ? '0' + day : day}`;
-    return bookings.filter((b) => b.date === dateString && (b.status === 'Confirmed' || b.status === 'Pending'));
+    return ownerBookings.filter((b) => b.date === dateString && (b.status === 'Confirmed' || b.status === 'Pending'));
   };
 
   return (
@@ -87,6 +100,13 @@ export default function OwnerCalendar() {
             );
           })}
         </div>
+
+        {ownerBookings.length === 0 && (
+          <div className="py-3 px-4 rounded-xl bg-surface-container-low/50 border border-outline-variant flex items-center gap-3 text-xs text-on-surface-variant">
+            <span className="material-symbols-outlined text-[18px] text-on-surface-variant">event_busy</span>
+            <span>No scheduled tours yet for this month. Scheduled student visit requests will appear on their respective dates.</span>
+          </div>
+        )}
       </section>
 
       {/* Slots Sidebar (Right, span 4) */}

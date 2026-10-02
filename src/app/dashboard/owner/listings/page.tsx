@@ -4,7 +4,20 @@ import React, { useState } from 'react';
 import { usePersona, Listing } from '@/context/PersonaContext';
 
 export default function OwnerListings() {
-  const { listings, setListings } = usePersona();
+  const { listings, setListings, user, profile } = usePersona();
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  // Real user: filter out mock seed listings
+  const ownerListings = isDemo
+    ? listings
+    : listings.filter((l) => l.id !== 'listing-1' && l.id !== 'listing-2' && l.id !== 'listing-3');
 
   // Form toggle
   const [showAddForm, setShowAddForm] = useState(false);
@@ -59,10 +72,14 @@ export default function OwnerListings() {
         { name: 'Double Sharing', price: parseInt(price), available: true }
       ],
       owner: {
-        name: 'Mrs. Sunita Gupta',
-        phone: '+91 99999 88888',
-        email: 'sunita@pgfinder.com',
-        avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80'
+        name:
+          profile?.full_name?.trim() ||
+          (user?.user_metadata?.full_name as string)?.trim() ||
+          (user?.email ? user.email.split('@')[0] : '') ||
+          (isDemo ? 'Mrs. Sunita Gupta' : 'Property Owner'),
+        phone: profile?.phone || (user?.user_metadata?.phone as string) || (isDemo ? '+91 99999 88888' : ''),
+        email: user?.email || profile?.email || (isDemo ? 'sunita@pgfinder.com' : ''),
+        avatar: profile?.avatar_url || (isDemo ? 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80' : '')
       },
       description,
       reviews: []
@@ -225,40 +242,58 @@ export default function OwnerListings() {
       <div className="bg-white rounded-card p-6 shadow-level-1 border border-outline-variant flex flex-col gap-4">
         <h2 className="text-sm font-bold text-[#333333] border-b border-outline-variant pb-3">My Properties</h2>
 
-        <div className="flex flex-col gap-4">
-          {listings.map((listing) => (
-            <div 
-              key={listing.id}
-              className="border border-outline-variant rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-16 rounded-lg overflow-hidden border border-outline-variant shrink-0 bg-surface-container-low">
-                  <img 
-                    src={listing.image} 
-                    alt={listing.title} 
-                    className="w-full h-full object-cover"
-                  />
+        {ownerListings.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {ownerListings.map((listing) => (
+              <div 
+                key={listing.id}
+                className="border border-outline-variant rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden border border-outline-variant shrink-0 bg-surface-container-low">
+                    <img 
+                      src={listing.image} 
+                      alt={listing.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-primary text-sm flex items-center gap-2">
+                      {listing.title}
+                      {listing.verified ? (
+                        <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-bold">Verified</span>
+                      ) : (
+                        <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded font-bold">Pending Review</span>
+                      )}
+                    </h3>
+                    <p className="text-xs text-on-surface-variant mt-0.5">{listing.location}</p>
+                    <p className="text-xs text-on-surface-variant font-semibold mt-1">₹{listing.price.toLocaleString()}/mo</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-primary text-sm flex items-center gap-2">
-                    {listing.title}
-                    {listing.verified ? (
-                      <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-bold">Verified</span>
-                    ) : (
-                      <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded font-bold">Pending Review</span>
-                    )}
-                  </h3>
-                  <p className="text-xs text-on-surface-variant mt-0.5">{listing.location}</p>
-                  <p className="text-xs text-on-surface-variant font-semibold mt-1">₹{listing.price.toLocaleString()}/mo</p>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-on-surface-variant font-medium">Rating: {listing.rating} ★</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-on-surface-variant font-medium">Rating: {listing.rating} ★</span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 flex flex-col items-center gap-3">
+            <span className="material-symbols-outlined text-5xl text-outline-variant">holiday_village</span>
+            <p className="text-sm font-medium text-on-surface-variant">You haven&apos;t listed any properties yet</p>
+            <p className="text-xs text-on-surface-variant max-w-sm">
+              Add your PG accommodation to start receiving visit requests from students.
+            </p>
+            {!showAddForm && (
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="bg-deep-green hover:bg-primary text-on-primary px-6 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer mt-1"
+              >
+                Add Property
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
     </div>

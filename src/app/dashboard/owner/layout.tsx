@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
+import { getInitials } from '@/lib/utils';
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   const { role, profile, user, isLoadingAuth } = usePersona();
@@ -78,9 +79,15 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  const ownerName = profile?.full_name || 'Mrs. Sunita Gupta';
+  const ownerName =
+    profile?.full_name?.trim() ||
+    (user?.user_metadata?.full_name as string)?.trim() ||
+    (user?.email ? user.email.split('@')[0] : '') ||
+    (isDemo ? 'Mrs. Sunita Gupta' : 'Property Owner');
+
   const ownerSubtitle = profile?.is_verified ? 'Verified Property Owner' : 'Property Owner';
-  const avatarUrl = profile?.avatar_url || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80';
+  const avatarUrl = profile?.avatar_url || (isDemo ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80' : null);
+  const initials = getInitials(ownerName, user?.email);
 
   return (
     <div className="w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl">
@@ -90,12 +97,18 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
         <aside className="lg:col-span-3">
           <div className="bg-white rounded-card p-6 shadow-level-1 border border-outline-variant flex flex-col gap-6">
             <div className="flex items-center gap-3 border-b border-outline-variant pb-4">
-              <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-low">
-                <img
-                  src={avatarUrl}
-                  alt="Owner Avatar"
-                  className="object-cover w-full h-full"
-                />
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-high shrink-0 flex items-center justify-center">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={ownerName}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <span className="font-bold text-deep-green text-sm select-none">
+                    {initials}
+                  </span>
+                )}
               </div>
               <div>
                 <h3 className="font-bold text-primary text-sm">{ownerName}</h3>

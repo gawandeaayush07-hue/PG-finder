@@ -4,7 +4,20 @@ import React from 'react';
 import { usePersona } from '@/context/PersonaContext';
 
 export default function OwnerMeetings() {
-  const { bookings, updateBookingStatus } = usePersona();
+  const { bookings, updateBookingStatus, user } = usePersona();
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  // Real user: filter out mock seed bookings
+  const ownerBookings = isDemo
+    ? bookings
+    : bookings.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2');
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -25,8 +38,8 @@ export default function OwnerMeetings() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {bookings.length > 0 ? (
-          bookings.map((booking) => (
+        {ownerBookings.length > 0 ? (
+          ownerBookings.map((booking) => (
             <div 
               key={booking.id}
               className="border border-outline-variant rounded-xl p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:bg-surface-container-low/20 transition-colors"
