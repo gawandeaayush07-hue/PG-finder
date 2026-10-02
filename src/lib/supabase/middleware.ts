@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import type { Database, UserRole } from '@/types/database';
+import { isSafeRedirect } from '@/lib/safe-redirect';
 
 /**
  * Updates the user's session by inspecting incoming cookies,
@@ -110,14 +111,7 @@ export async function updateSession(request: NextRequest) {
     const userRole = (profile?.role as UserRole) || 'STUDENT';
     const redirectTarget = request.nextUrl.searchParams.get('redirect');
 
-    const isValidRedirect =
-      redirectTarget &&
-      redirectTarget.startsWith('/') &&
-      !redirectTarget.startsWith('//') &&
-      !redirectTarget.includes('://') &&
-      !redirectTarget.includes('\\');
-
-    if (isValidRedirect) {
+    if (redirectTarget && isSafeRedirect(redirectTarget)) {
       return NextResponse.redirect(new URL(redirectTarget, request.url));
     }
 

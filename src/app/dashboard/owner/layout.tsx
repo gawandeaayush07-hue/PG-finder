@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
-  const { role, profile, isLoadingAuth } = usePersona();
+  const { role, profile, user, isLoadingAuth } = usePersona();
   const pathname = usePathname();
+  const router = useRouter();
 
   const menuItems = [
     { name: 'Analytics Dashboard', path: '/dashboard/owner', icon: 'analytics' },
@@ -17,6 +18,23 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   ];
 
   const isActive = (path: string) => pathname === path;
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  // For real signed-in users with a role mismatch, redirect to their own dashboard
+  const isRealUserMismatch = !isLoadingAuth && !isDemo && user && role !== 'OWNER' && role !== 'ADMIN';
+  useEffect(() => {
+    if (isRealUserMismatch) {
+      const target = role === 'STUDENT' ? '/dashboard/student' : '/dashboard/student';
+      router.replace(target);
+    }
+  }, [isRealUserMismatch, role, router]);
 
   // Prevent flicker during initial session load
   if (isLoadingAuth) {
@@ -30,6 +48,16 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
 
   // Role guard: check if user is in owner mode or admin mode
   if (role !== 'OWNER' && role !== 'ADMIN') {
+    // Real user: redirect handled by useEffect; show spinner while navigating
+    if (user) {
+      return (
+        <div className="w-full max-w-max-width mx-auto px-margin-mobile py-28 text-center flex flex-col items-center justify-center gap-3">
+          <span className="w-8 h-8 border-3 border-deep-green border-t-transparent rounded-full animate-spin"></span>
+          <span className="text-xs text-on-surface-variant font-medium">Redirecting to your dashboard...</span>
+        </div>
+      );
+    }
+    // Demo / unauthenticated: show informational UI with login link
     return (
       <div className="w-full max-w-max-width mx-auto px-margin-mobile py-20 text-center">
         <div className="bg-white rounded-card p-8 border border-outline-variant shadow-level-1 max-w-[500px] mx-auto flex flex-col items-center gap-4">

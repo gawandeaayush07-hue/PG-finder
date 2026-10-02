@@ -1,14 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
 import { getInitials } from '@/lib/utils';
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
   const { role, profile, user, isLoadingAuth } = usePersona();
   const pathname = usePathname();
+  const router = useRouter();
 
   const menuItems = [
     { name: 'My Dashboard', path: '/dashboard/student', icon: 'dashboard' },
@@ -18,6 +19,23 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   ];
 
   const isActive = (path: string) => pathname === path;
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  // For real signed-in users with a role mismatch, redirect to their own dashboard
+  const isRealUserMismatch = !isLoadingAuth && !isDemo && user && role !== 'STUDENT' && role !== 'ADMIN';
+  useEffect(() => {
+    if (isRealUserMismatch) {
+      const target = role === 'OWNER' ? '/dashboard/owner' : '/dashboard/student';
+      router.replace(target);
+    }
+  }, [isRealUserMismatch, role, router]);
 
   // Prevent flicker during initial session load
   if (isLoadingAuth) {
@@ -31,6 +49,16 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
   // Role guard: check if user is in student mode or admin mode (which can access everything)
   if (role !== 'STUDENT' && role !== 'ADMIN') {
+    // Real user: redirect is handled by useEffect above; show spinner while navigating
+    if (user) {
+      return (
+        <div className="w-full max-w-max-width mx-auto px-margin-mobile py-28 text-center flex flex-col items-center justify-center gap-3">
+          <span className="w-8 h-8 border-3 border-deep-green border-t-transparent rounded-full animate-spin"></span>
+          <span className="text-xs text-on-surface-variant font-medium">Redirecting to your dashboard...</span>
+        </div>
+      );
+    }
+    // Demo / unauthenticated: show informational UI with login link
     return (
       <div className="w-full max-w-max-width mx-auto px-margin-mobile py-20 text-center">
         <div className="bg-white rounded-card p-8 border border-outline-variant shadow-level-1 max-w-[500px] mx-auto flex flex-col items-center gap-4">
@@ -51,13 +79,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     );
   }
 
-  const isPlaceholderMode =
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
-    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
 
-  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
 
   const studentName =
     profile?.full_name?.trim() ||

@@ -360,9 +360,8 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
               setRoleState(p.role as UserRole);
               setIsAdminAuthorized(p.role === 'ADMIN');
             } else {
-              // Fallback role from user metadata if database profile is propagating
-              const metaRole = (currentUser.user_metadata?.role as UserRole) || 'STUDENT';
-              setRoleState(metaRole === 'ADMIN' ? 'STUDENT' : metaRole);
+              setProfile(null);
+              setRoleState('GUEST');
               setIsAdminAuthorized(false);
             }
           }
@@ -426,8 +425,9 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setRoleState(p.role as UserRole);
             setIsAdminAuthorized(p.role === 'ADMIN');
           } else {
-            const metaRole = (session.user.user_metadata?.role as UserRole) || 'STUDENT';
-            setRoleState(metaRole === 'ADMIN' ? 'STUDENT' : metaRole);
+            setProfile(null);
+            setRoleState('GUEST');
+            setIsAdminAuthorized(false);
           }
           setIsLoadingAuth(false);
         }
@@ -442,12 +442,32 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Backward compatible setRole handler
   const handleSetRole = (newRole: UserRole) => {
-    // If not authenticated or in preview mode, allow client persona switching for demo
+    // If a real Supabase session exists, setRole is a no-op
+    if (user) {
+      return;
+    }
+    // Only allow changing persona in dev-only demo mode
+    if (!isDevDemo) {
+      return;
+    }
     setRoleState(newRole);
     if (newRole === 'ADMIN') {
       setIsAdminAuthorized(true);
+    } else {
+      setIsAdminAuthorized(false);
     }
     setAuthPendingRole(null);
+  };
+
+  const handleSetIsAdminAuthorized = (authorized: boolean) => {
+    if (user) {
+      // For a real signed-in user, isAdminAuthorized must never become true unless profile.role === 'ADMIN'
+      setIsAdminAuthorized(profile?.role === 'ADMIN');
+      return;
+    }
+    if (isDevDemo) {
+      setIsAdminAuthorized(authorized);
+    }
   };
 
   // Authoritative Supabase Sign Out
@@ -473,6 +493,9 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const requestRoleChange = (newRole: UserRole) => {
+    if (user || !isDevDemo) {
+      return;
+    }
     if (newRole === 'GUEST') {
       handleSetRole(newRole);
     } else {
@@ -538,10 +561,10 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         user,
         profile,
-        role,
+        role: user ? ((profile?.role as UserRole) || 'GUEST') : role,
         setRole: handleSetRole,
-        isAdminAuthorized,
-        setIsAdminAuthorized,
+        isAdminAuthorized: user ? profile?.role === 'ADMIN' : (isDevDemo ? isAdminAuthorized : false),
+        setIsAdminAuthorized: handleSetIsAdminAuthorized,
         isLoadingAuth,
         logout,
         refreshProfile,

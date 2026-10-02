@@ -200,37 +200,48 @@ export const Navbar: React.FC = () => {
         {/* Right Side: Role Selector (Persona Switcher) & Profile / Actions */}
         <div className="flex items-center gap-md relative">
           
-          {/* Persona Switcher Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#B8D9B0] bg-white hover:bg-surface-container-low transition-colors shadow-sm cursor-pointer"
-            >
-              <span className={`w-2.5 h-2.5 rounded-full ${role === 'GUEST' ? 'bg-zinc-400' : role === 'STUDENT' ? 'bg-emerald-500' : role === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
-              <span className="text-xs font-semibold text-deep-green hidden sm:inline">Role: {role}</span>
-              <span className="material-symbols-outlined text-[16px] text-deep-green" style={{ fontVariationSettings: "'FILL' 0" }}>expand_more</span>
-            </button>
+          {/* Persona Switcher Dropdown — shown only in dev-only demo mode, hidden for real signed-in users */}
+          {(() => {
+            const isPlaceholderMode =
+              !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+              process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+              !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+              process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+            const showSwitcher = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+            if (!showSwitcher) return null;
+            return (
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#B8D9B0] bg-white hover:bg-surface-container-low transition-colors shadow-sm cursor-pointer"
+                >
+                  <span className={`w-2.5 h-2.5 rounded-full ${role === 'GUEST' ? 'bg-zinc-400' : role === 'STUDENT' ? 'bg-emerald-500' : role === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
+                  <span className="text-xs font-semibold text-deep-green hidden sm:inline">Role: {role}</span>
+                  <span className="material-symbols-outlined text-[16px] text-deep-green" style={{ fontVariationSettings: "'FILL' 0" }}>expand_more</span>
+                </button>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-outline-variant rounded-xl shadow-level-2 overflow-hidden py-1 z-50">
-                <div className="px-3 py-1.5 text-xs text-outline-variant font-bold border-b border-outline-variant">
-                  SWITCH PERSONA
-                </div>
-                {availableRoles.map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => handleRoleChange(r)}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-container-low transition-colors flex items-center gap-2 cursor-pointer ${
-                      role === r ? 'font-semibold text-primary bg-light-sage/25' : 'text-on-surface'
-                    }`}
-                  >
-                    <span className={`w-2 h-2 rounded-full ${r === 'GUEST' ? 'bg-zinc-400' : r === 'STUDENT' ? 'bg-emerald-500' : r === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
-                    {r.charAt(0) + r.slice(1).toLowerCase()}
-                  </button>
-                ))}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-outline-variant rounded-xl shadow-level-2 overflow-hidden py-1 z-50">
+                    <div className="px-3 py-1.5 text-xs text-outline-variant font-bold border-b border-outline-variant">
+                      SWITCH PERSONA
+                    </div>
+                    {availableRoles.map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => handleRoleChange(r)}
+                        className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-container-low transition-colors flex items-center gap-2 cursor-pointer ${
+                          role === r ? 'font-semibold text-primary bg-light-sage/25' : 'text-on-surface'
+                        }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${r === 'GUEST' ? 'bg-zinc-400' : r === 'STUDENT' ? 'bg-emerald-500' : r === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
+                        {r.charAt(0) + r.slice(1).toLowerCase()}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            );
+          })()}
 
           {/* Action buttons based on status */}
           {role === 'GUEST' ? (
