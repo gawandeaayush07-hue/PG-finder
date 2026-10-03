@@ -378,6 +378,8 @@ export interface Database {
           time_slot: string;
           status: BookingStatus;
           notes: string | null;
+          student_name: string;
+          student_email: string | null;
           student_phone: string | null;
           cancellation_reason: string | null;
           created_at: string;
@@ -392,6 +394,8 @@ export interface Database {
           time_slot: string;
           status?: BookingStatus;
           notes?: string | null;
+          student_name?: string;
+          student_email?: string | null;
           student_phone?: string | null;
           cancellation_reason?: string | null;
           created_at?: string;
@@ -406,6 +410,8 @@ export interface Database {
           time_slot?: string;
           status?: BookingStatus;
           notes?: string | null;
+          student_name?: string;
+          student_email?: string | null;
           student_phone?: string | null;
           cancellation_reason?: string | null;
           created_at?: string;

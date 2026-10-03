@@ -45,7 +45,7 @@ export interface Booking {
   listingImage: string;
   date: string;
   timeSlot: string;
-  status: 'Pending' | 'Confirmed' | 'Declined' | 'Rescheduled';
+  status: 'Pending' | 'Confirmed' | 'Declined' | 'Rescheduled' | 'Completed' | 'Cancelled';
   ownerName: string;
   studentName: string;
   studentEmail: string;
@@ -92,8 +92,8 @@ interface PersonaContextType {
   shortlist: string[];
   toggleShortlist: (id: string) => void;
   bookings: Booking[];
-  addBooking: (booking: Omit<Booking, 'id' | 'status'>) => void;
-  updateBookingStatus: (id: string, status: Booking['status']) => void;
+  addBooking: (booking: Omit<Booking, 'id' | 'status'>) => Promise<{ error?: string; success?: boolean } | void> | void;
+  updateBookingStatus: (id: string, status: Booking['status']) => Promise<void> | void;
   verificationPipeline: VerificationItem[];
   updateVerificationStatus: (id: string, status: VerificationItem['status']) => void;
   reports: ReportItem[];
@@ -358,6 +358,72 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [supabase]);
 
+  // Fetch real student bookings from Supabase public.bookings_visits
+  const fetchStudentBookings = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('bookings_visits')
+        .select(`
+          id,
+          property_id,
+          visit_date,
+          time_slot,
+          status,
+          student_name,
+          student_email,
+          student_phone,
+          properties (
+            title,
+            property_images (
+              image_url,
+              is_primary,
+              display_order
+            )
+          )
+        `)
+        .eq('student_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading bookings from Supabase:', error.message);
+        return;
+      }
+
+      if (data) {
+        const mappedBookings: Booking[] = data.map((row: any) => {
+          let primaryImg = '';
+          const images = row.properties?.property_images;
+          if (Array.isArray(images) && images.length > 0) {
+            const primary = images.find((img: any) => img.is_primary);
+            if (primary?.image_url) {
+              primaryImg = primary.image_url;
+            } else {
+              const sorted = [...images].sort((a: any, b: any) => (a.display_order ?? 0) - (b.display_order ?? 0));
+              primaryImg = sorted[0]?.image_url || '';
+            }
+          }
+
+          return {
+            id: row.id,
+            listingId: row.property_id,
+            listingTitle: row.properties?.title || '',
+            listingImage: primaryImg,
+            date: row.visit_date,
+            timeSlot: row.time_slot,
+            status: row.status as Booking['status'],
+            ownerName: '',
+            studentName: row.student_name || '',
+            studentEmail: row.student_email || '',
+            studentPhone: row.student_phone || '',
+          };
+        });
+        setBookings(mappedBookings);
+      }
+    } catch (err) {
+      console.error('Exception loading student bookings:', err);
+    }
+  }, [supabase]);
+
   // Initial Auth Lifecycle & Realtime Session Listener via Supabase Auth
   useEffect(() => {
     let isMounted = true;
@@ -385,6 +451,9 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
               setProfile(p);
               setRoleState(p.role as UserRole);
               setIsAdminAuthorized(p.role === 'ADMIN');
+              if (!isDevDemo && p.role === 'STUDENT') {
+                await fetchStudentBookings(currentUser.id);
+              }
             } else {
               setProfile(null);
               setRoleState('GUEST');
@@ -397,10 +466,8 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setProfile(null);
           setRoleState('GUEST');
           setIsAdminAuthorized(false);
-          if (!isDevDemo) {
-            setBookings([]);
-            setShortlist([]);
-          }
+          setBookings([]);
+          setShortlist([]);
         }
       } catch (err) {
         console.error('Auth initialization error:', err);
@@ -435,10 +502,8 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setRoleState('GUEST');
         setIsAdminAuthorized(false);
         setIsLoadingAuth(false);
-        if (!isDevDemo) {
-          setBookings([]);
-          setShortlist([]);
-        }
+        setBookings([]);
+        setShortlist([]);
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
         setUser(session.user);
         // Real authenticated user: do not keep mock bookings or mock shortlist
@@ -452,6 +517,9 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProfile(p);
             setRoleState(p.role as UserRole);
             setIsAdminAuthorized(p.role === 'ADMIN');
+            if (!isDevDemo && p.role === 'STUDENT') {
+              await fetchStudentBookings(session.user.id);
+            }
           } else {
             setProfile(null);
             setRoleState('GUEST');
@@ -466,7 +534,7 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase, fetchProfile, fetchShortlist, isDevDemo]);
+  }, [supabase, fetchProfile, fetchShortlist, fetchStudentBookings, isDevDemo]);
 
   // Backward compatible setRole handler
   const handleSetRole = (newRole: UserRole) => {
@@ -610,17 +678,140 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  const addBooking = (newBooking: Omit<Booking, 'id' | 'status'>) => {
-    const id = `booking-${Date.now()}`;
-    const booking: Booking = {
-      ...newBooking,
-      id,
-      status: 'Pending',
-    };
-    setBookings((prev) => [booking, ...prev]);
+  const addBooking = async (newBooking: Omit<Booking, 'id' | 'status'>): Promise<{ error?: string; success?: boolean } | void> => {
+    if (isDevDemo) {
+      const id = `booking-${Date.now()}`;
+      const booking: Booking = {
+        ...newBooking,
+        id,
+        status: 'Pending',
+      };
+      setBookings((prev) => [booking, ...prev]);
+      return { success: true };
+    }
+
+    if (!user) {
+      return { error: 'Please sign in to schedule a visit.' };
+    }
+
+    const currentRole = profile?.role || role;
+    if (currentRole === 'OWNER' || currentRole === 'ADMIN') {
+      // Owners and admins: addBooking does nothing
+      return;
+    }
+
+    try {
+      const phoneToInsert = newBooking.studentPhone?.trim() || profile?.phone?.trim() || null;
+      const { data, error } = await supabase
+        .from('bookings_visits')
+        .insert({
+          student_id: user.id,
+          property_id: newBooking.listingId,
+          visit_date: newBooking.date,
+          time_slot: newBooking.timeSlot,
+          student_phone: phoneToInsert,
+        } as any)
+        .select(`
+          id,
+          property_id,
+          visit_date,
+          time_slot,
+          status,
+          student_name,
+          student_email,
+          student_phone,
+          properties (
+            title,
+            property_images (
+              image_url,
+              is_primary,
+              display_order
+            )
+          )
+        `)
+        .single();
+
+      if (error) {
+        console.error('Failed to create booking in Supabase:', error);
+        if (error.code === '23505' || error.message?.includes('duplicate') || error.message?.includes('uq_booking_active_slot')) {
+          return { error: 'You already requested this slot' };
+        }
+        return { error: error.message || 'Failed to schedule visit. Please try again.' };
+      }
+
+      if (data) {
+        let primaryImg = '';
+        const images = (data.properties as any)?.property_images;
+        if (Array.isArray(images) && images.length > 0) {
+          const primary = images.find((img: any) => img.is_primary);
+          if (primary?.image_url) {
+            primaryImg = primary.image_url;
+          } else {
+            const sorted = [...images].sort((a: any, b: any) => (a.display_order ?? 0) - (b.display_order ?? 0));
+            primaryImg = sorted[0]?.image_url || '';
+          }
+        }
+
+        const createdBooking: Booking = {
+          id: data.id,
+          listingId: data.property_id,
+          listingTitle: (data.properties as any)?.title || newBooking.listingTitle || '',
+          listingImage: primaryImg || newBooking.listingImage || '',
+          date: data.visit_date,
+          timeSlot: data.time_slot,
+          status: data.status as Booking['status'],
+          ownerName: '',
+          studentName: data.student_name || '',
+          studentEmail: data.student_email || '',
+          studentPhone: data.student_phone || '',
+        };
+        setBookings((prev) => [createdBooking, ...prev]);
+        return { success: true };
+      }
+    } catch (err: any) {
+      console.error('Exception creating booking:', err);
+      return { error: err?.message || 'An unexpected error occurred.' };
+    }
   };
 
-  const updateBookingStatus = (id: string, status: Booking['status']) => {
+  const updateBookingStatus = async (id: string, status: Booking['status']) => {
+    if (!isDevDemo && user && (profile?.role === 'STUDENT' || role === 'STUDENT')) {
+      if (status !== 'Cancelled') {
+        console.warn('Students may only cancel bookings.');
+        return;
+      }
+
+      const target = bookings.find((b) => b.id === id);
+      if (!target) return;
+      const oldStatus = target.status;
+
+      // Optimistic update
+      setBookings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, status: 'Cancelled' } : b))
+      );
+
+      try {
+        const { error } = await supabase
+          .from('bookings_visits')
+          .update({ status: 'Cancelled' })
+          .eq('id', id);
+
+        if (error) {
+          console.error('Failed to cancel booking in Supabase:', error);
+          // Revert optimistic update
+          setBookings((prev) =>
+            prev.map((b) => (b.id === id ? { ...b, status: oldStatus } : b))
+          );
+        }
+      } catch (err) {
+        console.error('Exception cancelling booking:', err);
+        setBookings((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, status: oldStatus } : b))
+        );
+      }
+      return;
+    }
+
     setBookings((prev) =>
       prev.map((b) => (b.id === id ? { ...b, status } : b))
     );

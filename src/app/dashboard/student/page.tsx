@@ -25,8 +25,9 @@ export default function StudentDashboard() {
     : shortlist.filter((id) => id !== 'listing-2' || !isPlaceholderMode);
 
   // Stats: Real zeros for real authenticated user
+  const todayStr = new Date().toISOString().split('T')[0];
   const upcomingToursCount = displayBookings.filter(
-    (b) => b.status === 'Confirmed' || b.status === 'Pending'
+    (b) => (b.status === 'Confirmed' || b.status === 'Pending') && b.date >= todayStr
   ).length;
   const shortlistedCount = displayShortlist.length;
   const reviewsCount = isDemo
@@ -60,6 +61,7 @@ export default function StudentDashboard() {
       case 'Confirmed': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
       case 'Declined': return 'bg-rose-50 text-rose-700 border-rose-200';
       case 'Rescheduled': return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'Cancelled': return 'bg-zinc-100 text-zinc-500 border-zinc-200';
       default: return 'bg-zinc-50 text-zinc-600 border-zinc-200'; // Pending
     }
   };
@@ -135,9 +137,9 @@ export default function StudentDashboard() {
                     {booking.status}
                   </span>
                   
-                  {booking.status === 'Pending' && (
+                  {(booking.status === 'Pending' || booking.status === 'Confirmed') && (
                     <button
-                      onClick={() => updateBookingStatus(booking.id, 'Declined')}
+                      onClick={() => updateBookingStatus(booking.id, 'Cancelled')}
                       className="text-xs text-rose-600 hover:underline font-semibold cursor-pointer"
                     >
                       Cancel Visit

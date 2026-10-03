@@ -22,8 +22,17 @@ export default function ListingClient({ listing }: ListingClientProps) {
 
   const isNew = listing.rating === 0 || listing.reviewsCount === 0;
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const isOwnerOrAdmin = role === 'OWNER' || role === 'ADMIN';
+
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (role === 'GUEST') {
+      router.push('/auth');
+      return;
+    }
+    if (isOwnerOrAdmin) {
+      return;
+    }
     if (!bookingDate) {
       setErrorMessage('Please select a date for your visit.');
       return;
@@ -31,18 +40,22 @@ export default function ListingClient({ listing }: ListingClientProps) {
     
     setErrorMessage('');
     
-    // Add the booking
-    addBooking({
+    const result = await addBooking({
       listingId: listing.id,
       listingTitle: listing.title,
       listingImage: listing.image,
       date: bookingDate,
       timeSlot: bookingTime,
       ownerName: listing.owner.name,
-      studentName: 'Aarav Malhotra', // Mock student name
-      studentEmail: 'aarav@student.in',
-      studentPhone: '+91 98989 89898',
+      studentName: '',
+      studentEmail: '',
+      studentPhone: '',
     });
+
+    if (result && typeof result === 'object' && 'error' in result && result.error) {
+      setErrorMessage(result.error);
+      return;
+    }
 
     setBookingSuccess(true);
   };
@@ -391,24 +404,34 @@ export default function ListingClient({ listing }: ListingClientProps) {
                     onChange={(e) => setBookingTime(e.target.value)}
                     className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm font-body-md bg-white appearance-none cursor-pointer"
                   >
-                    <option>Morning (10 AM - 12 PM)</option>
-                    <option>Afternoon (1 PM - 4 PM)</option>
-                    <option>Evening (5 PM - 7 PM)</option>
+                    <option value="Morning (10 AM - 12 PM)">Morning (10 AM - 12 PM)</option>
+                    <option value="Afternoon (1 PM - 4 PM)">Afternoon (1 PM - 4 PM)</option>
+                    <option value="Evening (5 PM - 7 PM)">Evening (5 PM - 7 PM)</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
                 </div>
               </div>
 
+              <p className="text-[11px] text-on-surface-variant text-center">
+                Your name, email and phone will be shared with the property owner.
+              </p>
+
               <button
                 type="submit"
-                disabled={bookingSuccess}
-                className={`w-full text-center py-3 rounded-lg font-label-md text-sm font-bold text-on-primary transition-all shadow-sm mt-2 cursor-pointer ${
-                  bookingSuccess 
-                    ? 'bg-zinc-400 cursor-not-allowed' 
-                    : 'bg-deep-green hover:bg-primary hover:scale-[0.98]'
+                disabled={bookingSuccess || isOwnerOrAdmin}
+                className={`w-full text-center py-3 rounded-lg font-label-md text-sm font-bold transition-all shadow-sm mt-2 ${
+                  bookingSuccess || isOwnerOrAdmin
+                    ? 'bg-zinc-300 text-zinc-500 cursor-not-allowed'
+                    : 'bg-deep-green hover:bg-primary hover:scale-[0.98] text-on-primary cursor-pointer'
                 }`}
               >
-                Confirm Visit Request
+                {isOwnerOrAdmin
+                  ? 'Only students can request visits'
+                  : bookingSuccess
+                  ? 'Visit Requested'
+                  : role === 'GUEST'
+                  ? 'Sign In to Request Visit'
+                  : 'Confirm Visit Request'}
               </button>
             </form>
             
