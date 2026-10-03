@@ -25,7 +25,9 @@ export default function OwnerAnalytics() {
     : bookings.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2');
 
   const activeListingsCount = ownerListings.length;
-  const pendingVisits = ownerBookings.filter((b) => b.status === 'Pending').length;
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const pendingVisits = ownerBookings.filter((b) => b.status === 'Pending' && b.date >= today).length;
 
   const monthlyRevenue = isDemo
     ? '₹56,500'

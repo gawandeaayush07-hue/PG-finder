@@ -358,10 +358,39 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [supabase]);
 
-  // Fetch real student bookings from Supabase public.bookings_visits
-  const fetchStudentBookings = useCallback(async (userId: string) => {
+// Reusable booking row mapper
+function mapBookingRow(row: any, ownerNameFallback = ''): Booking {
+  let primaryImg = '';
+  const images = row.properties?.property_images;
+  if (Array.isArray(images) && images.length > 0) {
+    const primary = images.find((img: any) => img.is_primary);
+    if (primary?.image_url) {
+      primaryImg = primary.image_url;
+    } else {
+      const sorted = [...images].sort((a: any, b: any) => (a.display_order ?? 0) - (b.display_order ?? 0));
+      primaryImg = sorted[0]?.image_url || '';
+    }
+  }
+
+  return {
+    id: row.id,
+    listingId: row.property_id,
+    listingTitle: row.properties?.title || '',
+    listingImage: primaryImg,
+    date: row.visit_date,
+    timeSlot: row.time_slot,
+    status: row.status as Booking['status'],
+    ownerName: ownerNameFallback,
+    studentName: row.student_name || '',
+    studentEmail: row.student_email || '',
+    studentPhone: row.student_phone || '',
+  };
+}
+
+  // Fetch real student or owner bookings from Supabase public.bookings_visits
+  const fetchUserBookings = useCallback(async (userId: string, userRole: UserRole, ownerFullName = '') => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('bookings_visits')
         .select(`
           id,
@@ -380,9 +409,17 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
               display_order
             )
           )
-        `)
-        .eq('student_id', userId)
-        .order('created_at', { ascending: false });
+        `);
+
+      if (userRole === 'STUDENT') {
+        query = query.eq('student_id', userId);
+      } else if (userRole === 'OWNER') {
+        query = query.eq('owner_id', userId);
+      } else {
+        return;
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error loading bookings from Supabase:', error.message);
@@ -390,37 +427,13 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
 
       if (data) {
-        const mappedBookings: Booking[] = data.map((row: any) => {
-          let primaryImg = '';
-          const images = row.properties?.property_images;
-          if (Array.isArray(images) && images.length > 0) {
-            const primary = images.find((img: any) => img.is_primary);
-            if (primary?.image_url) {
-              primaryImg = primary.image_url;
-            } else {
-              const sorted = [...images].sort((a: any, b: any) => (a.display_order ?? 0) - (b.display_order ?? 0));
-              primaryImg = sorted[0]?.image_url || '';
-            }
-          }
-
-          return {
-            id: row.id,
-            listingId: row.property_id,
-            listingTitle: row.properties?.title || '',
-            listingImage: primaryImg,
-            date: row.visit_date,
-            timeSlot: row.time_slot,
-            status: row.status as Booking['status'],
-            ownerName: '',
-            studentName: row.student_name || '',
-            studentEmail: row.student_email || '',
-            studentPhone: row.student_phone || '',
-          };
-        });
+        const mappedBookings: Booking[] = data.map((row: any) =>
+          mapBookingRow(row, userRole === 'OWNER' ? ownerFullName : '')
+        );
         setBookings(mappedBookings);
       }
     } catch (err) {
-      console.error('Exception loading student bookings:', err);
+      console.error('Exception loading bookings:', err);
     }
   }, [supabase]);
 
@@ -451,8 +464,10 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
               setProfile(p);
               setRoleState(p.role as UserRole);
               setIsAdminAuthorized(p.role === 'ADMIN');
-              if (!isDevDemo && p.role === 'STUDENT') {
-                await fetchStudentBookings(currentUser.id);
+              if (!isDevDemo) {
+                if (p.role === 'STUDENT' || p.role === 'OWNER') {
+                  await fetchUserBookings(currentUser.id, p.role as UserRole, p.full_name || '');
+                }
               }
             } else {
               setProfile(null);
@@ -517,8 +532,10 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setProfile(p);
             setRoleState(p.role as UserRole);
             setIsAdminAuthorized(p.role === 'ADMIN');
-            if (!isDevDemo && p.role === 'STUDENT') {
-              await fetchStudentBookings(session.user.id);
+            if (!isDevDemo) {
+              if (p.role === 'STUDENT' || p.role === 'OWNER') {
+                await fetchUserBookings(session.user.id, p.role as UserRole, p.full_name || '');
+              }
             }
           } else {
             setProfile(null);
@@ -534,7 +551,7 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase, fetchProfile, fetchShortlist, fetchStudentBookings, isDevDemo]);
+  }, [supabase, fetchProfile, fetchShortlist, fetchUserBookings, isDevDemo]);
 
   // Backward compatible setRole handler
   const handleSetRole = (newRole: UserRole) => {
@@ -740,31 +757,13 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
 
       if (data) {
-        let primaryImg = '';
-        const images = (data.properties as any)?.property_images;
-        if (Array.isArray(images) && images.length > 0) {
-          const primary = images.find((img: any) => img.is_primary);
-          if (primary?.image_url) {
-            primaryImg = primary.image_url;
-          } else {
-            const sorted = [...images].sort((a: any, b: any) => (a.display_order ?? 0) - (b.display_order ?? 0));
-            primaryImg = sorted[0]?.image_url || '';
-          }
+        const createdBooking = mapBookingRow(data);
+        if (newBooking.listingTitle && !createdBooking.listingTitle) {
+          createdBooking.listingTitle = newBooking.listingTitle;
         }
-
-        const createdBooking: Booking = {
-          id: data.id,
-          listingId: data.property_id,
-          listingTitle: (data.properties as any)?.title || newBooking.listingTitle || '',
-          listingImage: primaryImg || newBooking.listingImage || '',
-          date: data.visit_date,
-          timeSlot: data.time_slot,
-          status: data.status as Booking['status'],
-          ownerName: '',
-          studentName: data.student_name || '',
-          studentEmail: data.student_email || '',
-          studentPhone: data.student_phone || '',
-        };
+        if (newBooking.listingImage && !createdBooking.listingImage) {
+          createdBooking.listingImage = newBooking.listingImage;
+        }
         setBookings((prev) => [createdBooking, ...prev]);
         return { success: true };
       }
@@ -775,10 +774,19 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const updateBookingStatus = async (id: string, status: Booking['status']) => {
-    if (!isDevDemo && user && (profile?.role === 'STUDENT' || role === 'STUDENT')) {
-      if (status !== 'Cancelled') {
-        console.warn('Students may only cancel bookings.');
-        return;
+    const currentRole = profile?.role || role;
+
+    if (!isDevDemo && user && (currentRole === 'STUDENT' || currentRole === 'OWNER')) {
+      if (currentRole === 'STUDENT') {
+        if (status !== 'Cancelled') {
+          console.warn('Students may only cancel bookings.');
+          return;
+        }
+      } else if (currentRole === 'OWNER') {
+        if (status !== 'Confirmed' && status !== 'Declined') {
+          console.warn('Owners may only confirm or decline bookings.');
+          return;
+        }
       }
 
       const target = bookings.find((b) => b.id === id);
@@ -787,24 +795,25 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       // Optimistic update
       setBookings((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, status: 'Cancelled' } : b))
+        prev.map((b) => (b.id === id ? { ...b, status } : b))
       );
 
       try {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('bookings_visits')
-          .update({ status: 'Cancelled' })
-          .eq('id', id);
+          .update({ status })
+          .eq('id', id)
+          .select('id');
 
-        if (error) {
-          console.error('Failed to cancel booking in Supabase:', error);
+        if (error || !data || data.length === 0) {
+          console.error('Failed to update booking in Supabase or zero rows updated:', error?.message || 'Zero rows updated');
           // Revert optimistic update
           setBookings((prev) =>
             prev.map((b) => (b.id === id ? { ...b, status: oldStatus } : b))
           );
         }
       } catch (err) {
-        console.error('Exception cancelling booking:', err);
+        console.error('Exception updating booking in Supabase:', err);
         setBookings((prev) =>
           prev.map((b) => (b.id === id ? { ...b, status: oldStatus } : b))
         );

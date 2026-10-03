@@ -51,7 +51,7 @@ export default function OwnerMeetings() {
                     {booking.status}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs text-on-surface-variant">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-on-surface-variant">
                   <p className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-[15px]">home</span>
                     PG: <strong className="text-primary">{booking.listingTitle}</strong>
@@ -66,7 +66,11 @@ export default function OwnerMeetings() {
                   </p>
                   <p className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-[15px]">call</span>
-                    Phone: {booking.studentPhone}
+                    Phone: {booking.studentPhone || 'Not provided'}
+                  </p>
+                  <p className="flex items-center gap-1 sm:col-span-2">
+                    <span className="material-symbols-outlined text-[15px]">mail</span>
+                    Email: {booking.studentEmail || 'Not provided'}
                   </p>
                 </div>
               </div>
@@ -91,8 +95,11 @@ export default function OwnerMeetings() {
           ))
         ) : (
           <div className="text-center py-12 flex flex-col items-center gap-3">
-            <span className="material-symbols-outlined text-5xl text-outline-variant">notifications_off</span>
-            <p className="text-sm text-on-surface-variant">No visit requests received yet.</p>
+            <span className="material-symbols-outlined text-5xl text-outline-variant">event_available</span>
+            <p className="text-sm font-semibold text-primary">No visit requests yet</p>
+            <p className="text-xs text-on-surface-variant max-w-sm">
+              When prospective tenants schedule a tour of your properties, their details and requested slots will appear here for your confirmation.
+            </p>
           </div>
         )}
       </div>

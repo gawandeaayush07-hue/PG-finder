@@ -25,7 +25,8 @@ export default function StudentDashboard() {
     : shortlist.filter((id) => id !== 'listing-2' || !isPlaceholderMode);
 
   // Stats: Real zeros for real authenticated user
-  const todayStr = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const upcomingToursCount = displayBookings.filter(
     (b) => (b.status === 'Confirmed' || b.status === 'Pending') && b.date >= todayStr
   ).length;

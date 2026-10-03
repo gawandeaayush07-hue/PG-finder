@@ -31,15 +31,38 @@ export default function OwnerCalendar() {
     setTimeout(() => setSuccessMsg(''), 3000);
   };
 
-  // Mock days in August 2026 (1st is Saturday)
-  const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
-  const paddingDays = Array.from({ length: 5 }, (_, i) => null); // padding before Saturday (Mon-Fri)
+  // Current calendar month view (defaults to August 2026 in demo mode, or current month for real users)
+  const [viewDate, setViewDate] = useState(() => {
+    if (isDemo) return new Date(2026, 7, 1);
+    return new Date();
+  });
+
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const monthTitle = viewDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  // Compute days in viewed month and Monday-first padding
+  const firstDay = new Date(year, month, 1).getDay(); // Sunday = 0
+  const paddingBefore = (firstDay + 6) % 7; // Monday = 0
+  const daysInMonthCount = new Date(year, month + 1, 0).getDate();
+  const daysInMonth = Array.from({ length: daysInMonthCount }, (_, i) => i + 1);
+  const paddingDays = Array.from({ length: paddingBefore }, () => null);
   const calendarCells = [...paddingDays, ...daysInMonth];
 
-  // Helper to find bookings for a specific day in August 2026
+  // Helper to find bookings for a specific day in the viewed month
   const getBookingsForDay = (day: number) => {
-    const dateString = `2026-08-${day < 10 ? '0' + day : day}`;
+    const mm = String(month + 1).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    const dateString = `${year}-${mm}-${dd}`;
     return ownerBookings.filter((b) => b.date === dateString && (b.status === 'Confirmed' || b.status === 'Pending'));
+  };
+
+  const handlePrevMonth = () => {
+    setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
 
   return (
@@ -48,12 +71,20 @@ export default function OwnerCalendar() {
       {/* Calendar Grid (Left, span 8) */}
       <section className="lg:col-span-8 bg-white rounded-card p-6 shadow-level-1 border border-outline-variant flex flex-col gap-6">
         <div className="flex justify-between items-center border-b border-outline-variant pb-4">
-          <h1 className="text-lg font-bold text-primary">August 2026</h1>
+          <h1 className="text-lg font-bold text-primary">{monthTitle}</h1>
           <div className="flex items-center gap-1.5">
-            <button className="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-low cursor-pointer">
+            <button 
+              type="button"
+              onClick={handlePrevMonth}
+              className="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-low cursor-pointer"
+            >
               <span className="material-symbols-outlined text-[18px]">chevron_left</span>
             </button>
-            <button className="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-low cursor-pointer">
+            <button 
+              type="button"
+              onClick={handleNextMonth}
+              className="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-low cursor-pointer"
+            >
               <span className="material-symbols-outlined text-[18px]">chevron_right</span>
             </button>
           </div>
