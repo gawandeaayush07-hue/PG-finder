@@ -338,6 +338,26 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [user, fetchProfile]);
 
+  // Fetch user's shortlist from Supabase public.shortlists
+  const fetchShortlist = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('shortlists')
+        .select('property_id')
+        .eq('student_id', userId);
+
+      if (error) {
+        console.error('Error loading shortlist from Supabase:', error.message);
+        return;
+      }
+      if (data) {
+        setShortlist(data.map((row) => row.property_id));
+      }
+    } catch (err) {
+      console.error('Exception loading shortlist:', err);
+    }
+  }, [supabase]);
+
   // Initial Auth Lifecycle & Realtime Session Listener via Supabase Auth
   useEffect(() => {
     let isMounted = true;
@@ -354,7 +374,11 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setUser(currentUser);
           // Real authenticated user: do not keep mock bookings or mock shortlist
           setBookings((prev) => (prev === initialBookings ? [] : prev.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2')));
-          setShortlist((prev) => (prev.length === 1 && prev[0] === 'listing-2' ? [] : prev.filter((id) => id !== 'listing-2')));
+          if (!isDevDemo) {
+            await fetchShortlist(currentUser.id);
+          } else {
+            setShortlist((prev) => (prev.length === 1 && prev[0] === 'listing-2' ? [] : prev.filter((id) => id !== 'listing-2')));
+          }
           const p = await fetchProfile(currentUser.id);
           if (isMounted) {
             if (p) {
@@ -419,7 +443,9 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setUser(session.user);
         // Real authenticated user: do not keep mock bookings or mock shortlist
         setBookings((prev) => (prev === initialBookings ? [] : prev.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2')));
-        setShortlist((prev) => (prev.length === 1 && prev[0] === 'listing-2' ? [] : prev.filter((id) => id !== 'listing-2')));
+        if (!isDevDemo) {
+          await fetchShortlist(session.user.id);
+        }
         const p = await fetchProfile(session.user.id);
         if (isMounted) {
           if (p) {
@@ -440,7 +466,7 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase, fetchProfile, isDevDemo]);
+  }, [supabase, fetchProfile, fetchShortlist, isDevDemo]);
 
   // Backward compatible setRole handler
   const handleSetRole = (newRole: UserRole) => {
@@ -511,10 +537,77 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  const toggleShortlist = (id: string) => {
-    setShortlist((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  const toggleShortlist = async (id: string) => {
+    // Dev-only demo mode keeps its current in-memory behavior
+    if (isDevDemo) {
+      setShortlist((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+      return;
+    }
+
+    // For guests keep whatever happens today
+    if (!user) {
+      setShortlist((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+      return;
+    }
+
+    // If the signed-in role is OWNER or ADMIN, do nothing (no write) and keep the heart unchanged
+    const userRole = profile?.role;
+    if (userRole === 'OWNER' || userRole === 'ADMIN') {
+      return;
+    }
+
+    // Real signed-in STUDENT: update state optimistically, then INSERT or DELETE
+    const isCurrentlyShortlisted = shortlist.includes(id);
+
+    if (isCurrentlyShortlisted) {
+      // Optimistic delete
+      setShortlist((prev) => prev.filter((item) => item !== id));
+
+      try {
+        const { error } = await supabase
+          .from('shortlists')
+          .delete()
+          .eq('student_id', user.id)
+          .eq('property_id', id);
+
+        if (error) {
+          console.error('Failed to remove property from shortlist in Supabase:', error);
+          // Revert optimistic change
+          setShortlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
+        }
+      } catch (err) {
+        console.error('Exception removing property from shortlist:', err);
+        // Revert optimistic change
+        setShortlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
+      }
+    } else {
+      // Optimistic insert
+      setShortlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
+
+      try {
+        // Never send a role or any other field from the client
+        const { error } = await supabase
+          .from('shortlists')
+          .insert({
+            student_id: user.id,
+            property_id: id,
+          });
+
+        if (error) {
+          console.error('Failed to add property to shortlist in Supabase:', error);
+          // Revert optimistic change
+          setShortlist((prev) => prev.filter((item) => item !== id));
+        }
+      } catch (err) {
+        console.error('Exception adding property to shortlist:', err);
+        // Revert optimistic change
+        setShortlist((prev) => prev.filter((item) => item !== id));
+      }
+    }
   };
 
   const addBooking = (newBooking: Omit<Booking, 'id' | 'status'>) => {

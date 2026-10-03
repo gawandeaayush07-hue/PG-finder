@@ -351,3 +351,98 @@ export async function getListingById(idOrSlug: string): Promise<Listing | null> 
     return null;
   }
 }
+
+/**
+ * Fetches multiple verified, active properties by their UUIDs.
+ * Filters out invalid UUIDs and caps the lookup at 50 IDs.
+ */
+export async function getListingsByIds(ids: string[]): Promise<Listing[]> {
+  if (!ids || !Array.isArray(ids) || ids.length === 0) return [];
+
+  const validIds = Array.from(
+    new Set(
+      ids
+        .filter((id) => typeof id === 'string' && UUID_REGEX.test(id.trim()))
+        .map((id) => id.trim())
+    )
+  ).slice(0, 50);
+
+  if (validIds.length === 0) return [];
+
+  try {
+    const supabase = createPublicClient();
+
+    const { data: properties, error } = await supabase
+      .from('properties')
+      .select(`
+        id,
+        owner_id,
+        title,
+        slug,
+        description,
+        location_name,
+        distance_text,
+        distance_km,
+        base_price,
+        gender_type,
+        is_premium,
+        is_verified,
+        is_active,
+        contact_phone,
+        contact_email,
+        rating,
+        reviews_count,
+        created_at,
+        property_images (
+          id,
+          image_url,
+          caption,
+          display_order,
+          is_primary
+        ),
+        rooms (
+          id,
+          name,
+          price,
+          is_available
+        ),
+        property_amenities (
+          amenities (
+            name
+          )
+        )
+      `)
+      .in('id', validIds)
+      .eq('is_active', true)
+      .eq('is_verified', true)
+      .order('is_premium', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error fetching listings by ids:', error);
+      return [];
+    }
+
+    if (!properties || properties.length === 0) {
+      return [];
+    }
+
+    const ownerIds = Array.from(
+      new Set(properties.map((p) => p.owner_id).filter(Boolean))
+    );
+    const propertyIds = properties.map((p) => p.id).filter(Boolean);
+
+    const [ownerMap, reviewsMap] = await Promise.all([
+      fetchOwnerProfiles(supabase, ownerIds),
+      fetchReviewsForProperties(supabase, propertyIds),
+    ]);
+
+    return properties.map((prop) =>
+      mapPropertyRowToListing(prop, ownerMap, reviewsMap)
+    );
+  } catch (err) {
+    console.error('Exception in getListingsByIds():', err);
+    return [];
+  }
+}
+
