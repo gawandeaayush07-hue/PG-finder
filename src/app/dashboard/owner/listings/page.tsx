@@ -29,6 +29,21 @@ interface DbPropertyRow {
   property_images: { image_url: string; is_primary: boolean; display_order: number }[];
 }
 
+interface PhotoRow {
+  id: string;
+  property_id: string;
+  image_url: string;
+  caption: string | null;
+  display_order: number;
+  is_primary: boolean;
+}
+
+interface FileUploadStatus {
+  name: string;
+  state: 'compressing' | 'uploading' | 'saving' | 'done' | 'error';
+  error?: string;
+}
+
 /* ─── Helpers ─── */
 const isPlaceholderMode =
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -73,6 +88,14 @@ export default function OwnerListings() {
   const [dbProperties, setDbProperties] = useState<DbPropertyRow[]>([]);
   const [dbAmenities, setDbAmenities] = useState<DbAmenity[]>([]);
   const [loadingProperties, setLoadingProperties] = useState(false);
+
+  /* ─── Photo management state ─── */
+  const [expandedPhotoProp, setExpandedPhotoProp] = useState<string | null>(null);
+  const [propPhotos, setPropPhotos] = useState<Record<string, PhotoRow[]>>({});
+  const [photoLoading, setPhotoLoading] = useState<Record<string, boolean>>({});
+  const [photoSaving, setPhotoSaving] = useState<Record<string, boolean>>({});
+  const [uploadStatuses, setUploadStatuses] = useState<FileUploadStatus[]>([]);
+  const [photoError, setPhotoError] = useState<Record<string, string>>({});
 
   /* ─── Form state (shared styling, real-owner-only logic on submit) ─── */
   const [title, setTitle] = useState('');
@@ -132,6 +155,256 @@ export default function OwnerListings() {
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);
+
+  /* ─── Fetch photos for a single property ─── */
+  const fetchPhotos = useCallback(async (propertyId: string) => {
+    setPhotoLoading((prev) => ({ ...prev, [propertyId]: true }));
+    const supabase = createClient();
+    const { data } = await supabase
+      .from('property_images')
+      .select('id, property_id, image_url, caption, display_order, is_primary')
+      .eq('property_id', propertyId)
+      .order('display_order', { ascending: true });
+    if (data) {
+      setPropPhotos((prev) => ({ ...prev, [propertyId]: data as PhotoRow[] }));
+    }
+    setPhotoLoading((prev) => ({ ...prev, [propertyId]: false }));
+  }, []);
+
+  /* ─── Compress image in browser using canvas ─── */
+  const compressImage = useCallback(async (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const MAX_SIDE = 1600;
+        let w = img.width;
+        let h = img.height;
+        if (w > MAX_SIDE || h > MAX_SIDE) {
+          const ratio = Math.min(MAX_SIDE / w, MAX_SIDE / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const tryExport = (type: string, quality: number): Promise<Blob | null> =>
+          new Promise((res) => canvas.toBlob((b) => res(b), type, quality));
+
+        (async () => {
+          // Try webp first
+          let blob = await tryExport('image/webp', 0.8);
+          if (!blob || blob.type !== 'image/webp') {
+            // Fallback to jpeg
+            blob = await tryExport('image/jpeg', 0.8);
+          }
+          if (blob && blob.size <= 5 * 1024 * 1024) {
+            resolve(blob);
+            return;
+          }
+          // Retry with lower quality
+          const fallbackType = blob?.type === 'image/webp' ? 'image/webp' : 'image/jpeg';
+          blob = await tryExport(fallbackType, 0.5);
+          if (blob && blob.size <= 5 * 1024 * 1024) {
+            resolve(blob);
+            return;
+          }
+          reject(new Error('Image still exceeds 5 MB after compression. Please use a smaller image.'));
+        })();
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load image for compression.'));
+      };
+      img.src = url;
+    });
+  }, []);
+
+  /* ─── Upload photos handler ─── */
+  const handlePhotoUpload = useCallback(async (propertyId: string, files: FileList) => {
+    const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
+    const MAX_ORIGINAL = 15 * 1024 * 1024;
+    const MAX_PHOTOS = 6;
+
+    const existing = propPhotos[propertyId] || [];
+    const remaining = MAX_PHOTOS - existing.length;
+
+    if (remaining <= 0) {
+      setPhotoError((prev) => ({ ...prev, [propertyId]: 'This property already has 6 photos (maximum).' }));
+      return;
+    }
+
+    const selected = Array.from(files).slice(0, remaining);
+    if (selected.length < files.length) {
+      setPhotoError((prev) => ({ ...prev, [propertyId]: `Only ${remaining} more photo(s) allowed. Extra files were skipped.` }));
+    } else {
+      setPhotoError((prev) => ({ ...prev, [propertyId]: '' }));
+    }
+
+    // Validate types and sizes
+    for (const f of selected) {
+      if (!ALLOWED.includes(f.type)) {
+        setPhotoError((prev) => ({
+          ...prev,
+          [propertyId]: `"${f.name}" is not a supported format. Use JPEG, PNG, or WebP.`,
+        }));
+        return;
+      }
+      if (f.size > MAX_ORIGINAL) {
+        setPhotoError((prev) => ({
+          ...prev,
+          [propertyId]: `"${f.name}" exceeds 15 MB. Please choose a smaller file.`,
+        }));
+        return;
+      }
+    }
+
+    setPhotoSaving((prev) => ({ ...prev, [propertyId]: true }));
+    const statuses: FileUploadStatus[] = selected.map((f) => ({ name: f.name, state: 'compressing' as const }));
+    setUploadStatuses(statuses);
+
+    const supabase = createClient();
+    let nextOrder = existing.length > 0 ? Math.max(...existing.map((p) => p.display_order)) + 1 : 0;
+    const hasPhotos = existing.length > 0;
+
+    for (let i = 0; i < selected.length; i++) {
+      const file = selected[i];
+      try {
+        // Compress
+        setUploadStatuses((prev) => prev.map((s, idx) => (idx === i ? { ...s, state: 'compressing' } : s)));
+        const compressed = await compressImage(file);
+
+        // Upload
+        setUploadStatuses((prev) => prev.map((s, idx) => (idx === i ? { ...s, state: 'uploading' } : s)));
+        const ext = compressed.type === 'image/webp' ? 'webp' : 'jpg';
+        const storagePath = `${propertyId}/${crypto.randomUUID()}.${ext}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('property-images')
+          .upload(storagePath, compressed, { contentType: compressed.type, upsert: false });
+        if (uploadErr) throw new Error(uploadErr.message);
+
+        // Get public URL
+        const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(storagePath);
+        const publicUrl = urlData.publicUrl;
+
+        // Insert row
+        setUploadStatuses((prev) => prev.map((s, idx) => (idx === i ? { ...s, state: 'saving' } : s)));
+        const isPrimary = !hasPhotos && i === 0;
+        const { error: rowErr } = await supabase.from('property_images').insert({
+          property_id: propertyId,
+          image_url: publicUrl,
+          display_order: nextOrder,
+          is_primary: isPrimary,
+        });
+
+        if (rowErr) {
+          // Rollback: remove uploaded file
+          await supabase.storage.from('property-images').remove([storagePath]);
+          throw new Error(rowErr.message);
+        }
+
+        nextOrder++;
+        setUploadStatuses((prev) => prev.map((s, idx) => (idx === i ? { ...s, state: 'done' } : s)));
+      } catch (err: any) {
+        setUploadStatuses((prev) =>
+          prev.map((s, idx) => (idx === i ? { ...s, state: 'error', error: err?.message || 'Upload failed' } : s)),
+        );
+      }
+    }
+
+    await fetchPhotos(propertyId);
+    await fetchProperties();
+    setPhotoSaving((prev) => ({ ...prev, [propertyId]: false }));
+    setTimeout(() => setUploadStatuses([]), 3000);
+  }, [propPhotos, compressImage, fetchPhotos, fetchProperties]);
+
+  /* ─── Delete a photo ─── */
+  const handleDeletePhoto = useCallback(async (propertyId: string, photo: PhotoRow) => {
+    setPhotoSaving((prev) => ({ ...prev, [propertyId]: true }));
+    setPhotoError((prev) => ({ ...prev, [propertyId]: '' }));
+    const supabase = createClient();
+
+    try {
+      // Derive storage path from URL
+      const url = new URL(photo.image_url);
+      const pathMatch = url.pathname.match(/\/property-images\/(.+)$/);
+      const storagePath = pathMatch ? decodeURIComponent(pathMatch[1]) : null;
+
+      // Remove storage object
+      if (storagePath) {
+        await supabase.storage.from('property-images').remove([storagePath]);
+      }
+
+      // Delete the row
+      await supabase.from('property_images').delete().eq('id', photo.id);
+
+      // If it was primary, promote the lowest display_order photo
+      if (photo.is_primary) {
+        const { data: remaining } = await supabase
+          .from('property_images')
+          .select('id, display_order')
+          .eq('property_id', propertyId)
+          .order('display_order', { ascending: true })
+          .limit(1);
+        if (remaining && remaining.length > 0) {
+          await supabase
+            .from('property_images')
+            .update({ is_primary: true })
+            .eq('id', remaining[0].id);
+        }
+      }
+    } catch (err: any) {
+      setPhotoError((prev) => ({ ...prev, [propertyId]: err?.message || 'Failed to delete photo.' }));
+    }
+
+    await fetchPhotos(propertyId);
+    await fetchProperties();
+    setPhotoSaving((prev) => ({ ...prev, [propertyId]: false }));
+  }, [fetchPhotos, fetchProperties]);
+
+  /* ─── Make cover ─── */
+  const handleMakeCover = useCallback(async (propertyId: string, photo: PhotoRow) => {
+    setPhotoSaving((prev) => ({ ...prev, [propertyId]: true }));
+    setPhotoError((prev) => ({ ...prev, [propertyId]: '' }));
+    const supabase = createClient();
+
+    try {
+      // First, unset the current primary
+      await supabase
+        .from('property_images')
+        .update({ is_primary: false })
+        .eq('property_id', propertyId)
+        .eq('is_primary', true);
+
+      // Then set the new one
+      await supabase
+        .from('property_images')
+        .update({ is_primary: true })
+        .eq('id', photo.id);
+    } catch (err: any) {
+      setPhotoError((prev) => ({ ...prev, [propertyId]: err?.message || 'Failed to set cover.' }));
+    }
+
+    await fetchPhotos(propertyId);
+    await fetchProperties();
+    setPhotoSaving((prev) => ({ ...prev, [propertyId]: false }));
+  }, [fetchPhotos, fetchProperties]);
+
+  /* ─── Toggle photo panel ─── */
+  const togglePhotoPanel = useCallback(async (propertyId: string) => {
+    if (expandedPhotoProp === propertyId) {
+      setExpandedPhotoProp(null);
+      return;
+    }
+    setExpandedPhotoProp(propertyId);
+    if (!propPhotos[propertyId]) {
+      await fetchPhotos(propertyId);
+    }
+  }, [expandedPhotoProp, propPhotos, fetchPhotos]);
 
   /* ─── Room helpers ─── */
   const addRoom = () => {
@@ -688,8 +961,9 @@ export default function OwnerListings() {
                 return (
                   <div
                     key={prop.id}
-                    className="border border-outline-variant rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+                    className="border border-outline-variant rounded-xl p-4 flex flex-col gap-4"
                   >
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex items-center gap-3">
                       <div className="w-16 h-16 rounded-lg overflow-hidden border border-outline-variant shrink-0 bg-surface-container-low flex items-center justify-center">
                         {imgUrl ? (
@@ -729,7 +1003,113 @@ export default function OwnerListings() {
                       <span className="text-xs text-on-surface-variant font-medium">
                         {prop.rooms?.length ?? 0} room type{(prop.rooms?.length ?? 0) !== 1 ? 's' : ''}
                       </span>
+                      <button
+                        type="button"
+                        onClick={() => togglePhotoPanel(prop.id)}
+                        className="text-xs font-bold text-primary border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-on-primary transition-colors cursor-pointer"
+                      >
+                        {expandedPhotoProp === prop.id ? 'Hide Photos' : 'Manage Photos'}
+                      </button>
                     </div>
+                    </div>
+
+                    {/* ── Photo management panel ── */}
+                    {expandedPhotoProp === prop.id && (
+                      <div className="border-t border-outline-variant pt-4 flex flex-col gap-3">
+                        {photoError[prop.id] && (
+                          <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                            {photoError[prop.id]}
+                          </div>
+                        )}
+
+                        {/* Thumbnails */}
+                        {photoLoading[prop.id] ? (
+                          <div className="text-xs text-on-surface-variant py-4 text-center">Loading photos…</div>
+                        ) : (propPhotos[prop.id] && propPhotos[prop.id].length > 0) ? (
+                          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                            {propPhotos[prop.id].map((photo) => (
+                              <div
+                                key={photo.id}
+                                className="relative group rounded-lg overflow-hidden border border-outline-variant aspect-square bg-surface-container-low"
+                              >
+                                <img
+                                  src={photo.image_url}
+                                  alt={photo.caption || 'Property photo'}
+                                  className="w-full h-full object-cover"
+                                />
+                                {photo.is_primary && (
+                                  <span className="absolute top-1 left-1 bg-primary text-on-primary text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                    Cover
+                                  </span>
+                                )}
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                  {!photo.is_primary && (
+                                    <button
+                                      type="button"
+                                      disabled={!!photoSaving[prop.id]}
+                                      onClick={() => handleMakeCover(prop.id, photo)}
+                                      className="text-[9px] font-bold bg-white text-primary px-2 py-1 rounded hover:bg-primary hover:text-on-primary transition-colors cursor-pointer disabled:opacity-50"
+                                    >
+                                      Cover
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    disabled={!!photoSaving[prop.id]}
+                                    onClick={() => handleDeletePhoto(prop.id, photo)}
+                                    className="text-[9px] font-bold bg-white text-red-600 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-on-surface-variant py-2">No photos yet.</p>
+                        )}
+
+                        {/* Upload statuses */}
+                        {uploadStatuses.length > 0 && (
+                          <div className="flex flex-col gap-1">
+                            {uploadStatuses.map((s, idx) => (
+                              <div key={idx} className="text-[11px] flex items-center gap-2">
+                                <span className="truncate max-w-[120px]">{s.name}</span>
+                                {s.state === 'compressing' && <span className="text-amber-600 font-semibold">Compressing…</span>}
+                                {s.state === 'uploading' && <span className="text-blue-600 font-semibold">Uploading…</span>}
+                                {s.state === 'saving' && <span className="text-purple-600 font-semibold">Saving…</span>}
+                                {s.state === 'done' && <span className="text-emerald-600 font-semibold">✓ Done</span>}
+                                {s.state === 'error' && <span className="text-red-600 font-semibold">✗ {s.error}</span>}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Upload input */}
+                        <div className="flex items-center gap-2">
+                          <label className="text-xs font-bold text-primary border border-primary px-3 py-1.5 rounded-lg hover:bg-primary hover:text-on-primary transition-colors cursor-pointer inline-flex items-center gap-1">
+                            <span className="material-symbols-outlined text-sm">add_photo_alternate</span>
+                            Add Photos
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              multiple
+                              className="hidden"
+                              disabled={!!photoSaving[prop.id]}
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files.length > 0) {
+                                  handlePhotoUpload(prop.id, e.target.files);
+                                  e.target.value = '';
+                                }
+                              }}
+                            />
+                          </label>
+                          <span className="text-[10px] text-on-surface-variant">
+                            JPEG, PNG, WebP · Max 15 MB each · {6 - (propPhotos[prop.id]?.length ?? 0)} remaining
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
