@@ -1,30 +1,91 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { usePersona } from '@/context/PersonaContext';
+import { createClient } from '@/lib/supabase/client';
 
 export default function StudentSettings() {
-  const [name, setName] = useState('Aarav Malhotra');
-  const [email, setEmail] = useState('aarav@student.in');
-  const [college, setCollege] = useState('IIT Delhi');
-  const [phone, setPhone] = useState('+91 98989 89898');
+  const { user, profile, refreshProfile } = usePersona();
+  const supabase = createClient();
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  const [name, setName] = useState(() => (isDemo ? 'Aarav Malhotra' : ''));
+  const [email, setEmail] = useState(() => (isDemo ? 'aarav@student.in' : ''));
+  const [college, setCollege] = useState(() => (isDemo ? 'IIT Delhi' : ''));
+  const [phone, setPhone] = useState(() => (isDemo ? '+91 98989 89898' : ''));
   
   const [idFile, setIdFile] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const handleProfileSave = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (profile) {
+      if (profile.full_name) setName(profile.full_name);
+      if (profile.email) setEmail(profile.email);
+      else if (user?.email) setEmail(user.email);
+      if (profile.college_name) setCollege(profile.college_name);
+      if (profile.phone) setPhone(profile.phone);
+      if (profile.student_id_doc_url) setIdFile(profile.student_id_doc_url);
+    } else if (user) {
+      if (user.user_metadata?.full_name) setName(user.user_metadata.full_name);
+      if (user.email) setEmail(user.email);
+      if (user.user_metadata?.college_name) setCollege(user.user_metadata.college_name);
+      if (user.user_metadata?.phone) setPhone(user.user_metadata.phone);
+    }
+  }, [profile, user]);
+
+  const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
+    setSaveError(null);
+
+    const isPlaceholderMode =
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+
+    if (isPlaceholderMode || !user) {
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 3000);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: name,
+          college_name: college,
+          phone,
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        setSaveError(error.message);
+      } else {
+        await refreshProfile();
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 3000);
+      }
+    } catch (err: unknown) {
+      console.error('Error saving profile settings:', err);
+      setSaveError('Failed to save settings. Please try again.');
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setIsUploading(true);
-      const name = e.target.files[0].name;
+      const fileName = e.target.files[0].name;
       setTimeout(() => {
         setIsUploading(false);
-        setIdFile(name);
+        setIdFile(fileName);
       }, 1000);
     }
   };
@@ -43,6 +104,12 @@ export default function StudentSettings() {
         {isSaved && (
           <div className="bg-emerald-50 border border-emerald-300 p-4 rounded-xl text-xs font-bold text-deep-green">
             Settings updated successfully!
+          </div>
+        )}
+
+        {saveError && (
+          <div className="bg-rose-50 border border-rose-300 p-4 rounded-xl text-xs font-bold text-rose-700">
+            {saveError}
           </div>
         )}
 

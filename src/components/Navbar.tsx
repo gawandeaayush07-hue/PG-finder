@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { usePersona, UserRole } from '@/context/PersonaContext';
 import { Magnetic } from '@/components/animations/Magnetic';
+import { getInitials } from '@/lib/utils';
 
 export const Navbar: React.FC = () => {
-  const { role, requestRoleChange, isAdminAuthorized, logout } = usePersona();
+  const { role, profile, user, requestRoleChange, isAdminAuthorized, logout } = usePersona();
   const router = useRouter();
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -199,37 +200,48 @@ export const Navbar: React.FC = () => {
         {/* Right Side: Role Selector (Persona Switcher) & Profile / Actions */}
         <div className="flex items-center gap-md relative">
           
-          {/* Persona Switcher Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#B8D9B0] bg-white hover:bg-surface-container-low transition-colors shadow-sm cursor-pointer"
-            >
-              <span className={`w-2.5 h-2.5 rounded-full ${role === 'GUEST' ? 'bg-zinc-400' : role === 'STUDENT' ? 'bg-emerald-500' : role === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
-              <span className="text-xs font-semibold text-deep-green hidden sm:inline">Role: {role}</span>
-              <span className="material-symbols-outlined text-[16px] text-deep-green" style={{ fontVariationSettings: "'FILL' 0" }}>expand_more</span>
-            </button>
+          {/* Persona Switcher Dropdown — shown only in dev-only demo mode, hidden for real signed-in users */}
+          {(() => {
+            const isPlaceholderMode =
+              !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+              process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+              !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+              process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+            const showSwitcher = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+            if (!showSwitcher) return null;
+            return (
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#B8D9B0] bg-white hover:bg-surface-container-low transition-colors shadow-sm cursor-pointer"
+                >
+                  <span className={`w-2.5 h-2.5 rounded-full ${role === 'GUEST' ? 'bg-zinc-400' : role === 'STUDENT' ? 'bg-emerald-500' : role === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
+                  <span className="text-xs font-semibold text-deep-green hidden sm:inline">Role: {role}</span>
+                  <span className="material-symbols-outlined text-[16px] text-deep-green" style={{ fontVariationSettings: "'FILL' 0" }}>expand_more</span>
+                </button>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-outline-variant rounded-xl shadow-level-2 overflow-hidden py-1 z-50">
-                <div className="px-3 py-1.5 text-xs text-outline-variant font-bold border-b border-outline-variant">
-                  SWITCH PERSONA
-                </div>
-                {availableRoles.map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => handleRoleChange(r)}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-container-low transition-colors flex items-center gap-2 cursor-pointer ${
-                      role === r ? 'font-semibold text-primary bg-light-sage/25' : 'text-on-surface'
-                    }`}
-                  >
-                    <span className={`w-2 h-2 rounded-full ${r === 'GUEST' ? 'bg-zinc-400' : r === 'STUDENT' ? 'bg-emerald-500' : r === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
-                    {r.charAt(0) + r.slice(1).toLowerCase()}
-                  </button>
-                ))}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-outline-variant rounded-xl shadow-level-2 overflow-hidden py-1 z-50">
+                    <div className="px-3 py-1.5 text-xs text-outline-variant font-bold border-b border-outline-variant">
+                      SWITCH PERSONA
+                    </div>
+                    {availableRoles.map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => handleRoleChange(r)}
+                        className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-container-low transition-colors flex items-center gap-2 cursor-pointer ${
+                          role === r ? 'font-semibold text-primary bg-light-sage/25' : 'text-on-surface'
+                        }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${r === 'GUEST' ? 'bg-zinc-400' : r === 'STUDENT' ? 'bg-emerald-500' : r === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
+                        {r.charAt(0) + r.slice(1).toLowerCase()}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            );
+          })()}
 
           {/* Action buttons based on status */}
           {role === 'GUEST' ? (
@@ -245,21 +257,27 @@ export const Navbar: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-deep-green hidden sm:block">
-                <img
-                  src={
-                    role === 'STUDENT'
-                      ? 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&h=100&q=80'
-                      : role === 'OWNER'
-                      ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80'
-                      : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&h=100&q=80'
-                  }
-                  alt="User Avatar"
-                  className="object-cover w-full h-full"
-                />
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-deep-green hidden sm:flex items-center justify-center bg-surface-container-high shrink-0">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt={profile.full_name || 'User Avatar'}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <span className="font-bold text-deep-green text-xs select-none">
+                    {getInitials(
+                      profile?.full_name || (user?.user_metadata?.full_name as string) || (user?.email ? user.email.split('@')[0] : null),
+                      user?.email
+                    )}
+                  </span>
+                )}
               </div>
               <button 
-                onClick={logout} 
+                onClick={async () => {
+                  await logout();
+                  router.push('/');
+                }} 
                 className="text-xs font-semibold text-rose-600 hover:underline px-2 py-1 cursor-pointer"
               >
                 Log out

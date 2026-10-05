@@ -1,13 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
+import { getInitials } from '@/lib/utils';
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
-  const { role } = usePersona();
+  const { role, profile, user, isLoadingAuth } = usePersona();
   const pathname = usePathname();
+  const router = useRouter();
 
   const menuItems = [
     { name: 'Analytics Dashboard', path: '/dashboard/owner', icon: 'analytics' },
@@ -18,8 +20,45 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
 
   const isActive = (path: string) => pathname === path;
 
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode && !user;
+
+  // For real signed-in users with a role mismatch, redirect to their own dashboard
+  const isRealUserMismatch = !isLoadingAuth && !isDemo && user && role !== 'OWNER' && role !== 'ADMIN';
+  useEffect(() => {
+    if (isRealUserMismatch) {
+      const target = role === 'STUDENT' ? '/dashboard/student' : '/dashboard/student';
+      router.replace(target);
+    }
+  }, [isRealUserMismatch, role, router]);
+
+  // Prevent flicker during initial session load
+  if (isLoadingAuth) {
+    return (
+      <div className="w-full max-w-max-width mx-auto px-margin-mobile py-28 text-center flex flex-col items-center justify-center gap-3">
+        <span className="w-8 h-8 border-3 border-deep-green border-t-transparent rounded-full animate-spin"></span>
+        <span className="text-xs text-on-surface-variant font-medium">Verifying authorization...</span>
+      </div>
+    );
+  }
+
   // Role guard: check if user is in owner mode or admin mode
   if (role !== 'OWNER' && role !== 'ADMIN') {
+    // Real user: redirect handled by useEffect; show spinner while navigating
+    if (user) {
+      return (
+        <div className="w-full max-w-max-width mx-auto px-margin-mobile py-28 text-center flex flex-col items-center justify-center gap-3">
+          <span className="w-8 h-8 border-3 border-deep-green border-t-transparent rounded-full animate-spin"></span>
+          <span className="text-xs text-on-surface-variant font-medium">Redirecting to your dashboard...</span>
+        </div>
+      );
+    }
+    // Demo / unauthenticated: show informational UI with login link
     return (
       <div className="w-full max-w-max-width mx-auto px-margin-mobile py-20 text-center">
         <div className="bg-white rounded-card p-8 border border-outline-variant shadow-level-1 max-w-[500px] mx-auto flex flex-col items-center gap-4">
@@ -40,6 +79,16 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     );
   }
 
+  const ownerName =
+    profile?.full_name?.trim() ||
+    (user?.user_metadata?.full_name as string)?.trim() ||
+    (user?.email ? user.email.split('@')[0] : '') ||
+    (isDemo ? 'Mrs. Sunita Gupta' : 'Property Owner');
+
+  const ownerSubtitle = profile?.is_verified ? 'Verified Property Owner' : 'Property Owner';
+  const avatarUrl = profile?.avatar_url || (isDemo ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80' : null);
+  const initials = getInitials(ownerName, user?.email);
+
   return (
     <div className="w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
@@ -48,16 +97,22 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
         <aside className="lg:col-span-3">
           <div className="bg-white rounded-card p-6 shadow-level-1 border border-outline-variant flex flex-col gap-6">
             <div className="flex items-center gap-3 border-b border-outline-variant pb-4">
-              <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-low">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80"
-                  alt="Owner Avatar"
-                  className="object-cover w-full h-full"
-                />
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-deep-green bg-surface-container-high shrink-0 flex items-center justify-center">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={ownerName}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <span className="font-bold text-deep-green text-sm select-none">
+                    {initials}
+                  </span>
+                )}
               </div>
               <div>
-                <h3 className="font-bold text-primary text-sm">Mrs. Sunita Gupta</h3>
-                <span className="text-[11px] text-on-surface-variant font-medium">Verified Property Owner</span>
+                <h3 className="font-bold text-primary text-sm">{ownerName}</h3>
+                <span className="text-[11px] text-on-surface-variant font-medium">{ownerSubtitle}</span>
               </div>
             </div>
 

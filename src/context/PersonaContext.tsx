@@ -1,8 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
+import type { Database, UserRole as DbUserRole } from '@/types/database';
 
 export type UserRole = 'GUEST' | 'STUDENT' | 'OWNER' | 'ADMIN';
+export type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export interface Review {
   id: string;
@@ -22,10 +26,12 @@ export interface Listing {
   image: string;
   images: string[];
   distanceText: string;
+  distanceKm?: number;
   type: 'Boys' | 'Girls' | 'Co-ed';
   premium: boolean;
   amenities: string[];
   rooms: { name: string; price: number; available: boolean }[];
+  ownerId?: string;
   owner: { name: string; phone: string; email: string; avatar: string };
   description: string;
   reviews: Review[];
@@ -39,7 +45,7 @@ export interface Booking {
   listingImage: string;
   date: string;
   timeSlot: string;
-  status: 'Pending' | 'Confirmed' | 'Declined' | 'Rescheduled';
+  status: 'Pending' | 'Confirmed' | 'Declined' | 'Rescheduled' | 'Completed' | 'Cancelled';
   ownerName: string;
   studentName: string;
   studentEmail: string;
@@ -67,18 +73,27 @@ export interface ReportItem {
 }
 
 interface PersonaContextType {
+  // Authoritative Authentication State
+  user: User | null;
+  profile: Profile | null;
   role: UserRole;
   setRole: (role: UserRole) => void;
   isAdminAuthorized: boolean;
   setIsAdminAuthorized: (authorized: boolean) => void;
-  logout: () => void;
+  isLoadingAuth: boolean;
+  logout: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
+  requestRoleChange: (role: UserRole) => void;
+  requireAuth: () => void;
+
+  // Existing Mock Data State (preserved for listings, search, bookings)
   listings: Listing[];
   setListings: React.Dispatch<React.SetStateAction<Listing[]>>;
   shortlist: string[];
   toggleShortlist: (id: string) => void;
   bookings: Booking[];
-  addBooking: (booking: Omit<Booking, 'id' | 'status'>) => void;
-  updateBookingStatus: (id: string, status: Booking['status']) => void;
+  addBooking: (booking: Omit<Booking, 'id' | 'status'>) => Promise<{ error?: string; success?: boolean } | void> | void;
+  updateBookingStatus: (id: string, status: Booking['status']) => Promise<void> | void;
   verificationPipeline: VerificationItem[];
   updateVerificationStatus: (id: string, status: VerificationItem['status']) => void;
   reports: ReportItem[];
@@ -87,8 +102,6 @@ interface PersonaContextType {
   setSearchQuery: (query: string) => void;
   priceRange: string;
   setPriceRange: (range: string) => void;
-  requestRoleChange: (role: UserRole) => void;
-  requireAuth: () => void;
 }
 
 const initialListings: Listing[] = [
@@ -268,49 +281,334 @@ import { AuthModal } from '@/components/AuthModal';
 const PersonaContext = createContext<PersonaContextType | undefined>(undefined);
 
 export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<UserRole>('GUEST');
+  const [supabase] = useState(() => createClient());
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [role, setRoleState] = useState<UserRole>('GUEST');
   const [isAdminAuthorized, setIsAdminAuthorized] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [authPendingRole, setAuthPendingRole] = useState<UserRole | null>(null);
+
+  const isPlaceholderMode =
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.includes('placeholder');
+
+  const isDevDemo = process.env.NODE_ENV === 'development' && isPlaceholderMode;
+
+  // Listing, booking, and search states
   const [listings, setListings] = useState<Listing[]>(initialListings);
-  const [shortlist, setShortlist] = useState<string[]>(['listing-2']);
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [shortlist, setShortlist] = useState<string[]>(() => (isDevDemo ? ['listing-2'] : []));
+  const [bookings, setBookings] = useState<Booking[]>(() => (isDevDemo ? initialBookings : []));
   const [verificationPipeline, setVerificationPipeline] = useState<VerificationItem[]>(initialVerificationPipeline);
   const [reports, setReports] = useState<ReportItem[]>(initialReports);
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState('');
 
-  // Sync role based on some routes if needed, or keep manual
-  useEffect(() => {
-    // Check if role is stored in localStorage to persist on reload
-    const savedRole = localStorage.getItem('pgfinder_persona_role') as UserRole;
-    const savedAdmin = localStorage.getItem('pgfinder_is_admin') === 'true';
-    if (savedRole) {
-      setRole(savedRole);
-    }
-    if (savedAdmin || savedRole === 'ADMIN') {
-      setIsAdminAuthorized(true);
-    }
-  }, []);
+  // Authoritatively fetch user's profile from Supabase public.profiles
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
+      if (error) {
+        // If profile row is not yet provisioned by the trigger, retry once or fallback to STUDENT
+        console.warn('Profile fetch note:', error.message);
+        return null;
+      }
+      return data as Profile;
+    } catch (err) {
+      console.error('Error fetching authoritative profile:', err);
+      return null;
+    }
+  }, [supabase]);
+
+  // Refresh profile action available to context consumers (e.g. after updating settings)
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    const p = await fetchProfile(user.id);
+    if (p) {
+      setProfile(p);
+      setRoleState(p.role as UserRole);
+      setIsAdminAuthorized(p.role === 'ADMIN');
+    }
+  }, [user, fetchProfile]);
+
+  // Fetch user's shortlist from Supabase public.shortlists
+  const fetchShortlist = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('shortlists')
+        .select('property_id')
+        .eq('student_id', userId);
+
+      if (error) {
+        console.error('Error loading shortlist from Supabase:', error.message);
+        return;
+      }
+      if (data) {
+        setShortlist(data.map((row) => row.property_id));
+      }
+    } catch (err) {
+      console.error('Exception loading shortlist:', err);
+    }
+  }, [supabase]);
+
+// Reusable booking row mapper
+function mapBookingRow(row: any, ownerNameFallback = ''): Booking {
+  let primaryImg = '';
+  const images = row.properties?.property_images;
+  if (Array.isArray(images) && images.length > 0) {
+    const primary = images.find((img: any) => img.is_primary);
+    if (primary?.image_url) {
+      primaryImg = primary.image_url;
+    } else {
+      const sorted = [...images].sort((a: any, b: any) => (a.display_order ?? 0) - (b.display_order ?? 0));
+      primaryImg = sorted[0]?.image_url || '';
+    }
+  }
+
+  return {
+    id: row.id,
+    listingId: row.property_id,
+    listingTitle: row.properties?.title || '',
+    listingImage: primaryImg,
+    date: row.visit_date,
+    timeSlot: row.time_slot,
+    status: row.status as Booking['status'],
+    ownerName: ownerNameFallback,
+    studentName: row.student_name || '',
+    studentEmail: row.student_email || '',
+    studentPhone: row.student_phone || '',
+  };
+}
+
+  // Fetch real student or owner bookings from Supabase public.bookings_visits
+  const fetchUserBookings = useCallback(async (userId: string, userRole: UserRole, ownerFullName = '') => {
+    try {
+      let query = supabase
+        .from('bookings_visits')
+        .select(`
+          id,
+          property_id,
+          visit_date,
+          time_slot,
+          status,
+          student_name,
+          student_email,
+          student_phone,
+          properties (
+            title,
+            property_images (
+              image_url,
+              is_primary,
+              display_order
+            )
+          )
+        `);
+
+      if (userRole === 'STUDENT') {
+        query = query.eq('student_id', userId);
+      } else if (userRole === 'OWNER') {
+        query = query.eq('owner_id', userId);
+      } else {
+        return;
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading bookings from Supabase:', error.message);
+        return;
+      }
+
+      if (data) {
+        const mappedBookings: Booking[] = data.map((row: any) =>
+          mapBookingRow(row, userRole === 'OWNER' ? ownerFullName : '')
+        );
+        setBookings(mappedBookings);
+      }
+    } catch (err) {
+      console.error('Exception loading bookings:', err);
+    }
+  }, [supabase]);
+
+  // Initial Auth Lifecycle & Realtime Session Listener via Supabase Auth
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initSession() {
+      try {
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser();
+
+        if (!isMounted) return;
+
+        if (currentUser) {
+          setUser(currentUser);
+          // Real authenticated user: do not keep mock bookings or mock shortlist
+          setBookings((prev) => (prev === initialBookings ? [] : prev.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2')));
+          if (!isDevDemo) {
+            await fetchShortlist(currentUser.id);
+          } else {
+            setShortlist((prev) => (prev.length === 1 && prev[0] === 'listing-2' ? [] : prev.filter((id) => id !== 'listing-2')));
+          }
+          const p = await fetchProfile(currentUser.id);
+          if (isMounted) {
+            if (p) {
+              setProfile(p);
+              setRoleState(p.role as UserRole);
+              setIsAdminAuthorized(p.role === 'ADMIN');
+              if (!isDevDemo) {
+                if (p.role === 'STUDENT' || p.role === 'OWNER') {
+                  await fetchUserBookings(currentUser.id, p.role as UserRole, p.full_name || '');
+                }
+              }
+            } else {
+              setProfile(null);
+              setRoleState('GUEST');
+              setIsAdminAuthorized(false);
+            }
+          }
+        } else {
+          // If no authenticated user exists, clear session state to GUEST
+          setUser(null);
+          setProfile(null);
+          setRoleState('GUEST');
+          setIsAdminAuthorized(false);
+          setBookings([]);
+          setShortlist([]);
+        }
+      } catch (err) {
+        console.error('Auth initialization error:', err);
+        if (isMounted) {
+          setUser(null);
+          setProfile(null);
+          setRoleState('GUEST');
+          setIsAdminAuthorized(false);
+          if (!isDevDemo) {
+            setBookings([]);
+            setShortlist([]);
+          }
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingAuth(false);
+        }
+      }
+    }
+
+    initSession();
+
+    // Subscribe to auth state changes (SIGN_IN, SIGN_OUT, TOKEN_REFRESHED)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
+
+      if (event === 'SIGNED_OUT' || !session?.user) {
+        setUser(null);
+        setProfile(null);
+        setRoleState('GUEST');
+        setIsAdminAuthorized(false);
+        setIsLoadingAuth(false);
+        setBookings([]);
+        setShortlist([]);
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        setUser(session.user);
+        // Real authenticated user: do not keep mock bookings or mock shortlist
+        setBookings((prev) => (prev === initialBookings ? [] : prev.filter((b) => b.id !== 'booking-1' && b.id !== 'booking-2')));
+        if (!isDevDemo) {
+          await fetchShortlist(session.user.id);
+        }
+        const p = await fetchProfile(session.user.id);
+        if (isMounted) {
+          if (p) {
+            setProfile(p);
+            setRoleState(p.role as UserRole);
+            setIsAdminAuthorized(p.role === 'ADMIN');
+            if (!isDevDemo) {
+              if (p.role === 'STUDENT' || p.role === 'OWNER') {
+                await fetchUserBookings(session.user.id, p.role as UserRole, p.full_name || '');
+              }
+            }
+          } else {
+            setProfile(null);
+            setRoleState('GUEST');
+            setIsAdminAuthorized(false);
+          }
+          setIsLoadingAuth(false);
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase, fetchProfile, fetchShortlist, fetchUserBookings, isDevDemo]);
+
+  // Backward compatible setRole handler
   const handleSetRole = (newRole: UserRole) => {
-    setRole(newRole);
-    localStorage.setItem('pgfinder_persona_role', newRole);
+    // If a real Supabase session exists, setRole is a no-op
+    if (user) {
+      return;
+    }
+    // Only allow changing persona in dev-only demo mode
+    if (!isDevDemo) {
+      return;
+    }
+    setRoleState(newRole);
     if (newRole === 'ADMIN') {
       setIsAdminAuthorized(true);
-      localStorage.setItem('pgfinder_is_admin', 'true');
+    } else {
+      setIsAdminAuthorized(false);
     }
     setAuthPendingRole(null);
   };
 
-  const logout = () => {
-    setRole('GUEST');
-    setIsAdminAuthorized(false);
-    localStorage.setItem('pgfinder_persona_role', 'GUEST');
-    localStorage.removeItem('pgfinder_is_admin');
-    setAuthPendingRole(null);
+  const handleSetIsAdminAuthorized = (authorized: boolean) => {
+    if (user) {
+      // For a real signed-in user, isAdminAuthorized must never become true unless profile.role === 'ADMIN'
+      setIsAdminAuthorized(profile?.role === 'ADMIN');
+      return;
+    }
+    if (isDevDemo) {
+      setIsAdminAuthorized(authorized);
+    }
+  };
+
+  // Authoritative Supabase Sign Out
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error('Error signing out:', err);
+    } finally {
+      setUser(null);
+      setProfile(null);
+      setRoleState('GUEST');
+      setIsAdminAuthorized(false);
+      setAuthPendingRole(null);
+      if (isDevDemo) {
+        setBookings(initialBookings);
+        setShortlist(['listing-2']);
+      } else {
+        setBookings([]);
+        setShortlist([]);
+      }
+    }
   };
 
   const requestRoleChange = (newRole: UserRole) => {
+    if (user || !isDevDemo) {
+      return;
+    }
     if (newRole === 'GUEST') {
       handleSetRole(newRole);
     } else {
@@ -324,23 +622,205 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  const toggleShortlist = (id: string) => {
-    setShortlist((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  const toggleShortlist = async (id: string) => {
+    // Dev-only demo mode keeps its current in-memory behavior
+    if (isDevDemo) {
+      setShortlist((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+      return;
+    }
+
+    // For guests keep whatever happens today
+    if (!user) {
+      setShortlist((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+      return;
+    }
+
+    // If the signed-in role is OWNER or ADMIN, do nothing (no write) and keep the heart unchanged
+    const userRole = profile?.role;
+    if (userRole === 'OWNER' || userRole === 'ADMIN') {
+      return;
+    }
+
+    // Real signed-in STUDENT: update state optimistically, then INSERT or DELETE
+    const isCurrentlyShortlisted = shortlist.includes(id);
+
+    if (isCurrentlyShortlisted) {
+      // Optimistic delete
+      setShortlist((prev) => prev.filter((item) => item !== id));
+
+      try {
+        const { error } = await supabase
+          .from('shortlists')
+          .delete()
+          .eq('student_id', user.id)
+          .eq('property_id', id);
+
+        if (error) {
+          console.error('Failed to remove property from shortlist in Supabase:', error);
+          // Revert optimistic change
+          setShortlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
+        }
+      } catch (err) {
+        console.error('Exception removing property from shortlist:', err);
+        // Revert optimistic change
+        setShortlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
+      }
+    } else {
+      // Optimistic insert
+      setShortlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
+
+      try {
+        // Never send a role or any other field from the client
+        const { error } = await supabase
+          .from('shortlists')
+          .insert({
+            student_id: user.id,
+            property_id: id,
+          });
+
+        if (error) {
+          console.error('Failed to add property to shortlist in Supabase:', error);
+          // Revert optimistic change
+          setShortlist((prev) => prev.filter((item) => item !== id));
+        }
+      } catch (err) {
+        console.error('Exception adding property to shortlist:', err);
+        // Revert optimistic change
+        setShortlist((prev) => prev.filter((item) => item !== id));
+      }
+    }
   };
 
-  const addBooking = (newBooking: Omit<Booking, 'id' | 'status'>) => {
-    const id = `booking-${Date.now()}`;
-    const booking: Booking = {
-      ...newBooking,
-      id,
-      status: 'Pending',
-    };
-    setBookings((prev) => [booking, ...prev]);
+  const addBooking = async (newBooking: Omit<Booking, 'id' | 'status'>): Promise<{ error?: string; success?: boolean } | void> => {
+    if (isDevDemo) {
+      const id = `booking-${Date.now()}`;
+      const booking: Booking = {
+        ...newBooking,
+        id,
+        status: 'Pending',
+      };
+      setBookings((prev) => [booking, ...prev]);
+      return { success: true };
+    }
+
+    if (!user) {
+      return { error: 'Please sign in to schedule a visit.' };
+    }
+
+    const currentRole = profile?.role || role;
+    if (currentRole === 'OWNER' || currentRole === 'ADMIN') {
+      // Owners and admins: addBooking does nothing
+      return;
+    }
+
+    try {
+      const phoneToInsert = newBooking.studentPhone?.trim() || profile?.phone?.trim() || null;
+      const { data, error } = await supabase
+        .from('bookings_visits')
+        .insert({
+          student_id: user.id,
+          property_id: newBooking.listingId,
+          visit_date: newBooking.date,
+          time_slot: newBooking.timeSlot,
+          student_phone: phoneToInsert,
+        } as any)
+        .select(`
+          id,
+          property_id,
+          visit_date,
+          time_slot,
+          status,
+          student_name,
+          student_email,
+          student_phone,
+          properties (
+            title,
+            property_images (
+              image_url,
+              is_primary,
+              display_order
+            )
+          )
+        `)
+        .single();
+
+      if (error) {
+        console.error('Failed to create booking in Supabase:', error);
+        if (error.code === '23505' || error.message?.includes('duplicate') || error.message?.includes('uq_booking_active_slot')) {
+          return { error: 'You already requested this slot' };
+        }
+        return { error: error.message || 'Failed to schedule visit. Please try again.' };
+      }
+
+      if (data) {
+        const createdBooking = mapBookingRow(data);
+        if (newBooking.listingTitle && !createdBooking.listingTitle) {
+          createdBooking.listingTitle = newBooking.listingTitle;
+        }
+        if (newBooking.listingImage && !createdBooking.listingImage) {
+          createdBooking.listingImage = newBooking.listingImage;
+        }
+        setBookings((prev) => [createdBooking, ...prev]);
+        return { success: true };
+      }
+    } catch (err: any) {
+      console.error('Exception creating booking:', err);
+      return { error: err?.message || 'An unexpected error occurred.' };
+    }
   };
 
-  const updateBookingStatus = (id: string, status: Booking['status']) => {
+  const updateBookingStatus = async (id: string, status: Booking['status']) => {
+    const currentRole = profile?.role || role;
+
+    if (!isDevDemo && user && (currentRole === 'STUDENT' || currentRole === 'OWNER')) {
+      if (currentRole === 'STUDENT') {
+        if (status !== 'Cancelled') {
+          console.warn('Students may only cancel bookings.');
+          return;
+        }
+      } else if (currentRole === 'OWNER') {
+        if (status !== 'Confirmed' && status !== 'Declined') {
+          console.warn('Owners may only confirm or decline bookings.');
+          return;
+        }
+      }
+
+      const target = bookings.find((b) => b.id === id);
+      if (!target) return;
+      const oldStatus = target.status;
+
+      // Optimistic update
+      setBookings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, status } : b))
+      );
+
+      try {
+        const { data, error } = await supabase
+          .from('bookings_visits')
+          .update({ status })
+          .eq('id', id)
+          .select('id');
+
+        if (error || !data || data.length === 0) {
+          console.error('Failed to update booking in Supabase or zero rows updated:', error?.message || 'Zero rows updated');
+          // Revert optimistic update
+          setBookings((prev) =>
+            prev.map((b) => (b.id === id ? { ...b, status: oldStatus } : b))
+          );
+        }
+      } catch (err) {
+        console.error('Exception updating booking in Supabase:', err);
+        setBookings((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, status: oldStatus } : b))
+        );
+      }
+      return;
+    }
+
     setBookings((prev) =>
       prev.map((b) => (b.id === id ? { ...b, status } : b))
     );
@@ -350,13 +830,12 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setVerificationPipeline((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status } : item))
     );
-    // If approved, verify the corresponding listing
     if (status === 'Approved') {
       setVerificationPipeline((prevPipeline) => {
-        const item = prevPipeline.find(p => p.id === id);
+        const item = prevPipeline.find((p) => p.id === id);
         if (item) {
-          setListings(prevListings =>
-            prevListings.map(l =>
+          setListings((prevListings) =>
+            prevListings.map((l) =>
               l.title === item.listingTitle ? { ...l, verified: true } : l
             )
           );
@@ -375,11 +854,15 @@ export const PersonaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   return (
     <PersonaContext.Provider
       value={{
-        role,
+        user,
+        profile,
+        role: user ? ((profile?.role as UserRole) || 'GUEST') : role,
         setRole: handleSetRole,
-        isAdminAuthorized,
-        setIsAdminAuthorized,
+        isAdminAuthorized: user ? profile?.role === 'ADMIN' : (isDevDemo ? isAdminAuthorized : false),
+        setIsAdminAuthorized: handleSetIsAdminAuthorized,
+        isLoadingAuth,
         logout,
+        refreshProfile,
         requestRoleChange,
         requireAuth,
         listings,

@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { usePersona, UserRole } from '@/context/PersonaContext';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { usePersona } from '@/context/PersonaContext';
+import { createClient } from '@/lib/supabase/client';
 
 export default function AuthPage() {
   const { setRole } = usePersona();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get('redirect');
+  const supabase = createClient();
   
   // Tab states
   const [activePortal, setActivePortal] = useState<'STUDENT' | 'OWNER'>('STUDENT');
@@ -18,21 +22,133 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [extraField, setExtraField] = useState(''); // College for student, phone for owner
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
+    setInfoMessage(null);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setRole(activePortal);
-      
-      if (activePortal === 'STUDENT') {
-        router.push('/dashboard/student');
+    // Check if Supabase credentials are configured or in placeholder mode
+    const isPlaceholderMode =
+      process.env.NODE_ENV === 'development' &&
+      (!process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
+
+    if (isPlaceholderMode) {
+      // In local preview/development before Supabase project credentials are provided in .env.local
+      setTimeout(() => {
+        setIsLoading(false);
+        setRole(activePortal);
+        if (redirectPath) {
+          router.push(redirectPath);
+        } else if (activePortal === 'STUDENT') {
+          router.push('/dashboard/student');
+        } else {
+          router.push('/dashboard/owner');
+        }
+      }, 1000);
+      return;
+    }
+
+    try {
+      if (isLogin) {
+        // Real Supabase Email/Password Login
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          if (error.message.toLowerCase().includes('invalid login credentials')) {
+            setErrorMessage('Invalid email or password. Please verify your credentials.');
+          } else if (error.message.toLowerCase().includes('email not confirmed')) {
+            setErrorMessage('Please confirm your email address before signing in.');
+          } else {
+            setErrorMessage(error.message);
+          }
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          // Fetch authoritative profile to determine target portal
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single();
+
+          const authoritativeRole = profile?.role || activePortal;
+          setRole(authoritativeRole as 'STUDENT' | 'OWNER' | 'ADMIN');
+
+          if (redirectPath) {
+            router.push(redirectPath);
+          } else if (authoritativeRole === 'ADMIN') {
+            router.push('/dashboard/admin');
+          } else if (authoritativeRole === 'OWNER') {
+            router.push('/dashboard/owner');
+          } else {
+            router.push('/dashboard/student');
+          }
+        }
       } else {
-        router.push('/dashboard/owner');
+        // Real Supabase Signup with Role Protection
+        // Role is strictly scoped to STUDENT or OWNER. ADMIN cannot be created via browser.
+        const targetRole = activePortal === 'OWNER' ? 'OWNER' : 'STUDENT';
+
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              full_name: name,
+              role: targetRole,
+              phone: targetRole === 'OWNER' ? extraField : null,
+              college_name: targetRole === 'STUDENT' ? extraField : null,
+            },
+          },
+        });
+
+        if (error) {
+          if (error.message.toLowerCase().includes('user already registered')) {
+            setErrorMessage('An account with this email already exists. Please log in.');
+          } else if (error.message.toLowerCase().includes('password')) {
+            setErrorMessage('Password is too weak. Please use at least 6 characters.');
+          } else {
+            setErrorMessage(error.message);
+          }
+          setIsLoading(false);
+          return;
+        }
+
+        // If email confirmation is enabled on the Supabase project
+        if (data.user && !data.session) {
+          setInfoMessage('Account created! Please check your email to confirm your account before logging in.');
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.session) {
+          setRole(targetRole);
+          if (redirectPath) {
+            router.push(redirectPath);
+          } else if (targetRole === 'OWNER') {
+            router.push('/dashboard/owner');
+          } else {
+            router.push('/dashboard/student');
+          }
+        }
       }
-    }, 1200); // Mock network request
+    } catch (err: unknown) {
+      console.error('Authentication error:', err);
+      setErrorMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -44,6 +160,8 @@ export default function AuthPage() {
           onClick={() => {
             setActivePortal('STUDENT');
             setIsLogin(true);
+            setErrorMessage(null);
+            setInfoMessage(null);
           }}
           className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${
             activePortal === 'STUDENT'
@@ -57,6 +175,8 @@ export default function AuthPage() {
           onClick={() => {
             setActivePortal('OWNER');
             setIsLogin(true);
+            setErrorMessage(null);
+            setInfoMessage(null);
           }}
           className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${
             activePortal === 'OWNER'
@@ -80,6 +200,21 @@ export default function AuthPage() {
             {isLogin ? 'Welcome back! Please enter your details.' : 'Create an account to get started.'}
           </p>
         </div>
+
+        {/* Feedback Alerts */}
+        {errorMessage && (
+          <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs px-3.5 py-2.5 rounded-lg flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">error</span>
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {infoMessage && (
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs px-3.5 py-2.5 rounded-lg flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">check_circle</span>
+            <span>{infoMessage}</span>
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -158,7 +293,11 @@ export default function AuthPage() {
         <div className="text-center text-xs text-on-surface-variant pt-2 border-t border-outline-variant">
           {isLogin ? "Don't have an account? " : 'Already have an account? '}
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setErrorMessage(null);
+              setInfoMessage(null);
+            }}
             className="font-bold text-deep-green hover:underline cursor-pointer"
           >
             {isLogin ? 'Sign Up' : 'Log In'}
