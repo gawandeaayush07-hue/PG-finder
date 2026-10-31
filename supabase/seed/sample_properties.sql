@@ -39,7 +39,7 @@ BEGIN
     INSERT INTO public.properties (
         owner_id, title, slug, description, location_name, city, state, pincode,
         address, latitude, longitude, distance_text, distance_km, base_price,
-        gender_type, is_premium, is_verified, is_active, house_rules,
+        gender_type, is_verified, is_active, house_rules,
         contact_phone, contact_email, rating, reviews_count
     ) VALUES (
         v_owner_id,
@@ -57,7 +57,6 @@ BEGIN
         0.40,
         7500,
         'Boys',
-        FALSE,
         TRUE,
         TRUE,
         ARRAY['No smoking inside rooms', 'Gate closes at 10:30 PM', 'Visitors allowed in common lobby only'],
@@ -106,7 +105,7 @@ BEGIN
     INSERT INTO public.properties (
         owner_id, title, slug, description, location_name, city, state, pincode,
         address, latitude, longitude, distance_text, distance_km, base_price,
-        gender_type, is_premium, is_verified, is_active, house_rules,
+        gender_type, is_verified, is_active, house_rules,
         contact_phone, contact_email, rating, reviews_count
     ) VALUES (
         v_owner_id,
@@ -124,7 +123,6 @@ BEGIN
         1.80,
         11000,
         'Girls',
-        TRUE,
         TRUE,
         TRUE,
         ARRAY['Biometric entry mandatory', 'Strict 10:00 PM curfew', 'Quiet hours after 11:00 PM', 'No male visitors past lobby'],
@@ -171,7 +169,7 @@ BEGIN
     INSERT INTO public.properties (
         owner_id, title, slug, description, location_name, city, state, pincode,
         address, latitude, longitude, distance_text, distance_km, base_price,
-        gender_type, is_premium, is_verified, is_active, house_rules,
+        gender_type, is_verified, is_active, house_rules,
         contact_phone, contact_email, rating, reviews_count
     ) VALUES (
         v_owner_id,
@@ -189,7 +187,6 @@ BEGIN
         1.20,
         6000,
         'Co-ed',
-        FALSE,
         TRUE,
         TRUE,
         ARRAY['Separate wings for boys and girls', 'Zero tolerance for narcotics/alcohol', 'Guest registration required at reception'],
@@ -235,7 +232,7 @@ BEGIN
     INSERT INTO public.properties (
         owner_id, title, slug, description, location_name, city, state, pincode,
         address, latitude, longitude, distance_text, distance_km, base_price,
-        gender_type, is_premium, is_verified, is_active, house_rules,
+        gender_type, is_verified, is_active, house_rules,
         contact_phone, contact_email, rating, reviews_count
     ) VALUES (
         v_owner_id,
@@ -253,7 +250,6 @@ BEGIN
         0.60,
         9500,
         'Boys',
-        TRUE,
         TRUE,
         TRUE,
         ARRAY['ID card compulsory at entrance', 'Night entry before 11:00 PM', 'No loud music during exam seasons'],
@@ -301,7 +297,7 @@ BEGIN
     INSERT INTO public.properties (
         owner_id, title, slug, description, location_name, city, state, pincode,
         address, latitude, longitude, distance_text, distance_km, base_price,
-        gender_type, is_premium, is_verified, is_active, house_rules,
+        gender_type, is_verified, is_active, house_rules,
         contact_phone, contact_email, rating, reviews_count
     ) VALUES (
         v_owner_id,
@@ -319,7 +315,6 @@ BEGIN
         1.50,
         8000,
         'Girls',
-        FALSE,
         TRUE,
         TRUE,
         ARRAY['Gate closes at 9:30 PM', 'Only female visitors in rooms', 'Weekly cleanliness review', 'Parent notification for late leaves'],
@@ -365,7 +360,7 @@ BEGIN
     INSERT INTO public.properties (
         owner_id, title, slug, description, location_name, city, state, pincode,
         address, latitude, longitude, distance_text, distance_km, base_price,
-        gender_type, is_premium, is_verified, is_active, house_rules,
+        gender_type, is_verified, is_active, house_rules,
         contact_phone, contact_email, rating, reviews_count
     ) VALUES (
         v_owner_id,
@@ -383,7 +378,6 @@ BEGIN
         0.25,
         8500,
         'Co-ed',
-        FALSE,
         TRUE,
         TRUE,
         ARRAY['Biometric attendance log', 'No non-resident overnight stays', 'Common area quiet hours after 10:30 PM'],

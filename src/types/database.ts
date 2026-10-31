@@ -12,7 +12,6 @@ export type BookingStatus = 'Pending' | 'Confirmed' | 'Declined' | 'Rescheduled'
 export type VerificationStatus = 'Pending' | 'Approved' | 'Rejected';
 export type ReportTargetType = 'Property' | 'Review' | 'User';
 export type ReportStatus = 'Open' | 'Resolved' | 'Dismissed';
-export type SubscriptionTier = 'Monthly' | 'Yearly';
 export type PaymentStatus = 'Pending' | 'Success' | 'Failed' | 'Refunded';
 export type NotificationType =
   | 'booking_request'
@@ -95,7 +94,6 @@ export interface Database {
           distance_km: number;
           base_price: number;
           gender_type: PropertyGenderType;
-          is_premium: boolean;
           is_verified: boolean;
           is_active: boolean;
           rejection_reason: string | null;
@@ -124,7 +122,6 @@ export interface Database {
           distance_km?: number;
           base_price: number;
           gender_type: PropertyGenderType;
-          is_premium?: boolean;
           is_verified?: boolean;
           is_active?: boolean;
           rejection_reason?: string | null;
@@ -153,7 +150,6 @@ export interface Database {
           distance_km?: number;
           base_price?: number;
           gender_type?: PropertyGenderType;
-          is_premium?: boolean;
           is_verified?: boolean;
           is_active?: boolean;
           rejection_reason?: string | null;
@@ -743,134 +739,6 @@ export interface Database {
           }
         ];
       };
-      premium_subscriptions: {
-        Row: {
-          id: string;
-          user_id: string;
-          tier: SubscriptionTier;
-          amount: number;
-          currency: string;
-          order_id: string;
-          payment_gateway: string;
-          gateway_payment_id: string | null;
-          payment_method: string;
-          status: PaymentStatus;
-          valid_from: string | null;
-          valid_until: string | null;
-          invoice_url: string | null;
-          metadata: Json;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          tier: SubscriptionTier;
-          amount: number;
-          currency?: string;
-          order_id: string;
-          payment_gateway?: string;
-          gateway_payment_id?: string | null;
-          payment_method: string;
-          status?: PaymentStatus;
-          valid_from?: string | null;
-          valid_until?: string | null;
-          invoice_url?: string | null;
-          metadata?: Json;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          tier?: SubscriptionTier;
-          amount?: number;
-          currency?: string;
-          order_id?: string;
-          payment_gateway?: string;
-          gateway_payment_id?: string | null;
-          payment_method?: string;
-          status?: PaymentStatus;
-          valid_from?: string | null;
-          valid_until?: string | null;
-          invoice_url?: string | null;
-          metadata?: Json;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'premium_subscriptions_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
-      payment_transactions: {
-        Row: {
-          id: string;
-          user_id: string;
-          subscription_id: string | null;
-          amount: number;
-          currency: string;
-          payment_gateway: string;
-          gateway_order_id: string | null;
-          gateway_payment_id: string | null;
-          gateway_signature: string | null;
-          status: PaymentStatus;
-          error_code: string | null;
-          error_description: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          subscription_id?: string | null;
-          amount: number;
-          currency?: string;
-          payment_gateway: string;
-          gateway_order_id?: string | null;
-          gateway_payment_id?: string | null;
-          gateway_signature?: string | null;
-          status?: PaymentStatus;
-          error_code?: string | null;
-          error_description?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          subscription_id?: string | null;
-          amount?: number;
-          currency?: string;
-          payment_gateway?: string;
-          gateway_order_id?: string | null;
-          gateway_payment_id?: string | null;
-          gateway_signature?: string | null;
-          status?: PaymentStatus;
-          error_code?: string | null;
-          error_description?: string | null;
-          created_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'payment_transactions_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'payment_transactions_subscription_id_fkey';
-            columns: ['subscription_id'];
-            isOneToOne: false;
-            referencedRelation: 'premium_subscriptions';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
     };
     Views: {
       [_ in never]: never;
@@ -895,7 +763,6 @@ export interface Database {
       verification_status: VerificationStatus;
       report_target_type: ReportTargetType;
       report_status: ReportStatus;
-      subscription_tier: SubscriptionTier;
       payment_status: PaymentStatus;
       notification_type: NotificationType;
     };
