@@ -107,5 +107,5 @@ DROP TYPE IF EXISTS public.subscription_tier CASCADE;
 
 -- 5. Drop is_premium column on properties
 ALTER TABLE public.properties 
-    DROP COLUMN IF EXISTS is_premium CASCADE;
+    DROP COLUMN IF EXISTS is_premium;
 
