@@ -8,7 +8,6 @@ export default function AboutPage() {
     { number: '15,000+', label: 'Verified Student Beds', icon: 'bed' },
     { number: '45+', label: 'University Hubs Covered', icon: 'school' },
     { number: '0₹', label: 'Brokerage Charged Ever', icon: 'savings' },
-    { number: '98.4%', label: 'Positive Student Rating', icon: 'thumb_up' },
   ];
 
   const values = [
@@ -95,7 +94,7 @@ export default function AboutPage() {
       </section>
 
       {/* Stats Counter Bar */}
-      <section className="bg-white rounded-card p-8 shadow-level-1 border border-outline-variant grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <section className="bg-white rounded-card p-8 shadow-level-1 border border-outline-variant grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
         {stats.map((item, idx) => (
           <div key={idx} className="flex flex-col items-center gap-2 p-2">
             <span className="material-symbols-outlined text-deep-green text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>

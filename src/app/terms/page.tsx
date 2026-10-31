@@ -131,7 +131,6 @@ export default function TermsOfServicePage() {
               <ul className="list-disc pl-5 space-y-1.5">
                 <li>Provide accurate personal identity information during tour booking and owner interactions.</li>
                 <li>Respect scheduled tour timings and cancel visits at least 2 hours in advance if unable to attend.</li>
-                <li>Leave genuine, objective reviews based on firsthand visits or actual residency.</li>
                 <li>Refrain from sharing owner contact information with unverified third parties.</li>
               </ul>
             </div>
@@ -176,7 +175,7 @@ export default function TermsOfServicePage() {
             <div className="text-sm text-on-surface-variant space-y-3 leading-relaxed">
               <p>PGFinder reserves the right to immediately deactivate accounts and remove listings involved in:</p>
               <ul className="list-disc pl-5 space-y-1.5">
-                <li>Posting fake property images, stock photographs, or fabricated reviews.</li>
+                <li>Posting fake property images, stock photographs, or misleading listing details.</li>
                 <li>Demanding unauthorized off-platform brokerage commissions.</li>
                 <li>Harassment, threats, or stalking of students, wardens, or staff.</li>
                 <li>Attempting to circumvent or tamper with the platform security or verification workflows.</li>

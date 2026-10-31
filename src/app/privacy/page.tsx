@@ -99,7 +99,7 @@ export default function PrivacyPolicyPage() {
               <ul className="list-disc pl-5 space-y-1.5">
                 <li><strong className="text-primary">Student Account Details:</strong> Full name, university email address, contact phone number, college/institute name, and government ID for visit authorization.</li>
                 <li><strong className="text-primary">Owner &amp; Property Documentation:</strong> Ownership title deeds, municipal NOC, electricity bills, property address, room photos, and bank account details for rental disbursement.</li>
-                <li><strong className="text-primary">Platform Interaction Logs:</strong> Search filters (budget, food preference, AC/Non-AC), shortlisted properties, visit requests, and review ratings.</li>
+                <li><strong className="text-primary">Platform Interaction Logs:</strong> Search filters (budget, food preference, AC/Non-AC), shortlisted properties, and visit requests.</li>
                 <li><strong className="text-primary">Technical Telemetry:</strong> Device IP address, browser type, operating system, and session cookies to ensure platform stability and session continuity.</li>
               </ul>
             </div>
@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
                 <li>Facilitating direct, broker-free connections between genuine students and verified property owners.</li>
                 <li>Executing mandatory 4-step physical and documentary verification for all new hostel/PG listings.</li>
                 <li>Sending transactional booking confirmations, visit appointment reminders via SMS/email, and OTP authentication.</li>
-                <li>Detecting and immediately terminating fraudulent listings, fake reviews, or spam accounts.</li>
+                <li>Detecting and immediately terminating fraudulent listings, misleading information, or spam accounts.</li>
               </ul>
             </div>
           </section>

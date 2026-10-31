@@ -5,7 +5,7 @@ import { usePersona } from '@/context/PersonaContext';
 import Link from 'next/link';
 
 export default function StudentDashboard() {
-  const { bookings, shortlist, listings, updateBookingStatus, user, profile } = usePersona();
+  const { bookings, shortlist, updateBookingStatus, user, profile } = usePersona();
 
   const isPlaceholderMode =
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -31,14 +31,7 @@ export default function StudentDashboard() {
     (b) => (b.status === 'Confirmed' || b.status === 'Pending') && b.date >= todayStr
   ).length;
   const shortlistedCount = displayShortlist.length;
-  const reviewsCount = isDemo
-    ? 2
-    : listings.reduce((acc, l) => {
-        const authored = (l.reviews || []).filter(
-          (r) => profile?.full_name && r.author === profile.full_name
-        ).length;
-        return acc + authored;
-      }, 0);
+
 
   // Welcome heading: use the first word of profile.full_name from the real profile. Never fall back to "Aarav" for real users.
   const getFirstName = () => {
@@ -86,7 +79,7 @@ export default function StudentDashboard() {
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-white border border-outline-variant p-4 rounded-xl shadow-level-1 flex flex-col gap-1">
           <span className="text-xs text-on-surface-variant font-medium">Upcoming Visits</span>
           <span className="text-3xl font-bold text-primary">{upcomingToursCount}</span>
@@ -94,10 +87,6 @@ export default function StudentDashboard() {
         <div className="bg-white border border-outline-variant p-4 rounded-xl shadow-level-1 flex flex-col gap-1">
           <span className="text-xs text-on-surface-variant font-medium">Shortlisted PGs</span>
           <span className="text-3xl font-bold text-primary">{shortlistedCount}</span>
-        </div>
-        <div className="bg-white border border-outline-variant p-4 rounded-xl shadow-level-1 flex flex-col gap-1">
-          <span className="text-xs text-on-surface-variant font-medium">Reviews Written</span>
-          <span className="text-3xl font-bold text-primary">{reviewsCount}</span>
         </div>
       </div>
 

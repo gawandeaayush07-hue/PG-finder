@@ -14,7 +14,6 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const menuItems = [
     { name: 'My Dashboard', path: '/dashboard/student', icon: 'dashboard' },
     { name: 'Shortlisted PGs', path: '/dashboard/student/shortlist', icon: 'favorite' },
-    { name: 'Reviews Hub', path: '/dashboard/student/reviews', icon: 'rate_review' },
     { name: 'Account Settings', path: '/dashboard/student/settings', icon: 'settings' },
   ];
 
