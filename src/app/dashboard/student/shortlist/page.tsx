@@ -109,10 +109,7 @@ export default function StudentShortlist() {
                   </span>
                 </button>
 
-                <div className="absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded text-[11px] font-bold text-primary shadow-sm flex items-center gap-0.5">
-                  <span className="material-symbols-outlined text-[13px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                  {listing.rating}
-                </div>
+
               </div>
 
               <div className="p-4 flex-grow flex flex-col gap-3">
