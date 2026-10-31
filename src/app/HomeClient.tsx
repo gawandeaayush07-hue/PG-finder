@@ -10,7 +10,7 @@ interface HomeClientProps {
 }
 
 export default function HomeClient({ initialListings }: HomeClientProps) {
-  const { role, searchQuery, setSearchQuery, priceRange, setPriceRange } = usePersona();
+  const { searchQuery, setSearchQuery, priceRange, setPriceRange } = usePersona();
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -18,14 +18,9 @@ export default function HomeClient({ initialListings }: HomeClientProps) {
     router.push('/search');
   };
 
-  // For GUESTs, hide premium listings (same rule as /search). Then take first 3.
   const featuredListings = React.useMemo(() => {
-    const visible =
-      role === 'GUEST'
-        ? initialListings.filter((l) => !l.premium)
-        : initialListings;
-    return visible.slice(0, 3);
-  }, [initialListings, role]);
+    return initialListings.slice(0, 3);
+  }, [initialListings]);
 
   return (
     <div className="relative overflow-hidden">
@@ -194,7 +189,6 @@ export default function HomeClient({ initialListings }: HomeClientProps) {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredListings.map((listing) => {
-              const isNew = listing.rating === 0 || listing.reviewsCount === 0;
               return (
                 <div key={listing.id} className="bg-white card-radius shadow-level-1 hover-lift flex flex-col overflow-hidden">
                   <div className="relative h-56 w-full p-2">
@@ -212,11 +206,6 @@ export default function HomeClient({ initialListings }: HomeClientProps) {
                     <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
                       <span className="font-label-sm text-label-sm text-deep-green font-bold">₹{listing.price.toLocaleString()}/mo</span>
                     </div>
-                    {listing.premium && (
-                      <div className="absolute top-4 left-4 bg-deep-green text-white px-3 py-1 rounded-full shadow-sm">
-                        <span className="font-label-sm text-label-sm">Premium</span>
-                      </div>
-                    )}
                   </div>
 
                   <div className="p-6 flex flex-col flex-grow gap-4">
@@ -225,16 +214,6 @@ export default function HomeClient({ initialListings }: HomeClientProps) {
                         <h3 className="font-headline-md text-headline-md text-deep-green font-semibold line-clamp-1">
                           {listing.title}
                         </h3>
-                        <div className="flex items-center gap-0.5 shrink-0">
-                          {isNew ? (
-                            <span className="text-xs font-bold text-deep-green bg-light-sage/40 px-2 py-0.5 rounded-full">New</span>
-                          ) : (
-                            <>
-                              <span className="material-symbols-outlined text-[16px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                              <span className="text-sm font-bold text-on-surface">{listing.rating}</span>
-                            </>
-                          )}
-                        </div>
                       </div>
                       <div className="flex items-center gap-1 text-on-surface-variant">
                         <span className="material-symbols-outlined text-[16px]">location_on</span>
