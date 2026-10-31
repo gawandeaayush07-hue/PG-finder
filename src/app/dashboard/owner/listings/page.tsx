@@ -674,8 +674,6 @@ export default function OwnerListings() {
       title,
       location: locationName,
       price: parseInt(basePrice),
-      rating: 5.0,
-      reviewsCount: 0,
       image:
         'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=400&h=300&q=80',
       images: [
@@ -684,7 +682,6 @@ export default function OwnerListings() {
       ],
       distanceText,
       type: genderType,
-      premium: false,
       verified: false,
       amenities: selectedAmenityNames,
       rooms: [{ name: 'Double Sharing', price: parseInt(basePrice), available: true }],
@@ -701,7 +698,6 @@ export default function OwnerListings() {
           'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80',
       },
       description,
-      reviews: [],
     };
 
     setListings((prev) => [...prev, newListing]);
@@ -1460,9 +1456,6 @@ export default function OwnerListings() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-on-surface-variant font-medium">
-                      Rating: {listing.rating} ★
-                    </span>
                     <button
                       type="button"
                       onClick={() => openDeleteModal({ id: listing.id, title: listing.title })}
@@ -1515,7 +1508,7 @@ export default function OwnerListings() {
                 <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
                   This action cannot be undone. This will permanently delete{' '}
                   <span className="font-bold text-on-surface">{propertyToDelete.title}</span>,
-                  including all rooms, amenities, photos, reviews, and will notify any students
+                  including all rooms, amenities, photos, and will notify any students
                   with scheduled tour bookings.
                 </p>
               </div>

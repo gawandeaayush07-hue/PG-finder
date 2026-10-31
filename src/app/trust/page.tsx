@@ -31,9 +31,9 @@ export default function TrustAndSafetyPage() {
     },
     {
       step: '04',
-      title: 'Continuous Resident Auditing',
-      desc: 'Only students who have booked visits or lived in a PG can submit verified reviews. Listings with sub-standard ratings trigger immediate spot audits.',
-      icon: 'rate_review',
+      title: 'Continuous Quality Auditing',
+      desc: 'We conduct regular checks and quality audits on active accommodations. Any property reported with safety or maintenance issues triggers an immediate spot inspection.',
+      icon: 'verified_user',
     },
   ];
 

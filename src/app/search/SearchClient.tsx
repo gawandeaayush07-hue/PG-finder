@@ -9,7 +9,7 @@ interface SearchClientProps {
 }
 
 export default function SearchClient({ initialListings }: SearchClientProps) {
-  const { role, shortlist, toggleShortlist, searchQuery, setSearchQuery } = usePersona();
+  const { shortlist, toggleShortlist, searchQuery, setSearchQuery } = usePersona();
   
   // Local filter states
   const [maxDistance, setMaxDistance] = useState<number>(10); // in km
@@ -59,18 +59,14 @@ export default function SearchClient({ initialListings }: SearchClientProps) {
         // 4. Gender Type filter
         if (!genderTypes[item.type]) return false;
 
-        // 5. Guest restriction (Hide premium listings from Guests)
-        if (role === 'GUEST' && item.premium) return false;
-
         return true;
       })
       .sort((a, b) => {
         if (sortBy === 'Price: Low to High') return a.price - b.price;
-        if (sortBy === 'Rating') return (b.rating || 0) - (a.rating || 0);
         if (sortBy === 'Distance') return getDistance(a) - getDistance(b);
         return 0; // Recommended / default
       });
-  }, [initialListings, searchQuery, maxDistance, maxPrice, genderTypes, sortBy, role]);
+  }, [initialListings, searchQuery, maxDistance, maxPrice, genderTypes, sortBy]);
 
   const handleGenderToggle = (type: string) => {
     setGenderTypes((prev) => ({
@@ -209,7 +205,6 @@ export default function SearchClient({ initialListings }: SearchClientProps) {
               <option>Sort by: Recommended</option>
               <option>Price: Low to High</option>
               <option>Distance</option>
-              <option>Rating</option>
             </select>
             <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
               expand_more
@@ -230,7 +225,6 @@ export default function SearchClient({ initialListings }: SearchClientProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
             {filteredListings.map((listing, index) => {
               const isSaved = shortlist.includes(listing.id);
-              const isNew = listing.rating === 0 || listing.reviewsCount === 0;
               return (
                 <div 
                   key={listing.id} 
@@ -262,16 +256,7 @@ export default function SearchClient({ initialListings }: SearchClientProps) {
                       </span>
                     </button>
 
-                    <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg flex items-center gap-0.5 font-label-sm text-sm text-primary shadow-sm font-semibold">
-                      {isNew ? (
-                        <span className="text-xs font-bold text-deep-green">New</span>
-                      ) : (
-                        <>
-                          <span className="material-symbols-outlined text-[14px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span> 
-                          {listing.rating}
-                        </>
-                      )}
-                    </div>
+
                   </div>
 
                   <div className="p-4 flex-grow flex flex-col gap-3">
@@ -321,7 +306,7 @@ export default function SearchClient({ initialListings }: SearchClientProps) {
             <span className="material-symbols-outlined text-6xl text-outline-variant">search_off</span>
             <h3 className="font-headline-md text-deep-green font-bold text-xl">No Properties Found</h3>
             <p className="text-on-surface-variant max-w-[40ch]">
-              We couldn't find any PGs matching your filters. Try clearing your search query or expanding your distance/price ranges.
+              We couldn&apos;t find any PGs matching your filters. Try clearing your search query or expanding your distance/price ranges.
             </p>
             <button
               onClick={() => {

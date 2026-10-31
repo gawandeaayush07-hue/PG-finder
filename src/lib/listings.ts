@@ -4,7 +4,7 @@
  * and maps rows to the application Listing shape.
  */
 import { createPublicClient } from '@/lib/supabase/public';
-import type { Listing, Review } from '@/context/PersonaContext';
+import type { Listing } from '@/context/PersonaContext';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -51,78 +51,14 @@ async function fetchOwnerProfiles(
   return map;
 }
 
-/**
- * Batched lookup of reviews and author names from public_profiles view.
- */
-async function fetchReviewsForProperties(
-  supabase: ReturnType<typeof createPublicClient>,
-  propertyIds: string[]
-): Promise<Map<string, Review[]>> {
-  const reviewsMap = new Map<string, Review[]>();
-  if (propertyIds.length === 0) return reviewsMap;
 
-  try {
-    const { data: dbReviews, error: revError } = await supabase
-      .from('reviews')
-      .select('id, property_id, student_id, rating, comment, created_at')
-      .in('property_id', propertyIds)
-      .order('created_at', { ascending: false });
-
-    if (revError) {
-      console.error('Supabase error fetching reviews:', revError);
-      return reviewsMap;
-    }
-
-    if (!dbReviews || dbReviews.length === 0) {
-      return reviewsMap;
-    }
-
-    const studentIds = Array.from(new Set(dbReviews.map((r) => r.student_id).filter(Boolean)));
-    const authorMap = new Map<string, string>();
-
-    if (studentIds.length > 0) {
-      const { data: authors, error: authorError } = await (supabase
-        .from('public_profiles' as any)
-        .select('id, full_name')
-        .in('id', studentIds) as any);
-
-      if (authorError) {
-        console.error('Supabase error fetching review author profiles:', authorError);
-      } else if (authors) {
-        for (const a of authors as RawProfile[]) {
-          authorMap.set(a.id, a.full_name || '');
-        }
-      }
-    }
-
-    for (const rev of dbReviews) {
-      const authorName = authorMap.get(rev.student_id) || 'Verified Resident';
-      const formattedReview: Review = {
-        id: rev.id ?? '',
-        author: authorName,
-        rating: Number(rev.rating) || 0,
-        date: rev.created_at ? rev.created_at.split('T')[0] : '',
-        comment: rev.comment ?? '',
-      };
-
-      const existing = reviewsMap.get(rev.property_id) || [];
-      existing.push(formattedReview);
-      reviewsMap.set(rev.property_id, existing);
-    }
-  } catch (err) {
-    console.error('Exception fetching reviews:', err);
-  }
-
-  return reviewsMap;
-}
 
 /**
  * Maps raw Supabase property row and resolved relation maps to the Listing shape.
  */
 function mapPropertyRowToListing(
   rawProp: any,
-  ownerMap: Map<string, { full_name: string; avatar_url: string | null }>,
-  reviewsMap: Map<string, Review[]>
+  ownerMap: Map<string, { full_name: string; avatar_url: string | null }>
 ): Listing {
   const sortedImages = Array.isArray(rawProp.property_images)
     ? [...rawProp.property_images].sort((a: any, b: any) => (a.display_order ?? 0) - (b.display_order ?? 0))
@@ -161,15 +97,11 @@ function mapPropertyRowToListing(
     avatar: ownerProfile?.avatar_url ?? '',
   };
 
-  const propReviews = rawProp.id ? (reviewsMap.get(rawProp.id) || []) : [];
-
   return {
     id: rawProp.id ?? '',
     title: rawProp.title ?? '',
     location: rawProp.location_name ?? '',
     price: Number(rawProp.base_price) || 0,
-    rating: Number(rawProp.rating) || 0,
-    reviewsCount: Number(rawProp.reviews_count) || 0,
     image,
     images,
     distanceText: rawProp.distance_text ?? '',
@@ -177,19 +109,17 @@ function mapPropertyRowToListing(
     latitude: rawProp.latitude != null ? Number(rawProp.latitude) : undefined,
     longitude: rawProp.longitude != null ? Number(rawProp.longitude) : undefined,
     type: (rawProp.gender_type as 'Boys' | 'Girls' | 'Co-ed') || 'Co-ed',
-    premium: Boolean(rawProp.is_premium),
     verified: Boolean(rawProp.is_verified),
     amenities,
     rooms,
     ownerId: rawProp.owner_id ?? '',
     owner,
     description: rawProp.description ?? '',
-    reviews: propReviews,
   };
 }
 
 /**
- * Fetches all verified, active properties ordered by is_premium desc then created_at desc.
+ * Fetches all verified, active properties ordered by created_at desc.
  */
 export async function getListings(): Promise<Listing[]> {
   try {
@@ -210,7 +140,6 @@ export async function getListings(): Promise<Listing[]> {
         distance_km,
         base_price,
         gender_type,
-        is_premium,
         is_verified,
         is_active,
         contact_phone,
@@ -239,7 +168,6 @@ export async function getListings(): Promise<Listing[]> {
       `)
       .eq('is_active', true)
       .eq('is_verified', true)
-      .order('is_premium', { ascending: false })
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -254,15 +182,11 @@ export async function getListings(): Promise<Listing[]> {
     const ownerIds = Array.from(
       new Set(properties.map((p) => p.owner_id).filter(Boolean))
     );
-    const propertyIds = properties.map((p) => p.id).filter(Boolean);
 
-    const [ownerMap, reviewsMap] = await Promise.all([
-      fetchOwnerProfiles(supabase, ownerIds),
-      fetchReviewsForProperties(supabase, propertyIds),
-    ]);
+    const ownerMap = await fetchOwnerProfiles(supabase, ownerIds);
 
     return properties.map((prop) =>
-      mapPropertyRowToListing(prop, ownerMap, reviewsMap)
+      mapPropertyRowToListing(prop, ownerMap)
     );
   } catch (err) {
     console.error('Exception in getListings():', err);
@@ -295,7 +219,6 @@ export async function getListingById(idOrSlug: string): Promise<Listing | null> 
         distance_km,
         base_price,
         gender_type,
-        is_premium,
         is_verified,
         is_active,
         contact_phone,
@@ -346,12 +269,8 @@ export async function getListingById(idOrSlug: string): Promise<Listing | null> 
       supabase,
       property.owner_id ? [property.owner_id] : []
     );
-    const reviewsMap = await fetchReviewsForProperties(
-      supabase,
-      property.id ? [property.id] : []
-    );
 
-    return mapPropertyRowToListing(property, ownerMap, reviewsMap);
+    return mapPropertyRowToListing(property, ownerMap);
   } catch (err) {
     console.error(`Exception in getListingById('${idOrSlug}'):`, err);
     return null;
@@ -393,7 +312,6 @@ export async function getListingsByIds(ids: string[]): Promise<Listing[]> {
         distance_km,
         base_price,
         gender_type,
-        is_premium,
         is_verified,
         is_active,
         contact_phone,
@@ -423,7 +341,6 @@ export async function getListingsByIds(ids: string[]): Promise<Listing[]> {
       .in('id', validIds)
       .eq('is_active', true)
       .eq('is_verified', true)
-      .order('is_premium', { ascending: false })
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -438,15 +355,11 @@ export async function getListingsByIds(ids: string[]): Promise<Listing[]> {
     const ownerIds = Array.from(
       new Set(properties.map((p) => p.owner_id).filter(Boolean))
     );
-    const propertyIds = properties.map((p) => p.id).filter(Boolean);
 
-    const [ownerMap, reviewsMap] = await Promise.all([
-      fetchOwnerProfiles(supabase, ownerIds),
-      fetchReviewsForProperties(supabase, propertyIds),
-    ]);
+    const ownerMap = await fetchOwnerProfiles(supabase, ownerIds);
 
     return properties.map((prop) =>
-      mapPropertyRowToListing(prop, ownerMap, reviewsMap)
+      mapPropertyRowToListing(prop, ownerMap)
     );
   } catch (err) {
     console.error('Exception in getListingsByIds():', err);

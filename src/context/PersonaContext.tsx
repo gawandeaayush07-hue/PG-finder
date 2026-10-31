@@ -8,21 +8,11 @@ import type { Database, UserRole as DbUserRole } from '@/types/database';
 export type UserRole = 'GUEST' | 'STUDENT' | 'OWNER' | 'ADMIN';
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 
-export interface Review {
-  id: string;
-  author: string;
-  rating: number;
-  date: string;
-  comment: string;
-}
-
 export interface Listing {
   id: string;
   title: string;
   location: string;
   price: number;
-  rating: number;
-  reviewsCount: number;
   image: string;
   images: string[];
   distanceText: string;
@@ -30,13 +20,11 @@ export interface Listing {
   latitude?: number;
   longitude?: number;
   type: 'Boys' | 'Girls' | 'Co-ed';
-  premium: boolean;
   amenities: string[];
   rooms: { name: string; price: number; available: boolean }[];
   ownerId?: string;
   owner: { name: string; phone: string; email: string; avatar: string };
   description: string;
-  reviews: Review[];
   verified: boolean;
 }
 
@@ -112,8 +100,6 @@ const initialListings: Listing[] = [
     title: 'Green Leaf Residences',
     location: 'North Campus Area',
     price: 8500,
-    rating: 4.5,
-    reviewsCount: 24,
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAm8lPh-Mh5caZDv8otgb_zbadZcAdDju396GSImXWmGWluVmY84Ux_xLoF2VC-lYMdHWMG7FUq-Gc0MuQ2j9d3i5fuRXHrsmha7p_8co2PX0ntqHVv6_Br2Nk3Nze04cTAl_RZnhWqnSwPN9FXk0Xo28PH3UowicNa3OeV-QyOCj-HpXLTxT6pajpTJ52a6nxk81CjYC-nxto-OsTinCozpc9oPhYTwyCf0sebvQNOHzVcEb-PhLVG',
     images: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuAm8lPh-Mh5caZDv8otgb_zbadZcAdDju396GSImXWmGWluVmY84Ux_xLoF2VC-lYMdHWMG7FUq-Gc0MuQ2j9d3i5fuRXHrsmha7p_8co2PX0ntqHVv6_Br2Nk3Nze04cTAl_RZnhWqnSwPN9FXk0Xo28PH3UowicNa3OeV-QyOCj-HpXLTxT6pajpTJ52a6nxk81CjYC-nxto-OsTinCozpc9oPhYTwyCf0sebvQNOHzVcEb-PhLVG',
@@ -121,7 +107,6 @@ const initialListings: Listing[] = [
     ],
     distanceText: '5 mins walk to college',
     type: 'Boys',
-    premium: false,
     verified: true,
     amenities: ['Wifi', 'AC', 'Power Backup', 'Food Included', 'CCTV', 'Security'],
     rooms: [
@@ -136,18 +121,12 @@ const initialListings: Listing[] = [
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80',
     },
     description: 'Green Leaf Residences offers premium student living with a modern minimal style in the quietest pocket of the North Campus area. Ideal for students who prioritize peace of mind, high-speed internet, and home-style nutritious food. Daily laundry services and 24/7 security are included.',
-    reviews: [
-      { id: 'r1', author: 'Aman Sharma', rating: 5, date: '2026-08-01', comment: 'Very clean rooms and nice food. Ramesh Uncle is very helpful.' },
-      { id: 'r2', author: 'Vikram Singh', rating: 4, date: '2026-07-28', comment: 'Excellent high-speed Wi-Fi, perfect for study. Quiet environment.' },
-    ],
   },
   {
     id: 'listing-2',
     title: "The Scholar's Abode",
     location: 'South Ext. Zone',
     price: 12000,
-    rating: 4.8,
-    reviewsCount: 42,
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC5pCTp3k1FCq-3XHGKV2oHeHVb_nLeF_SRifbW1gBGQf1IZsbzXAtLlT1oezipOlG2E1C-Lbxz0u0OtnOFYnghKi85o7hNPV1TwW2CLmY78QjC2EZR4oYFpDI0v6pmhWGQJzBbZNjyhXVaOKzIfif84mndDETJUI8S_C4-P3_eYwPZHbuVYKvq6m334Dy4d5NSKcWCdz1AQHHE1eLuv34s3JklKR_hYO-rWjmvhaBcpvh9GmyeRmYs',
     images: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuC5pCTp3k1FCq-3XHGKV2oHeHVb_nLeF_SRifbW1gBGQf1IZsbzXAtLlT1oezipOlG2E1C-Lbxz0u0OtnOFYnghKi85o7hNPV1TwW2CLmY78QjC2EZR4oYFpDI0v6pmhWGQJzBbZNjyhXVaOKzIfif84mndDETJUI8S_C4-P3_eYwPZHbuVYKvq6m334Dy4d5NSKcWCdz1AQHHE1eLuv34s3JklKR_hYO-rWjmvhaBcpvh9GmyeRmYs',
@@ -155,7 +134,6 @@ const initialListings: Listing[] = [
     ],
     distanceText: '15 mins bus ride to college',
     type: 'Girls',
-    premium: true,
     verified: true,
     amenities: ['Wifi', 'AC', 'Gym', 'Laundry', 'Food Included', 'CCTV', 'Biometric Entry', 'Peacful Study Room'],
     rooms: [
@@ -169,25 +147,18 @@ const initialListings: Listing[] = [
       avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80',
     },
     description: 'An elite hostel living experience exclusively for female students. Located in the highly secure South Ext. Zone, featuring biometric entry, modern security, an in-house gymnasium, and a dedicated library room. Our goal is to provide a home away from home with premium comforts.',
-    reviews: [
-      { id: 'r3', author: 'Neha Gupta', rating: 5, date: '2026-08-04', comment: 'Extremely safe and beautiful. Best accommodation I have ever stayed in.' },
-      { id: 'r4', author: 'Pooja Roy', rating: 4.5, date: '2026-07-15', comment: 'The gym is very well equipped and food is delicious.' },
-    ],
   },
   {
     id: 'listing-3',
     title: 'Harmony House',
     location: 'Tech Park Road',
     price: 6000,
-    rating: 4.2,
-    reviewsCount: 18,
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD4hh1JlQ4KvtIzEejGlq2kDX8wyYd07ileen21WMo05pUVbgXr82GC0qxNgJgwEcVNV9zvGpdCFlxdqBWM9sjz3EQsbC4V_JyJPpR7IaNcQRD4aWU4IkAn0TsIKQsd1QG6Asx70RVi5865nAajbIxkjK6rgKNDjekuae8fohn0AMydAJR3wTdQA476d4dzl-pkl1XDCOV3VBevwnTZmlqY38catB9sxOq7MhcwBznkiCK8aFPM0eRA',
     images: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuD4hh1JlQ4KvtIzEejGlq2kDX8wyYd07ileen21WMo05pUVbgXr82GC0qxNgJgwEcVNV9zvGpdCFlxdqBWM9sjz3EQsbC4V_JyJPpR7IaNcQRD4aWU4IkAn0TsIKQsd1QG6Asx70RVi5865nAajbIxkjK6rgKNDjekuae8fohn0AMydAJR3wTdQA476d4dzl-pkl1XDCOV3VBevwnTZmlqY38catB9sxOq7MhcwBznkiCK8aFPM0eRA',
     ],
     distanceText: '10 mins walk to college',
     type: 'Co-ed',
-    premium: false,
     verified: true,
     amenities: ['Wifi', 'Power Backup', 'Food Included', 'Laundry', 'CCTV'],
     rooms: [
@@ -201,9 +172,6 @@ const initialListings: Listing[] = [
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80',
     },
     description: 'Harmony House offers friendly, budget-friendly and community-centered living. Located close to Tech Park Road, it offers twin and triple sharing rooms. Commencing meals, recreation rooms, and cooperative student environment.',
-    reviews: [
-      { id: 'r5', author: 'Rahul Sen', rating: 4, date: '2026-08-05', comment: 'Very cheap and good. Location is perfect for tech campus.' },
-    ],
   },
 ];
 

@@ -22,7 +22,6 @@ export default function ListingClient({ listing }: ListingClientProps) {
   const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const isNew = listing.rating === 0 || listing.reviewsCount === 0;
 
   const isOwnerOrAdmin = role === 'OWNER' || role === 'ADMIN';
 
@@ -114,16 +113,6 @@ export default function ListingClient({ listing }: ListingClientProps) {
           <span className="bg-light-sage/50 text-deep-green px-3 py-1 rounded-full font-label-sm text-xs font-semibold">
             {listing.type} Accommodation
           </span>
-          {isNew ? (
-            <span className="bg-light-sage/50 text-deep-green px-3 py-1 rounded-full font-label-sm text-xs font-semibold">
-              New
-            </span>
-          ) : (
-            <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full font-label-sm text-xs flex items-center gap-1 font-semibold">
-              <span className="material-symbols-outlined text-[14px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              {listing.rating} ({listing.reviewsCount} review{listing.reviewsCount === 1 ? '' : 's'})
-            </span>
-          )}
         </div>
         <p className="text-subtext flex items-center gap-1 font-body-md text-sm text-[#7A8F7A]">
           <span className="material-symbols-outlined text-[18px]">location_on</span>
@@ -332,33 +321,7 @@ export default function ListingClient({ listing }: ListingClientProps) {
             </div>
           </section>
 
-          {/* Reviews List */}
-          <section className="bg-white rounded-card p-6 shadow-level-1 border border-outline-variant">
-            <h2 className="font-headline-md text-lg font-bold text-[#333333] mb-4">
-              Student Reviews ({listing.reviews ? listing.reviews.length : 0})
-            </h2>
-            {listing.reviews && listing.reviews.length > 0 ? (
-              <div className="space-y-4">
-                {listing.reviews.map((rev) => (
-                  <div key={rev.id} className="border-b border-outline-variant pb-4 last:border-b-0 last:pb-0">
-                    <div className="flex justify-between items-center mb-1">
-                      <h4 className="font-bold text-primary text-sm">{rev.author}</h4>
-                      <div className="flex items-center gap-0.5 text-amber-500">
-                        <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                        <span className="text-xs font-bold text-on-surface">{rev.rating}</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-on-surface-variant block mb-2">{rev.date}</span>
-                    <p className="text-sm text-on-surface-variant italic">
-                      "{rev.comment}"
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-on-surface-variant italic">No reviews yet.</p>
-            )}
-          </section>
+
         </div>
 
         {/* Tour Booking Sidebar */}
