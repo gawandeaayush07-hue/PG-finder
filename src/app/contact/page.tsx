@@ -20,8 +20,8 @@ export default function ContactSupportPage() {
     {
       city: 'Pune Campus Operations Hub',
       address: 'Pimpri Chinchwad College of Engineering, Sector No 26, Pradhikaran, Nigdi, Pune, Maharashtra 411044',
-      phone: '+91 20 6719 3300',
-      email: 'pune-hub@pgfinder.com',
+      phone: '+91 80079 22818',
+      email: 'ayush.gawande25@pccoepune.org',
     },
   ];
 
@@ -58,7 +58,7 @@ export default function ContactSupportPage() {
                 <div>
                   <h4 className="text-sm font-bold text-primary">24/7 Student Hotline</h4>
                   <p className="text-xs text-on-surface-variant mt-0.5">Toll-free student help &amp; visit coordination</p>
-                  <p className="text-sm font-mono font-bold text-deep-green mt-1">+91 1800-743-4633</p>
+                  <p className="text-sm font-mono font-bold text-deep-green mt-1">+91 80079 22818</p>
                 </div>
               </div>
 
@@ -69,7 +69,7 @@ export default function ContactSupportPage() {
                 <div>
                   <h4 className="text-sm font-bold text-primary">Official Support Inbox</h4>
                   <p className="text-xs text-on-surface-variant mt-0.5">General queries &amp; document submissions</p>
-                  <p className="text-sm font-bold text-deep-green mt-1">support@pgfinder.com</p>
+                  <p className="text-sm font-bold text-deep-green mt-1">ayush.gawande25@pccoepune.org</p>
                 </div>
               </div>
 
@@ -80,7 +80,7 @@ export default function ContactSupportPage() {
                 <div>
                   <h4 className="text-sm font-bold text-primary">WhatsApp Student Desk</h4>
                   <p className="text-xs text-on-surface-variant mt-0.5">Quick chat for location map sharing</p>
-                  <p className="text-sm font-mono font-bold text-deep-green mt-1">+91 98765 12345</p>
+                  <p className="text-sm font-mono font-bold text-deep-green mt-1">+91 80079 22818</p>
                 </div>
               </div>
             </div>
@@ -238,7 +238,7 @@ export default function ContactSupportPage() {
                 </span>
                 <div>
                   <p className="text-[11px] font-semibold text-on-surface-variant uppercase">Contact Desk</p>
-                  <p className="text-xs sm:text-sm font-mono font-bold text-deep-green">+91 20 6719 3300</p>
+                  <p className="text-xs sm:text-sm font-mono font-bold text-deep-green">+91 80079 22818</p>
                 </div>
               </div>
 
@@ -248,7 +248,7 @@ export default function ContactSupportPage() {
                 </span>
                 <div>
                   <p className="text-[11px] font-semibold text-on-surface-variant uppercase">Official Hub Mail</p>
-                  <p className="text-xs sm:text-sm font-bold text-deep-green">pune-hub@pgfinder.com</p>
+                  <p className="text-xs sm:text-sm font-bold text-deep-green">ayush.gawande25@pccoepune.org</p>
                 </div>
               </div>
             </div>
