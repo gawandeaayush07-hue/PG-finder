@@ -63,7 +63,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="material-symbols-outlined text-6xl text-rose-600">lock</span>
           <h2 className="text-2xl font-bold text-primary">Admin Portal</h2>
           <p className="text-on-surface-variant text-sm leading-relaxed">
-            You are currently browsing as a <strong className="text-primary">{role}</strong>. 
+            You are currently browsing as a <strong className="text-primary">{role}</strong>.
             To view this portal, please log in as an authorized administrator.
           </p>
           {isDemo ? (
@@ -74,7 +74,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               Admin Login
             </button>
           ) : (
-            <Link 
+            <Link
               href="/auth"
               className="bg-deep-green text-on-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary transition-colors cursor-pointer"
             >
@@ -92,7 +92,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
-        
+
         {/* Sidebar */}
         <aside className="lg:col-span-3">
           <div className="bg-white rounded-card p-6 shadow-level-1 border border-outline-variant flex flex-col gap-6">
@@ -115,11 +115,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.path}
                   href={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors font-medium cursor-pointer ${
-                    isActive(item.path)
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors font-medium cursor-pointer ${isActive(item.path)
                       ? 'bg-light-sage/30 text-primary font-bold'
                       : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                  }`}
+                    }`}
                 >
                   <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                   {item.name}

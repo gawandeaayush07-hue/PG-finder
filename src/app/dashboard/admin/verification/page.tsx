@@ -580,7 +580,7 @@ export default function AdminVerification() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5 text-xs text-on-surface-variant">
                       <p>
-                        Email: <strong className="text-[#333333] font-semibold">{student.email}</strong>
+                        Email: <strong className="text-[#333333] font-semibold">{student.email?.endsWith('@phone.pgfinder.app') ? 'Not provided' : student.email}</strong>
                       </p>
                       <p>
                         Phone: <strong className="text-[#333333] font-semibold">{student.phone || 'Not provided'}</strong>

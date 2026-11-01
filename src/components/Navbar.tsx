@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { usePersona, UserRole } from '@/context/PersonaContext';
 import { Magnetic } from '@/components/animations/Magnetic';
 import { getInitials } from '@/lib/utils';
+import { isAuthPlaceholderEmail } from '@/lib/phone';
 
 export const Navbar: React.FC = () => {
   const { role, profile, user, requestRoleChange, isAdminAuthorized, logout } = usePersona();
@@ -22,7 +23,7 @@ export const Navbar: React.FC = () => {
     requestRoleChange(newRole);
     setDropdownOpen(false);
     setMobileMenuOpen(false);
-    
+
     // Redirect to the dashboard corresponding to the role
     if (newRole === 'GUEST') {
       router.push('/');
@@ -49,7 +50,7 @@ export const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-50 bg-surface/70 backdrop-blur-md border-b border-outline-variant shadow-level-1">
       <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto h-20">
-        
+
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-sm group">
           <img
@@ -66,53 +67,47 @@ export const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center gap-lg">
           {(role === 'GUEST' || role === 'STUDENT') && (
             <>
-              <Link 
-                href="/" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Home
               </Link>
-              <Link 
-                href="/search" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/search') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/search"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/search') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Find a PG
               </Link>
-              <Link 
-                href="/about" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/about') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/about"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/about') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 About Us
               </Link>
-              <Link 
-                href="/contact" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/contact') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/contact"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/contact') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Contact
               </Link>
               {role === 'STUDENT' && (
                 <>
-                  <Link 
-                    href="/dashboard/student/shortlist" 
-                    className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                      isActive('/dashboard/student/shortlist') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                    }`}
+                  <Link
+                    href="/dashboard/student/shortlist"
+                    className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/student/shortlist') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                      }`}
                   >
                     Shortlist
                   </Link>
-                  <Link 
-                    href="/dashboard/student" 
-                    className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                      pathname.startsWith('/dashboard/student') && !pathname.endsWith('shortlist') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                    }`}
+                  <Link
+                    href="/dashboard/student"
+                    className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${pathname.startsWith('/dashboard/student') && !pathname.endsWith('shortlist') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                      }`}
                   >
                     Dashboard
                   </Link>
@@ -123,35 +118,31 @@ export const Navbar: React.FC = () => {
 
           {role === 'OWNER' && (
             <>
-              <Link 
-                href="/dashboard/owner" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/dashboard/owner') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/dashboard/owner"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/owner') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Analytics Dashboard
               </Link>
-              <Link 
-                href="/dashboard/owner/listings" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/dashboard/owner/listings') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/dashboard/owner/listings"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/owner/listings') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 My Listings
               </Link>
-              <Link 
-                href="/dashboard/owner/calendar" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/dashboard/owner/calendar') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/dashboard/owner/calendar"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/owner/calendar') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Tour Calendar
               </Link>
-              <Link 
-                href="/dashboard/owner/meetings" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/dashboard/owner/meetings') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/dashboard/owner/meetings"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/owner/meetings') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Requests
               </Link>
@@ -160,27 +151,24 @@ export const Navbar: React.FC = () => {
 
           {role === 'ADMIN' && (
             <>
-              <Link 
-                href="/dashboard/admin" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/dashboard/admin') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/dashboard/admin"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/admin') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Overview
               </Link>
-              <Link 
-                href="/dashboard/admin/verification" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/dashboard/admin/verification') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/dashboard/admin/verification"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/admin/verification') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Verification Pipeline
               </Link>
-              <Link 
-                href="/dashboard/admin/reports" 
-                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${
-                  isActive('/dashboard/admin/reports') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                }`}
+              <Link
+                href="/dashboard/admin/reports"
+                className={`font-label-md text-label-md px-3 py-2 rounded-md transition-colors ${isActive('/dashboard/admin/reports') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
+                  }`}
               >
                 Reports
               </Link>
@@ -190,7 +178,7 @@ export const Navbar: React.FC = () => {
 
         {/* Right Side: Role Selector (Persona Switcher) & Profile / Actions */}
         <div className="flex items-center gap-md relative">
-          
+
           {/* Persona Switcher Dropdown — shown only in dev-only demo mode, hidden for real signed-in users */}
           {(() => {
             const isPlaceholderMode =
@@ -220,9 +208,8 @@ export const Navbar: React.FC = () => {
                       <button
                         key={r}
                         onClick={() => handleRoleChange(r)}
-                        className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-container-low transition-colors flex items-center gap-2 cursor-pointer ${
-                          role === r ? 'font-semibold text-primary bg-light-sage/25' : 'text-on-surface'
-                        }`}
+                        className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-container-low transition-colors flex items-center gap-2 cursor-pointer ${role === r ? 'font-semibold text-primary bg-light-sage/25' : 'text-on-surface'
+                          }`}
                       >
                         <span className={`w-2 h-2 rounded-full ${r === 'GUEST' ? 'bg-zinc-400' : r === 'STUDENT' ? 'bg-emerald-500' : r === 'OWNER' ? 'bg-blue-600' : 'bg-rose-500'}`}></span>
                         {r.charAt(0) + r.slice(1).toLowerCase()}
@@ -241,7 +228,7 @@ export const Navbar: React.FC = () => {
                 Log In
               </Link>
               <Magnetic>
-                <Link href="/auth" className="bg-deep-green text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-full hover:bg-primary transition-colors hover:scale-95 duration-150 ease-in-out font-medium inline-block">
+                <Link href="/auth?mode=signup" className="bg-deep-green text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-full hover:bg-primary transition-colors hover:scale-95 duration-150 ease-in-out font-medium inline-block">
                   Sign Up
                 </Link>
               </Magnetic>
@@ -264,11 +251,11 @@ export const Navbar: React.FC = () => {
                   </span>
                 )}
               </div>
-              <button 
+              <button
                 onClick={async () => {
                   await logout();
                   router.push('/');
-                }} 
+                }}
                 className="text-xs font-semibold text-rose-600 hover:underline px-2 py-1 cursor-pointer"
               >
                 Log out
@@ -329,7 +316,7 @@ export const Navbar: React.FC = () => {
               <Link href="/auth" onClick={() => setMobileMenuOpen(false)} className="text-center text-primary font-medium py-2 hover:bg-surface-container-low rounded-md">
                 Log In
               </Link>
-              <Link href="/auth" onClick={() => setMobileMenuOpen(false)} className="text-center bg-deep-green text-on-primary font-medium py-2.5 rounded-full">
+              <Link href="/auth?mode=signup" onClick={() => setMobileMenuOpen(false)} className="text-center bg-deep-green text-on-primary font-medium py-2.5 rounded-full">
                 Sign Up
               </Link>
             </div>

@@ -39,12 +39,14 @@ export interface Database {
           student_id_rejection_reason: string | null;
           bio: string | null;
           emergency_contact: string | null;
+          contact_email: string | null;
+          contact_email_verified: boolean;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id: string;
-          email: string;
+          email?: string;
           full_name: string;
           phone?: string | null;
           role?: UserRole;
@@ -55,6 +57,8 @@ export interface Database {
           student_id_rejection_reason?: string | null;
           bio?: string | null;
           emergency_contact?: string | null;
+          contact_email?: string | null;
+          contact_email_verified?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -71,6 +75,8 @@ export interface Database {
           student_id_rejection_reason?: string | null;
           bio?: string | null;
           emergency_contact?: string | null;
+          contact_email?: string | null;
+          contact_email_verified?: boolean;
           created_at?: string;
           updated_at?: string;
         };

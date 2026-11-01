@@ -692,7 +692,7 @@ export default function OwnerListings() {
           (user?.email ? user.email.split('@')[0] : '') ||
           'Mrs. Sunita Gupta',
         phone: profile?.phone || (user?.user_metadata?.phone as string) || '+91 99999 88888',
-        email: user?.email || profile?.email || 'sunita@pgfinder.com',
+        email: profile?.contact_email || '',
         avatar:
           profile?.avatar_url ||
           'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80',
