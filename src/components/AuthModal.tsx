@@ -183,6 +183,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
                 />
               </div>
 
+              <div className="text-right -mt-2">
+                <a href="/auth/forgot" className="text-xs font-semibold text-deep-green hover:underline">Forgot password?</a>
+              </div>
               {error && <p className="text-rose-600 text-xs font-semibold text-center">{error}</p>}
 
               <div className="flex justify-end gap-3 mt-4">

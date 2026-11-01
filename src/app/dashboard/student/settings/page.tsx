@@ -62,13 +62,12 @@ export default function StudentSettings() {
   useEffect(() => {
     if (profile) {
       if (profile.full_name) setName(profile.full_name);
-      if (profile.email) setEmail(profile.email);
-      else if (user?.email) setEmail(user.email);
+      if (profile.contact_email) setEmail(profile.contact_email);
       if (profile.college_name) setCollege(profile.college_name);
       if (profile.phone) setPhone(profile.phone);
     } else if (user) {
       if (user.user_metadata?.full_name) setName(user.user_metadata.full_name);
-      if (user.email) setEmail(user.email);
+      if (user.email && !user.email.endsWith('@phone.pgfinder.app')) setEmail(user.email);
       if (user.user_metadata?.college_name) setCollege(user.user_metadata.college_name);
       if (user.user_metadata?.phone) setPhone(user.user_metadata.phone);
     }
