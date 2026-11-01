@@ -48,6 +48,7 @@ export default function AuthPage() {
   const [recoveryQuestion, setRecoveryQuestion] = useState<string>(RECOVERY_QUESTIONS[0].key);
   const [recoveryAnswer, setRecoveryAnswer] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   // After a successful signup we show the one-time recovery code before going on
   const [issuedRecoveryCode, setIssuedRecoveryCode] = useState<string | null>(null);
@@ -267,6 +268,9 @@ export default function AuthPage() {
 
       if (!response.ok) {
         setErrorMessage(result.error || 'Failed to create account. Please check your details.');
+        // A captcha token works only once, so ask for a fresh one before the next try
+        setTurnstileToken('');
+        setCaptchaReset((n) => n + 1);
         setIsLoading(false);
         return;
       }
@@ -282,6 +286,8 @@ export default function AuthPage() {
     } catch (err: unknown) {
       console.error('Signup error:', err);
       setErrorMessage('Network or server error during registration. Please try again.');
+      setTurnstileToken('');
+      setCaptchaReset((n) => n + 1);
     } finally {
       setIsLoading(false);
     }
@@ -652,6 +658,7 @@ export default function AuthPage() {
               onVerify={(token) => setTurnstileToken(token)}
               onError={() => setErrorMessage('Security check error. Please reload.')}
               onExpire={() => setTurnstileToken('')}
+              resetSignal={captchaReset}
             />
 
             <button

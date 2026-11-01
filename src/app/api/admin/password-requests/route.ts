@@ -1,31 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { requireAdmin } from '@/lib/require-admin';
+import { normalizePhone } from '@/lib/phone';
 import { ADMIN_CODE_HOURS, generateAdminResetCode, hashSecret, normalizeCode } from '@/lib/recovery-server';
-
-type AdminCheck = { ok: true; db: SupabaseClient } | { ok: false; response: NextResponse };
-
-/** Confirms the caller is a logged-in ADMIN (token sent in the Authorization header). */
-async function requireAdmin(request: NextRequest): Promise<AdminCheck> {
-  const header = request.headers.get('authorization') ?? '';
-  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
-  if (!token) {
-    return { ok: false, response: NextResponse.json({ error: 'Please log in again.' }, { status: 401 }) };
-  }
-
-  const db = createAdminClient() as unknown as SupabaseClient;
-  const { data, error } = await db.auth.getUser(token);
-  if (error || !data.user) {
-    return { ok: false, response: NextResponse.json({ error: 'Please log in again.' }, { status: 401 }) };
-  }
-
-  const { data: profile } = await db.from('profiles').select('role').eq('id', data.user.id).maybeSingle();
-  if (!profile || profile.role !== 'ADMIN') {
-    return { ok: false, response: NextResponse.json({ error: 'Admins only.' }, { status: 403 }) };
-  }
-
-  return { ok: true, db };
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -80,7 +56,67 @@ export async function POST(request: NextRequest) {
     if (!check.ok) return check.response;
     const { db } = check;
 
-    const body: { id?: string; action?: 'issue' | 'cancel' } = await request.json();
+    const body: { id?: string; phone?: string; action?: 'create' | 'issue' | 'cancel' } = await request.json();
+
+    // ---- create: the admin types a mobile number (after the user contacted them) ----
+    if (body.action === 'create') {
+      const canonicalPhone = body.phone ? normalizePhone(body.phone) : null;
+      if (!canonicalPhone) {
+        return NextResponse.json({ error: 'Please enter a valid 10-digit Indian mobile number.' }, { status: 400 });
+      }
+
+      const { data: profile, error: profileError } = await db
+        .from('profiles')
+        .select('id, full_name, role')
+        .eq('phone', canonicalPhone)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Admin create code: profile lookup failed', profileError);
+        return NextResponse.json({ error: 'Could not look up that number.' }, { status: 500 });
+      }
+      if (!profile) {
+        return NextResponse.json({ error: 'No account is registered with that number.' }, { status: 404 });
+      }
+      if (profile.role === 'ADMIN') {
+        return NextResponse.json({ error: 'Admin accounts cannot be reset here.' }, { status: 403 });
+      }
+
+      // Close any older open requests so only the newest code works
+      await db
+        .from('password_reset_requests')
+        .update({ status: 'CANCELLED' })
+        .eq('user_id', profile.id)
+        .in('status', ['PENDING', 'CODE_ISSUED']);
+
+      const code = generateAdminResetCode();
+      const expires = new Date(Date.now() + ADMIN_CODE_HOURS * 60 * 60 * 1000).toISOString();
+      const { error: insertError } = await db.from('password_reset_requests').insert({
+        user_id: profile.id,
+        phone: canonicalPhone,
+        status: 'CODE_ISSUED',
+        code_hash: hashSecret(normalizeCode(code)),
+        code_expires_at: expires,
+        issued_at: new Date().toISOString(),
+      });
+
+      if (insertError) {
+        console.error('Admin create code: insert failed', insertError);
+        return NextResponse.json({ error: 'Could not create the code.' }, { status: 500 });
+      }
+
+      // The code is returned ONCE here and never stored in readable form.
+      return NextResponse.json({
+        success: true,
+        code,
+        expiresAt: expires,
+        fullName: String(profile.full_name ?? ''),
+        role: String(profile.role ?? ''),
+        phone: canonicalPhone,
+      });
+    }
+
+    // ---- issue / cancel on an existing request ----
     if (!body.id || (body.action !== 'issue' && body.action !== 'cancel')) {
       return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
     }
@@ -107,7 +143,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // issue (or re-issue) a one-time code, valid for ADMIN_CODE_HOURS
     const code = generateAdminResetCode();
     const expires = new Date(Date.now() + ADMIN_CODE_HOURS * 60 * 60 * 1000).toISOString();
     const { error: issueError } = await db
@@ -126,7 +161,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not create the code.' }, { status: 500 });
     }
 
-    // The code is returned ONCE here and never stored in readable form.
     return NextResponse.json({ success: true, code, expiresAt: expires });
   } catch (error: unknown) {
     console.error('Admin action unexpected error:', error);

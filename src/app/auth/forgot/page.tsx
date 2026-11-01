@@ -23,7 +23,6 @@ export default function ForgotPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isRequesting, setIsRequesting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -78,38 +77,6 @@ export default function ForgotPasswordPage() {
       setErrorMessage('Network error. Please try again.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleAskAdmin = async () => {
-    clearAlerts();
-    const canonicalPhone = normalizePhone(phone);
-    if (!canonicalPhone) {
-      setErrorMessage('Enter your mobile number above first, then ask the admin for help.');
-      return;
-    }
-
-    setIsRequesting(true);
-    try {
-      const response = await fetch('/api/auth/recovery/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: canonicalPhone }),
-      });
-      const result = await response.json();
-
-      if (!response.ok) {
-        setErrorMessage(result.error || 'Could not send your request. Please try again.');
-        return;
-      }
-
-      setInfoMessage(result.message);
-      setMethod('ADMIN_CODE');
-    } catch (err: unknown) {
-      console.error('Request error:', err);
-      setErrorMessage('Network error. Please try again.');
-    } finally {
-      setIsRequesting(false);
     }
   };
 
@@ -255,7 +222,7 @@ export default function ForgotPasswordPage() {
                 autoComplete="off"
               />
               <p className="text-[11px] text-zinc-500">
-                No code yet? Use the &quot;Ask the admin&quot; button below, then contact the admin. The code works
+                No code yet? Use the &quot;Contact the admin for help&quot; button below and tell the admin your mobile number. The code works
                 for 24 hours, one time.
               </p>
             </div>
@@ -309,14 +276,12 @@ export default function ForgotPasswordPage() {
           <p className="text-xs text-on-surface-variant">
             Lost your recovery code and forgot your answer too?
           </p>
-          <button
-            type="button"
-            onClick={handleAskAdmin}
-            disabled={isRequesting}
-            className="w-full border border-deep-green text-deep-green font-bold text-sm py-2.5 rounded-lg hover:bg-[#F3FAF1] transition-colors cursor-pointer disabled:opacity-50"
+          <Link
+            href="/contact?topic=password"
+            className="block w-full border border-deep-green text-deep-green font-bold text-sm py-2.5 rounded-lg hover:bg-[#F3FAF1] transition-colors"
           >
-            {isRequesting ? 'Sending request...' : 'Ask the admin for a reset code'}
-          </button>
+            Contact the admin for help
+          </Link>
         </div>
 
         <div className="text-center text-xs text-on-surface-variant">
