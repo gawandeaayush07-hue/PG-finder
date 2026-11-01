@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     // 9. Duplicate phone number check
     const { data: existingProfile, error: profileCheckError } = await adminClient
       .from('profiles')
-      .select('id')
+      .select('id, role')
       .eq('phone', canonicalPhone)
       .maybeSingle();
 
@@ -151,10 +151,13 @@ export async function POST(request: NextRequest) {
     }
 
     if (existingProfile) {
-      return NextResponse.json(
-        { error: 'This mobile number is already registered. Please log in instead.' },
-        { status: 409 }
-      );
+      const roleLabel = (r: string) => (r === 'OWNER' ? 'Property Owner' : 'Student');
+      const existingRole = String(existingProfile.role);
+      const message =
+        existingRole !== role
+          ? `This number is already registered for a ${roleLabel(existingRole)} profile. Please enter another number.`
+          : 'This mobile number is already registered. Please log in instead.';
+      return NextResponse.json({ error: message }, { status: 409 });
     }
 
     // 10. Derive hidden login email

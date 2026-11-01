@@ -14,7 +14,7 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onCancel }) => {
   const roleName = targetRole.charAt(0).toUpperCase() + targetRole.slice(1).toLowerCase();
   const supabase = createClient();
-  
+
   const [step, setStep] = useState<1 | 2>(1);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -94,7 +94,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
         }
 
         if (targetRole === 'OWNER' && profileRole !== 'OWNER' && profileRole !== 'ADMIN') {
-          setError('Access Denied: Your account does not have Property Owner privileges.');
+          setError('This number is registered for a Student profile. Please use the Student portal, or use another number.');
+          await supabase.auth.signOut();
+          setIsLoading(false);
+          return;
+        }
+
+        if (targetRole === 'STUDENT' && profileRole !== 'STUDENT' && profileRole !== 'ADMIN') {
+          setError('This number is registered for a Property Owner profile. Please use the Property Owner portal, or use another number.');
           await supabase.auth.signOut();
           setIsLoading(false);
           return;
@@ -113,28 +120,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
       {/* Background Gradient */}
-      <div 
+      <div
         className="absolute inset-0 z-0 bg-gradient-to-br from-[#e6f4e6] to-[#c6eac6] opacity-90"
         onClick={onCancel}
       />
-      
+
       <div className="relative z-10 bg-white border border-outline-variant p-8 md:p-12 w-[90vw] max-w-[500px] shadow-level-2 text-center flex flex-col items-center gap-4 rounded-3xl">
-        
+
         {step === 1 ? (
           <>
             <span className="material-symbols-outlined text-4xl text-amber-500 font-light">
               lock
             </span>
-            
+
             <h2 className="text-2xl md:text-3xl font-bold text-deep-green tracking-tight">
               {roleName} Dashboard
             </h2>
-            
+
             <p className="text-on-surface-variant text-base md:text-lg leading-relaxed mt-2 mb-4 px-2">
               Please authenticate with your credentials to access the <strong>{roleName}</strong> portal.
             </p>
-            
-            <button 
+
+            <button
               onClick={() => setStep(2)}
               className="bg-[#2E4A38] text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-[#1f3326] transition-colors shadow-sm cursor-pointer"
             >
@@ -153,9 +160,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
             <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full text-left">
               <div>
                 <label className="block text-sm font-semibold mb-1 text-deep-green" htmlFor="identifier">Mobile Number or Email</label>
-                <input 
+                <input
                   id="identifier"
-                  type="text" 
+                  type="text"
                   required
                   className="w-full border border-outline-variant rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-brand-green text-sm"
                   placeholder="9876543210 or email"
@@ -165,9 +172,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-1 text-deep-green" htmlFor="password">Password</label>
-                <input 
+                <input
                   id="password"
-                  type="password" 
+                  type="password"
                   required
                   className="w-full border border-outline-variant rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-brand-green text-sm"
                   placeholder="••••••••"
@@ -175,19 +182,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              
+
               {error && <p className="text-rose-600 text-xs font-semibold text-center">{error}</p>}
-              
+
               <div className="flex justify-end gap-3 mt-4">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setStep(1)}
                   disabled={isLoading}
                   className="px-6 py-3 rounded-full font-semibold text-on-surface hover:bg-surface-container transition-colors cursor-pointer disabled:opacity-50"
                 >
                   Back
                 </button>
-                <button 
+                <button
                   type="submit"
                   disabled={isLoading}
                   className="px-8 py-3 rounded-full font-bold bg-[#2E4A38] text-white hover:bg-[#1f3326] transition-colors shadow-sm cursor-pointer disabled:bg-zinc-400 flex items-center justify-center gap-2"

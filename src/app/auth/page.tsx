@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
 import { createClient } from '@/lib/supabase/client';
@@ -24,7 +24,12 @@ export default function AuthPage() {
 
   // Tab states
   const [activePortal, setActivePortal] = useState<'STUDENT' | 'OWNER'>('STUDENT');
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'signup');
+
+  // Keep the form in sync when a link like /auth?mode=signup is clicked while already on this page
+  useEffect(() => {
+    setIsLogin(searchParams.get('mode') !== 'signup');
+  }, [searchParams]);
 
   // Common login state
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -120,6 +125,18 @@ export default function AuthPage() {
           .single();
 
         const authoritativeRole = profile?.role || activePortal;
+
+        // Block logging in through the wrong portal (admins may use either)
+        if (authoritativeRole !== 'ADMIN' && authoritativeRole !== activePortal) {
+          const registeredAs = authoritativeRole === 'OWNER' ? 'Property Owner' : 'Student';
+          await supabase.auth.signOut();
+          setErrorMessage(
+            `This number is registered for a ${registeredAs} profile. Please log in from the ${registeredAs} Portal, or use another number.`
+          );
+          setIsLoading(false);
+          return;
+        }
+
         setRole(authoritativeRole as 'STUDENT' | 'OWNER' | 'ADMIN');
 
         if (redirectPath) {
@@ -258,7 +275,7 @@ export default function AuthPage() {
 
   return (
     <div className="w-full max-w-[500px] mx-auto px-margin-mobile py-16 flex flex-col gap-6">
-      
+
       {/* Selector Tabs for Portals */}
       <div className="flex border-b border-outline-variant">
         <button
@@ -266,11 +283,10 @@ export default function AuthPage() {
             setActivePortal('STUDENT');
             resetFormAlerts();
           }}
-          className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${
-            activePortal === 'STUDENT'
+          className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${activePortal === 'STUDENT'
               ? 'border-deep-green text-primary'
               : 'border-transparent text-on-surface-variant hover:text-primary'
-          }`}
+            }`}
         >
           Student Portal
         </button>
@@ -279,11 +295,10 @@ export default function AuthPage() {
             setActivePortal('OWNER');
             resetFormAlerts();
           }}
-          className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${
-            activePortal === 'OWNER'
+          className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${activePortal === 'OWNER'
               ? 'border-deep-green text-primary'
               : 'border-transparent text-on-surface-variant hover:text-primary'
-          }`}
+            }`}
         >
           Property Owner Portal
         </button>
@@ -291,7 +306,7 @@ export default function AuthPage() {
 
       {/* Main Auth Container */}
       <div className="bg-white rounded-card p-6 md:p-8 shadow-level-1 border border-outline-variant flex flex-col gap-6">
-        
+
         {/* Title */}
         <div className="text-center">
           <h2 className="font-headline-md text-2xl font-bold text-primary mb-1">
@@ -366,7 +381,7 @@ export default function AuthPage() {
         ) : (
           /* SIGNUP FORM */
           <form onSubmit={handleSignupSubmit} className="flex flex-col gap-4">
-            
+
             {/* Full Name */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-[#7A8F7A]">Full Name</label>
