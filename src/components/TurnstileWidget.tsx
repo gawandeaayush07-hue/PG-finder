@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useRef } from 'react';
 
@@ -6,6 +6,12 @@ interface TurnstileWidgetProps {
   onVerify: (token: string) => void;
   onError?: () => void;
   onExpire?: () => void;
+  /**
+   * Change this number (for example count + 1) to get a fresh check. A captcha token can be used
+   * only ONCE, so after any attempt the server has seen (even a failed one) the form must ask
+   * for a new token.
+   */
+  resetSignal?: number;
 }
 
 interface TurnstileRenderOptions {
@@ -18,6 +24,7 @@ interface TurnstileRenderOptions {
 interface TurnstileApi {
   render: (container: HTMLElement, options: TurnstileRenderOptions) => string;
   remove: (widgetId: string) => void;
+  reset: (widgetId?: string) => void;
 }
 
 declare global {
@@ -54,10 +61,11 @@ function loadTurnstileScript(): Promise<void> {
   });
 }
 
-export default function TurnstileWidget({ onVerify, onError, onExpire }: TurnstileWidgetProps) {
+export default function TurnstileWidget({ onVerify, onError, onExpire, resetSignal }: TurnstileWidgetProps) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const firstResetRun = useRef(true);
 
   // Keep the latest callbacks in a ref. The page creates new callback functions on every
   // redraw; if the widget depended on them it would be destroyed and rebuilt in a loop.
@@ -98,6 +106,21 @@ export default function TurnstileWidget({ onVerify, onError, onExpire }: Turnsti
       widgetIdRef.current = null;
     };
   }, [siteKey]);
+
+  // Ask for a fresh token whenever the page bumps resetSignal (not on the very first render)
+  useEffect(() => {
+    if (firstResetRun.current) {
+      firstResetRun.current = false;
+      return;
+    }
+    if (widgetIdRef.current && window.turnstile) {
+      try {
+        window.turnstile.reset(widgetIdRef.current);
+      } catch {
+        // ignore: the widget may already be gone
+      }
+    }
+  }, [resetSignal]);
 
   if (!siteKey) return null;
 

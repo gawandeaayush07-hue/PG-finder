@@ -1,7 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import TurnstileWidget from '@/components/TurnstileWidget';
+import { CONTACT_LIMITS } from '@/lib/contact';
+
+const PASSWORD_HELP_TEMPLATE =
+  'I forgot my PG Finder password and cannot use my recovery code or security answer.\n\nMy registered mobile number: +91 ';
 
 export default function ContactSupportPage() {
   const [name, setName] = useState('');
@@ -10,10 +15,70 @@ export default function ContactSupportPage() {
   const [message, setMessage] = useState('');
   const [ticketId, setTicketId] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Sending state
+  const [isSending, setIsSending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [captchaReset, setCaptchaReset] = useState(0);
+  const [honeypot, setHoneypot] = useState(''); // hidden field; real people leave it empty
+
+  // Arriving from "Forgot password" (/contact?topic=password): choose the right category for them
+  const [passwordHelp, setPasswordHelp] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('topic') === 'password') {
+      setPasswordHelp(true);
+      setSubject('account_help');
+      setMessage((current) => current || PASSWORD_HELP_TEMPLATE);
+    }
+  }, []);
+
+  // The captcha box only exists when a site key is configured (not on a plain local setup)
+  const captchaRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+
+  const requestFreshCaptcha = () => {
+    setTurnstileToken('');
+    setCaptchaReset((n) => n + 1);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newTicket = 'SUP-' + Math.floor(100000 + Math.random() * 900000);
-    setTicketId(newTicket);
+    if (isSending) return;
+
+    setIsSending(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          category: subject,
+          message: message.trim(),
+          website: honeypot,
+          turnstileToken: turnstileToken || undefined,
+        }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setErrorMessage(result.error || 'Could not send your message. Please try again.');
+        requestFreshCaptcha();
+        return;
+      }
+
+      setTicketId(result.ticketId);
+      requestFreshCaptcha();
+    } catch (err: unknown) {
+      console.error('Contact form error:', err);
+      setErrorMessage('Network error. Please check your connection and try again.');
+      requestFreshCaptcha();
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const offices = [
@@ -27,7 +92,7 @@ export default function ContactSupportPage() {
 
   return (
     <div className="w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl flex flex-col gap-16">
-      
+
       {/* Page Header */}
       <section className="text-center max-w-[80ch] mx-auto flex flex-col items-center gap-6 mt-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 text-deep-green text-xs font-bold uppercase tracking-wider">
@@ -44,7 +109,7 @@ export default function ContactSupportPage() {
 
       {/* Main Grid: Contact Channels + Interactive Ticket Form */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        
+
         {/* Left Side: Contact Channels & Quick Info */}
         <div className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-white rounded-3xl p-6 md:p-8 border border-outline-variant shadow-level-1 flex flex-col gap-6">
@@ -103,18 +168,27 @@ export default function ContactSupportPage() {
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Support Ticket</span>
             <h2 className="font-headline-md text-2xl font-bold text-primary mt-1">Send a Message</h2>
             <p className="text-xs text-on-surface-variant mt-1">
-              Fill out the form below and our team will get back to your registered contact.
+              Fill out the form below and our team will get back to you on the email address you enter.
             </p>
           </div>
 
           {!ticketId ? (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {passwordHelp && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-900 text-xs px-3.5 py-3 rounded-lg">
+                  <strong>Password help:</strong> write your registered mobile number in the message. The admin
+                  will check that it is really you (usually by calling or messaging that number), then give you a
+                  one-time code. Use it on the &quot;Forgot password&quot; page under &quot;Code from admin&quot;.
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-deep-green">Full Name *</label>
                   <input
                     type="text"
                     required
+                    minLength={CONTACT_LIMITS.nameMin}
+                    maxLength={CONTACT_LIMITS.nameMax}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your name"
@@ -127,6 +201,7 @@ export default function ContactSupportPage() {
                   <input
                     type="email"
                     required
+                    maxLength={CONTACT_LIMITS.emailMax}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
@@ -147,6 +222,7 @@ export default function ContactSupportPage() {
                   <option value="technical_bug">Technical Bug / App Feedback</option>
                   <option value="billing_deposit">Deposit or Rent Clarification</option>
                   <option value="press_partnership">Campus Partnership &amp; Media</option>
+                  <option value="account_help">Account / Password Help</option>
                 </select>
               </div>
 
@@ -155,18 +231,61 @@ export default function ContactSupportPage() {
                 <textarea
                   required
                   rows={5}
+                  minLength={CONTACT_LIMITS.messageMin}
+                  maxLength={CONTACT_LIMITS.messageMax}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="How can we help? Please provide any listing names or booking dates if applicable..."
                   className="w-full px-3.5 py-2.5 rounded-lg border border-outline-variant focus:border-deep-green outline-none text-sm bg-white resize-none"
                 ></textarea>
+                <p className="text-[11px] text-zinc-400 text-right">
+                  {message.length}/{CONTACT_LIMITS.messageMax}
+                </p>
               </div>
+
+              {/* Hidden trap field for spam bots. Real visitors never see or fill it. */}
+              <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+                <label>
+                  Website
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              {/* Security check (Cloudflare Turnstile) */}
+              <TurnstileWidget
+                onVerify={(token) => setTurnstileToken(token)}
+                onError={() => setErrorMessage('Security check error. Please reload the page.')}
+                onExpire={() => setTurnstileToken('')}
+                resetSignal={captchaReset}
+              />
+
+              {errorMessage && (
+                <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs px-3.5 py-2.5 rounded-lg flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">error</span>
+                  <span>{errorMessage}</span>
+                </div>
+              )}
 
               <button
                 type="submit"
-                className="bg-deep-green hover:bg-primary text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition-all cursor-pointer mt-2"
+                disabled={isSending || (captchaRequired && !turnstileToken)}
+                className="bg-deep-green hover:bg-primary text-white font-bold text-sm py-3.5 rounded-xl shadow-md transition-all cursor-pointer mt-2 disabled:bg-zinc-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Submit Support Request
+                {isSending ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Sending...
+                  </>
+                ) : (
+                  'Submit Support Request'
+                )}
               </button>
             </form>
           ) : (
@@ -174,18 +293,18 @@ export default function ContactSupportPage() {
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center border-2 border-emerald-300">
                 <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
               </div>
-              <h3 className="font-headline-md text-2xl font-bold text-deep-green">Support Ticket Generated!</h3>
+              <h3 className="font-headline-md text-2xl font-bold text-deep-green">Message Received!</h3>
               <p className="text-sm text-on-surface-variant max-w-[420px] w-full mx-auto">
-                Thank you <strong className="text-primary">{name}</strong>. Your inquiry has been routed to our student support team.
+                Thank you <strong className="text-primary">{name}</strong>. Your message has reached our support team.
               </p>
               <div className="bg-emerald-50 border border-emerald-300 px-5 py-2.5 rounded-xl text-sm font-mono font-bold text-deep-green">
                 Ticket ID: {ticketId}
               </div>
               <p className="text-xs text-on-surface-variant">
-                A confirmation has been sent to <strong className="text-primary">{email}</strong>. We will respond shortly.
+                We will reply to <strong className="text-primary">{email}</strong>. Please keep your ticket ID for reference.
               </p>
               <button
-                onClick={() => { setTicketId(null); setName(''); setEmail(''); setMessage(''); }}
+                onClick={() => { setTicketId(null); setName(''); setEmail(''); setMessage(''); setErrorMessage(null); }}
                 className="bg-deep-green text-white font-bold text-sm px-6 py-2.5 rounded-xl mt-2 cursor-pointer"
               >
                 Send Another Inquiry
