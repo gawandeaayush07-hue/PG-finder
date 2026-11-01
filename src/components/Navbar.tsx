@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { usePersona, UserRole } from '@/context/PersonaContext';
 import { Magnetic } from '@/components/animations/Magnetic';
 import { getInitials } from '@/lib/utils';
+import { isAuthPlaceholderEmail } from '@/lib/phone';
 
 export const Navbar: React.FC = () => {
   const { role, profile, user, requestRoleChange, isAdminAuthorized, logout } = usePersona();

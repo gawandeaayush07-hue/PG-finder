@@ -4,6 +4,16 @@ import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { usePersona } from '@/context/PersonaContext';
 import { createClient } from '@/lib/supabase/client';
+import { normalizePhone, phoneToAuthEmail } from '@/lib/phone';
+import TurnstileWidget from '@/components/TurnstileWidget';
+
+const COLLEGE_OPTIONS = [
+  'Pimpri Chinchwad College of Engineering (PCCOE), Akurdi',
+  'Dr. D. Y. Patil Institute of Technology, Pimpri',
+  'DY Patil International University (DYPIU), Akurdi',
+  'All India Shri Shivaji Memorial Society (AISSMS), Pune',
+  'Other',
+];
 
 export default function AuthPage() {
   const { setRole } = usePersona();
@@ -11,34 +21,171 @@ export default function AuthPage() {
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get('redirect');
   const supabase = createClient();
-  
+
   // Tab states
   const [activePortal, setActivePortal] = useState<'STUDENT' | 'OWNER'>('STUDENT');
   const [isLogin, setIsLogin] = useState(true);
 
-  // Form states
+  // Common login state
+  const [loginIdentifier, setLoginIdentifier] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+
+  // Signup form states
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [selectedCollege, setSelectedCollege] = useState(COLLEGE_OPTIONS[0]);
+  const [customCollege, setCustomCollege] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [extraField, setExtraField] = useState(''); // College for student, phone for owner
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
+
+  // Status states
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const resetFormAlerts = () => {
     setErrorMessage(null);
     setInfoMessage(null);
+  };
 
-    // Check if Supabase credentials are configured or in placeholder mode
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    resetFormAlerts();
+
     const isPlaceholderMode =
       process.env.NODE_ENV === 'development' &&
       (!process.env.NEXT_PUBLIC_SUPABASE_URL ||
         process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
 
     if (isPlaceholderMode) {
-      // In local preview/development before Supabase project credentials are provided in .env.local
+      setTimeout(() => {
+        setIsLoading(false);
+        setRole(activePortal);
+        if (redirectPath) {
+          router.push(redirectPath);
+        } else if (activePortal === 'STUDENT') {
+          router.push('/dashboard/student');
+        } else {
+          router.push('/dashboard/owner');
+        }
+      }, 800);
+      return;
+    }
+
+    try {
+      const trimmedInput = loginIdentifier.trim();
+      let targetAuthEmail: string;
+
+      if (trimmedInput.includes('@')) {
+        // Direct email login (admin or existing test accounts)
+        targetAuthEmail = trimmedInput.toLowerCase();
+      } else {
+        // Phone login -> normalize and map to hidden auth email
+        const canonicalPhone = normalizePhone(trimmedInput);
+        if (!canonicalPhone) {
+          setErrorMessage('Please enter a valid 10-digit Indian mobile number or email address.');
+          setIsLoading(false);
+          return;
+        }
+        const derivedEmail = phoneToAuthEmail(canonicalPhone);
+        if (!derivedEmail) {
+          setErrorMessage('Invalid phone number format.');
+          setIsLoading(false);
+          return;
+        }
+        targetAuthEmail = derivedEmail;
+      }
+
+      // Client-side sign in with password
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: targetAuthEmail,
+        password: loginPassword,
+      });
+
+      if (error) {
+        setErrorMessage('Invalid mobile number or password.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        // Query authoritative profile for role redirection
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        const authoritativeRole = profile?.role || activePortal;
+        setRole(authoritativeRole as 'STUDENT' | 'OWNER' | 'ADMIN');
+
+        if (redirectPath) {
+          router.push(redirectPath);
+        } else if (authoritativeRole === 'ADMIN') {
+          router.push('/dashboard/admin');
+        } else if (authoritativeRole === 'OWNER') {
+          router.push('/dashboard/owner');
+        } else {
+          router.push('/dashboard/student');
+        }
+      }
+    } catch (err: unknown) {
+      console.error('Login error:', err);
+      setErrorMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    resetFormAlerts();
+
+    // 1. Password confirmation check
+    if (password !== confirmPassword) {
+      setErrorMessage('Passwords do not match. Please re-enter.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage('Password must be at least 6 characters long.');
+      setIsLoading(false);
+      return;
+    }
+
+    // 2. Phone validation
+    const canonicalPhone = normalizePhone(phone);
+    if (!canonicalPhone) {
+      setErrorMessage('Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).');
+      setIsLoading(false);
+      return;
+    }
+
+    // 3. College selection
+    const finalCollege =
+      activePortal === 'STUDENT'
+        ? selectedCollege === 'Other'
+          ? customCollege.trim()
+          : selectedCollege
+        : undefined;
+
+    if (activePortal === 'STUDENT' && !finalCollege) {
+      setErrorMessage('Please specify your college or university name.');
+      setIsLoading(false);
+      return;
+    }
+
+    const isPlaceholderMode =
+      process.env.NODE_ENV === 'development' &&
+      (!process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
+
+    if (isPlaceholderMode) {
       setTimeout(() => {
         setIsLoading(false);
         setRole(activePortal);
@@ -54,98 +201,56 @@ export default function AuthPage() {
     }
 
     try {
-      if (isLogin) {
-        // Real Supabase Email/Password Login
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
+      // 4. Server-side registration via /api/auth/signup
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: canonicalPhone,
           password,
-        });
+          role: activePortal,
+          college: finalCollege,
+          contactEmail: contactEmail.trim() || undefined,
+          turnstileToken: turnstileToken || undefined,
+        }),
+      });
 
-        if (error) {
-          if (error.message.toLowerCase().includes('invalid login credentials')) {
-            setErrorMessage('Invalid email or password. Please verify your credentials.');
-          } else if (error.message.toLowerCase().includes('email not confirmed')) {
-            setErrorMessage('Please confirm your email address before signing in.');
-          } else {
-            setErrorMessage(error.message);
-          }
-          setIsLoading(false);
-          return;
-        }
+      const result = await response.json();
 
-        if (data.user) {
-          // Fetch authoritative profile to determine target portal
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', data.user.id)
-            .single();
+      if (!response.ok) {
+        setErrorMessage(result.error || 'Failed to create account. Please check your details.');
+        setIsLoading(false);
+        return;
+      }
 
-          const authoritativeRole = profile?.role || activePortal;
-          setRole(authoritativeRole as 'STUDENT' | 'OWNER' | 'ADMIN');
+      // 5. Automatic sign in with the derived auth email
+      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+        email: result.authEmail,
+        password,
+      });
 
-          if (redirectPath) {
-            router.push(redirectPath);
-          } else if (authoritativeRole === 'ADMIN') {
-            router.push('/dashboard/admin');
-          } else if (authoritativeRole === 'OWNER') {
-            router.push('/dashboard/owner');
-          } else {
-            router.push('/dashboard/student');
-          }
-        }
-      } else {
-        // Real Supabase Signup with Role Protection
-        // Role is strictly scoped to STUDENT or OWNER. ADMIN cannot be created via browser.
-        const targetRole = activePortal === 'OWNER' ? 'OWNER' : 'STUDENT';
+      if (loginError) {
+        setInfoMessage('Account created! Please log in with your mobile number and password.');
+        setIsLogin(true);
+        setLoginIdentifier(canonicalPhone);
+        setIsLoading(false);
+        return;
+      }
 
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: {
-              full_name: name,
-              role: targetRole,
-              phone: targetRole === 'OWNER' ? extraField : null,
-              college_name: targetRole === 'STUDENT' ? extraField : null,
-            },
-          },
-        });
-
-        if (error) {
-          if (error.message.toLowerCase().includes('user already registered')) {
-            setErrorMessage('An account with this email already exists. Please log in.');
-          } else if (error.message.toLowerCase().includes('password')) {
-            setErrorMessage('Password is too weak. Please use at least 6 characters.');
-          } else {
-            setErrorMessage(error.message);
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        // If email confirmation is enabled on the Supabase project
-        if (data.user && !data.session) {
-          setInfoMessage('Account created! Please check your email to confirm your account before logging in.');
-          setIsLoading(false);
-          return;
-        }
-
-        if (data.session) {
-          setRole(targetRole);
-          if (redirectPath) {
-            router.push(redirectPath);
-          } else if (targetRole === 'OWNER') {
-            router.push('/dashboard/owner');
-          } else {
-            router.push('/dashboard/student');
-          }
+      if (loginData.session) {
+        setRole(activePortal);
+        if (redirectPath) {
+          router.push(redirectPath);
+        } else if (activePortal === 'OWNER') {
+          router.push('/dashboard/owner');
+        } else {
+          router.push('/dashboard/student');
         }
       }
     } catch (err: unknown) {
-      console.error('Authentication error:', err);
-      setErrorMessage('An unexpected error occurred. Please try again.');
+      console.error('Signup error:', err);
+      setErrorMessage('Network or server error during registration. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -159,9 +264,7 @@ export default function AuthPage() {
         <button
           onClick={() => {
             setActivePortal('STUDENT');
-            setIsLogin(true);
-            setErrorMessage(null);
-            setInfoMessage(null);
+            resetFormAlerts();
           }}
           className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${
             activePortal === 'STUDENT'
@@ -174,9 +277,7 @@ export default function AuthPage() {
         <button
           onClick={() => {
             setActivePortal('OWNER');
-            setIsLogin(true);
-            setErrorMessage(null);
-            setInfoMessage(null);
+            resetFormAlerts();
           }}
           className={`flex-1 text-center pb-3 font-semibold text-sm transition-all border-b-2 cursor-pointer ${
             activePortal === 'OWNER'
@@ -197,7 +298,9 @@ export default function AuthPage() {
             {activePortal === 'STUDENT' ? 'Student' : 'Owner'} {isLogin ? 'Log In' : 'Sign Up'}
           </h2>
           <p className="text-xs text-on-surface-variant">
-            {isLogin ? 'Welcome back! Please enter your details.' : 'Create an account to get started.'}
+            {isLogin
+              ? 'Enter your mobile number and password to access your portal.'
+              : 'Create an account with your mobile number. No SMS OTP required.'}
           </p>
         </div>
 
@@ -216,10 +319,55 @@ export default function AuthPage() {
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          
-          {!isLogin && (
+        {/* LOGIN FORM */}
+        {isLogin ? (
+          <form onSubmit={handleLoginSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#7A8F7A]">Mobile Number or Email</label>
+              <input
+                type="text"
+                required
+                value={loginIdentifier}
+                onChange={(e) => setLoginIdentifier(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
+                placeholder="e.g. 9876543210 or admin@pgfinder.com"
+                autoComplete="username"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#7A8F7A]">Password</label>
+              <input
+                type="password"
+                required
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
+                placeholder="••••••••"
+                autoComplete="current-password"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-deep-green hover:bg-primary text-on-primary font-bold text-sm py-3 rounded-lg shadow-sm transition-colors mt-2 flex items-center justify-center gap-2 cursor-pointer disabled:bg-zinc-400"
+            >
+              {isLoading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Logging in...
+                </>
+              ) : (
+                'Log In'
+              )}
+            </button>
+          </form>
+        ) : (
+          /* SIGNUP FORM */
+          <form onSubmit={handleSignupSubmit} className="flex flex-col gap-4">
+            
+            {/* Full Name */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-[#7A8F7A]">Full Name</label>
               <input
@@ -228,66 +376,127 @@ export default function AuthPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
-                placeholder="Enter your name"
+                placeholder="Enter your full name"
               />
             </div>
-          )}
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-[#7A8F7A]">Email Address</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-[#7A8F7A]">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {!isLogin && (
+            {/* Mobile Number */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-[#7A8F7A]">
-                {activePortal === 'STUDENT' ? 'College / University Name' : 'Phone Number'}
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-semibold text-[#7A8F7A]">Mobile Number</label>
+                <span className="text-[11px] text-emerald-700 font-medium">No SMS OTP required</span>
+              </div>
+              <div className="relative flex items-center">
+                <span className="absolute left-3.5 text-sm text-zinc-500 font-medium">+91</span>
+                <input
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full pl-12 pr-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
+                  placeholder="10-digit mobile number"
+                  maxLength={14}
+                />
+              </div>
+            </div>
+
+            {/* College Dropdown for Students */}
+            {activePortal === 'STUDENT' && (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-[#7A8F7A]">College / University</label>
+                <select
+                  value={selectedCollege}
+                  onChange={(e) => setSelectedCollege(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white cursor-pointer"
+                >
+                  {COLLEGE_OPTIONS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedCollege === 'Other' && (
+                  <input
+                    type="text"
+                    required
+                    value={customCollege}
+                    onChange={(e) => setCustomCollege(e.target.value)}
+                    className="w-full mt-1 px-3.5 py-2 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
+                    placeholder="Enter your college name"
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Optional Email */}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-semibold text-[#7A8F7A]">
+                  {activePortal === 'OWNER' ? 'Contact Email (Optional)' : 'Email Address (Optional)'}
+                </label>
+                <span className="text-[11px] text-zinc-400">Optional</span>
+              </div>
               <input
-                type="text"
-                required
-                value={extraField}
-                onChange={(e) => setExtraField(e.target.value)}
+                type="email"
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
-                placeholder={activePortal === 'STUDENT' ? 'e.g. IIT Delhi' : 'e.g. +91 99999 99999'}
+                placeholder={activePortal === 'OWNER' ? 'e.g. owner@gmail.com' : 'e.g. you@example.com'}
               />
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-deep-green hover:bg-primary text-on-primary font-bold text-sm py-3 rounded-lg shadow-sm transition-colors mt-2 flex items-center justify-center gap-2 cursor-pointer disabled:bg-zinc-400"
-          >
-            {isLoading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                Processing...
-              </>
-            ) : (
-              isLogin ? 'Log In' : 'Create Account'
-            )}
-          </button>
-        </form>
+            {/* Password */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#7A8F7A]">Password</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
+                placeholder="At least 6 characters"
+                autoComplete="new-password"
+              />
+            </div>
+
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#7A8F7A]">Confirm Password</label>
+              <input
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#B8D9B0] focus:border-primary focus:ring-0 outline-none text-sm bg-white"
+                placeholder="Re-enter password"
+                autoComplete="new-password"
+              />
+            </div>
+
+            {/* Turnstile Security Check */}
+            <TurnstileWidget
+              onVerify={(token) => setTurnstileToken(token)}
+              onError={() => setErrorMessage('Security check error. Please reload.')}
+              onExpire={() => setTurnstileToken('')}
+            />
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-deep-green hover:bg-primary text-on-primary font-bold text-sm py-3 rounded-lg shadow-sm transition-colors mt-2 flex items-center justify-center gap-2 cursor-pointer disabled:bg-zinc-400"
+            >
+              {isLoading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Creating Account...
+                </>
+              ) : (
+                'Create Account'
+              )}
+            </button>
+          </form>
+        )}
 
         {/* Toggle Login/Signup link */}
         <div className="text-center text-xs text-on-surface-variant pt-2 border-t border-outline-variant">
@@ -295,8 +504,7 @@ export default function AuthPage() {
           <button
             onClick={() => {
               setIsLogin(!isLogin);
-              setErrorMessage(null);
-              setInfoMessage(null);
+              resetFormAlerts();
             }}
             className="font-bold text-deep-green hover:underline cursor-pointer"
           >

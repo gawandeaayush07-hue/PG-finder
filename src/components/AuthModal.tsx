@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { UserRole } from '@/context/PersonaContext';
 import { createClient } from '@/lib/supabase/client';
+import { normalizePhone, phoneToAuthEmail } from '@/lib/phone';
 
 interface AuthModalProps {
   targetRole: UserRole;
@@ -15,7 +16,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
   const supabase = createClient();
   
   const [step, setStep] = useState<1 | 2>(1);
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,27 +34,44 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
     if (isPlaceholderMode) {
       setTimeout(() => {
         setIsLoading(false);
-        if (email.length >= 3 && password.length >= 4) {
+        if (identifier.length >= 3 && password.length >= 4) {
           onSuccess(targetRole);
         } else {
-          setError('Invalid credentials. Please enter a valid email and password (min 4 chars).');
+          setError('Invalid credentials. Please enter a valid mobile number/email and password.');
         }
       }, 800);
       return;
     }
 
     try {
+      const trimmed = identifier.trim();
+      let authEmail: string;
+
+      if (trimmed.includes('@')) {
+        authEmail = trimmed.toLowerCase();
+      } else {
+        const canonical = normalizePhone(trimmed);
+        if (!canonical) {
+          setError('Please enter a valid 10-digit mobile number or email.');
+          setIsLoading(false);
+          return;
+        }
+        const derived = phoneToAuthEmail(canonical);
+        if (!derived) {
+          setError('Invalid mobile number.');
+          setIsLoading(false);
+          return;
+        }
+        authEmail = derived;
+      }
+
       const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+        email: authEmail,
         password,
       });
 
       if (authError) {
-        if (authError.message.toLowerCase().includes('invalid login credentials')) {
-          setError('Invalid credentials. Please check your email and password.');
-        } else {
-          setError(authError.message);
-        }
+        setError('Invalid credentials. Please check your mobile number and password.');
         setIsLoading(false);
         return;
       }
@@ -134,15 +152,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ targetRole, onSuccess, onC
 
             <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full text-left">
               <div>
-                <label className="block text-sm font-semibold mb-1 text-deep-green" htmlFor="email">Email Address</label>
+                <label className="block text-sm font-semibold mb-1 text-deep-green" htmlFor="identifier">Mobile Number or Email</label>
                 <input 
-                  id="email"
-                  type="email" 
+                  id="identifier"
+                  type="text" 
                   required
                   className="w-full border border-outline-variant rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-brand-green text-sm"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="9876543210 or email"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                 />
               </div>
               <div>
